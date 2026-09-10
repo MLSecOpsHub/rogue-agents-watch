@@ -1700,3 +1700,104 @@ body.embed .embed-foot {
     display: none;
   }
 }
+
+/* ---- techniques: matrices, count bars, record chips ------------------------ */
+.matrix-wrap {
+  overflow-x: auto;
+  margin-bottom: 1.25rem;
+}
+.matrix {
+  border-collapse: separate;
+  border-spacing: 2px;
+  font-size: 0.86rem;
+  min-width: 100%;
+}
+.matrix caption {
+  text-align: left;
+  font-weight: 600;
+  padding: 0 0 0.4rem;
+  caption-side: top;
+}
+.matrix th,
+.matrix td {
+  padding: 0.35rem 0.5rem;
+  vertical-align: middle;
+}
+.matrix thead th {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-muted);
+  text-align: left;
+  vertical-align: bottom;
+}
+.matrix tbody th {
+  text-align: left;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.matrix tfoot th,
+.matrix tfoot td {
+  color: var(--fg-muted);
+  border-top: 1px solid var(--border);
+}
+.matrix-cell {
+  text-align: center;
+  min-width: 3.2rem;
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.matrix-cell.heat {
+  background: color-mix(in srgb, var(--accent) calc(var(--heat) * 55%), var(--bg-elev));
+  font-weight: 600;
+}
+.matrix-cell.heat a {
+  color: var(--fg);
+  text-decoration: none;
+  display: block;
+}
+.matrix-cell.zero {
+  background: var(--bg-muted);
+  color: var(--fg-muted);
+}
+.matrix-total {
+  text-align: right;
+  color: var(--fg-muted);
+}
+.count-bar {
+  display: inline-block;
+  width: 6rem;
+  height: 0.55rem;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--accent) var(--w, 0%), var(--bg-muted) var(--w, 0%));
+}
+.chips-inline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.chip-link {
+  text-decoration: none;
+  font-size: 0.78rem;
+}
+.chip-link:hover {
+  border-color: var(--accent);
+}
+.technique-table td.num {
+  white-space: nowrap;
+}
+.gaps-table .gap-none th {
+  color: var(--fg-muted);
+}
+.gaps-table .gap-full th::after {
+  content: ' ✓';
+  color: var(--status-confirmed);
+}
+.panel-evidence dd {
+  font-variant-numeric: tabular-nums;
+}

@@ -93,7 +93,8 @@ export function createMapCanvas(ds: Dataset, opts: CanvasOptions = {}): MapCanva
   const incidents = opts.incidents ?? ds.incidents;
   const projection = geoNaturalEarth1().fitExtent([[6, 6], [MAP_W - 6, MAP_H - 6]], { type: 'Sphere' });
   const path = geoPath(projection);
-  const svg = svgEl('svg', { viewBox: `0 0 ${MAP_W} ${MAP_H}`, class: 'map', role: 'img', 'aria-label': opts.ariaLabel ?? 'World map of incidents with stated coordinates' });
+  // role=group (not img): an image role would hide the focusable markers inside from assistive tech.
+  const svg = svgEl('svg', { viewBox: `0 0 ${MAP_W} ${MAP_H}`, class: 'map', role: 'group', 'aria-label': opts.ariaLabel ?? 'World map of incidents with stated coordinates' });
   const defs = svgEl('defs');
   for (const role of ROLES) {
     const grad = svgEl('radialGradient', { id: `halo-${role}`, class: `halo-grad role-${role}` });

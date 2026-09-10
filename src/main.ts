@@ -10,6 +10,7 @@ import { notFoundView } from './views/not-found';
 import { overviewView } from './views/overview';
 import { statsView } from './views/stats';
 import { tableView } from './views/table';
+import { techniquesView } from './views/techniques';
 import { timelineView } from './views/timeline';
 import type { View } from './views/types';
 
@@ -18,6 +19,7 @@ const VIEWS: Record<Route['view'], View> = {
   map: mapView,
   timeline: timelineView,
   table: tableView,
+  techniques: techniquesView,
   stats: statsView,
   about: aboutView,
   incident: incidentView,
@@ -29,6 +31,7 @@ const TITLES: Record<Route['view'], string> = {
   map: 'Map',
   timeline: 'Timeline',
   table: 'Table',
+  techniques: 'Techniques',
   stats: 'Stats',
   about: 'About',
   incident: 'Incident',

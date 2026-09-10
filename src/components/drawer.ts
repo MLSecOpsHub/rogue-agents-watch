@@ -2,6 +2,7 @@
 // throws the reader out of the view. Facts and wording come from the record;
 // the full page stays one click away.
 import { correctionIssueUrl, upstreamUrls } from '../config';
+import { datasetStatesAutonomyPct } from '../data/coverage';
 import { describe, label } from '../data/taxonomy';
 import type { Dataset, Incident } from '../data/types';
 import { incidentHref } from '../router';
@@ -37,7 +38,7 @@ export function incidentDrawer(ds: Dataset, inc: Incident, onClose: () => void):
       { class: 'def drawer-facts' },
       ...row('Actor', h('span', null, h('strong', null, inc.actor), ' (', badge(tax, 'actor_type', inc.actor_type, { compact: true, prefix: 'Actor type' }), ')')),
       ...row('Category', badge(tax, 'category', inc.category, { compact: true, prefix: 'Category' })),
-      ...row('Autonomy', `${label(tax, 'autonomy_level', inc.autonomy_level)} · ${fmtPct(inc.autonomy_pct)}`),
+      ...row('Autonomy', datasetStatesAutonomyPct(ds.incidents) || inc.autonomy_pct !== null ? `${label(tax, 'autonomy_level', inc.autonomy_level)} · ${fmtPct(inc.autonomy_pct)}` : label(tax, 'autonomy_level', inc.autonomy_level)),
       ...row('Models', inc.models.length ? inc.models.join(', ') : 'not named by sources'),
       ...row('Location', location),
     ),

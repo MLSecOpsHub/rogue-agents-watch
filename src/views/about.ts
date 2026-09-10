@@ -1,4 +1,5 @@
-import { SITE, UPSTREAM_REPO_URL, upstreamUrls } from '../config';
+import { SITE, SITE_URL, UPSTREAM_REPO_URL, upstreamUrls } from '../config';
+import { href } from '../router';
 import { values } from '../data/taxonomy';
 import { externalLink, h } from '../util/dom';
 import type { ViewContext } from './types';
@@ -91,7 +92,9 @@ export function aboutView({ ds, root }: ViewContext): void {
         h('dt', null, 'Archive coverage'),
         h('dd', null, `${ds.summary.archive_coverage.archived} of ${ds.summary.archive_coverage.sources} source URLs (${ds.summary.archive_coverage.pct}%) have a recorded Wayback Machine snapshot`),
         h('dt', null, 'Machine-readable'),
-        h('dd', null, externalLink(upstreamUrls.incidents, 'JSON', 'plain'), ' · ', externalLink(upstreamUrls.ndjson, 'NDJSON', 'plain'), ' · ', externalLink(upstreamUrls.csv, 'CSV', 'plain'), ' · ', externalLink(upstreamUrls.stix, 'STIX 2.1 bundle', 'plain')),
+        h('dd', null, externalLink(upstreamUrls.incidents, 'JSON', 'plain'), ' · ', externalLink(upstreamUrls.ndjson, 'NDJSON', 'plain'), ' · ', externalLink(upstreamUrls.csv, 'CSV', 'plain'), ' · ', externalLink(upstreamUrls.stix, 'STIX 2.1 bundle', 'plain'), ' (imports into OpenCTI)'),
+        h('dt', null, 'Built here'),
+        h('dd', null, h('a', { href: `${SITE_URL}feed.atom` }, 'Atom feed'), ' · ', h('a', { href: `${SITE_URL}changes.json` }, 'changes.json'), ' · ', h('a', { href: `${SITE_URL}navigator/attack-layer.json` }, 'ATT&CK Navigator layer'), ' · ', h('a', { href: `${SITE_URL}navigator/atlas-layer.json` }, 'ATLAS Navigator layer'), ' · ', h('a', { href: `${SITE_URL}misp/manifest.json` }, 'MISP feed'), ' (feed URL: ', h('code', null, `${SITE_URL}misp/`), ') · ', h('a', { href: `${SITE_URL}sitemap.xml` }, 'sitemap'), '. Record pages carry schema.org JSON-LD; see the ', h('a', { href: href('techniques') }, 'Techniques view'), ' for the technique lens.'),
       ),
     ),
   );

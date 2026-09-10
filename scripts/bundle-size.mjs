@@ -30,7 +30,7 @@ try {
 }
 
 const rel = (f) => path.relative(DIST, f);
-const isPrerender = (f) => /^(incident\/|og\/|feed\.atom$|changes\.json$)/.test(rel(f).split(path.sep).join('/'));
+const isPrerender = (f) => /^(incident\/|og\/|navigator\/|misp\/|feed\.atom$|changes\.json$|sitemap\.xml$|robots\.txt$)/.test(rel(f).split(path.sep).join('/'));
 const prerender = files.filter(isPrerender);
 const rows = files
   .filter((f) => !isPrerender(f))

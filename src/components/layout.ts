@@ -10,6 +10,7 @@ const NAV: Array<{ view: Exclude<Route['view'], 'incident' | 'not-found'>; text:
   { view: 'map', text: 'Map' },
   { view: 'timeline', text: 'Timeline' },
   { view: 'table', text: 'Table' },
+  { view: 'techniques', text: 'Techniques' },
   { view: 'stats', text: 'Stats' },
   { view: 'about', text: 'About' },
 ];

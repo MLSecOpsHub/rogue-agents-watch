@@ -7,11 +7,12 @@ export type Route =
   | { view: 'timeline'; query: URLSearchParams }
   | { view: 'table'; query: URLSearchParams }
   | { view: 'stats'; query: URLSearchParams }
+  | { view: 'techniques'; query: URLSearchParams }
   | { view: 'about'; query: URLSearchParams }
   | { view: 'incident'; id: string; query: URLSearchParams }
   | { view: 'not-found'; path: string; query: URLSearchParams };
 
-export const VIEWS = ['map', 'timeline', 'table', 'stats', 'about'] as const;
+export const VIEWS = ['map', 'timeline', 'table', 'techniques', 'stats', 'about'] as const;
 
 const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 

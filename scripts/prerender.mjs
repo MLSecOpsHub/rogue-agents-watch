@@ -7,13 +7,18 @@
 //   dist/og/site.png                site-level card
 //   dist/feed.atom                  Atom feed of records (by added date)
 //   dist/changes.json               latest additions / revisions / status changes
-// and injects site-level Open Graph tags into dist/index.html.
+//   dist/sitemap.xml, robots.txt    crawl surface for search and Dataset Search
+//   dist/navigator/*.json           ATT&CK (layer 4.5) and ATLAS (layer 4.3) Navigator layers
+//   dist/misp/                      static MISP feed: manifest.json, <uuid>.json, hashes.csv
+// and injects site-level Open Graph tags and schema.org Dataset JSON-LD into
+// dist/index.html; each incident page also carries Article JSON-LD.
 //
 // Deterministic by construction: no wall clock, stable sort orders, vendored
 // fonts, resvg with system fonts disabled. The same snapshot yields identical
 // bytes, which CI checks by building twice.
 //
 // Usage: node scripts/prerender.mjs   (VITE_SITE_URL overrides the canonical URL)
+import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -324,6 +329,174 @@ export function siteOgTags(ctx) {
 `;
 }
 
+// ---- discoverability -------------------------------------------------------
+
+export function siteJsonLd(ctx) {
+  const dates = ctx.incidents.map((r) => r.date_disclosed).sort();
+  const modified = ctx.incidents.map((r) => r.last_updated ?? r.added?.date ?? r.date_disclosed).sort().at(-1) ?? ctx.snapshot?.fetched_at ?? null;
+  const dist = (url, fmt) => ({ '@type': 'DataDownload', encodingFormat: fmt, contentUrl: url });
+  const raw = `https://raw.githubusercontent.com/MLSecOpsHub/agentic-attack-index/${ctx.snapshot?.source_ref ?? 'main'}/dist/`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Dataset',
+    name: 'Agentic Attack Index',
+    alternateName: SITE_NAME,
+    description: `Curated, source-linked, graded records of real-world cyberattacks executed or orchestrated by AI agents, and rogue-agent incidents. ${ctx.summary.total} records, dataset v${ctx.version}. Each record carries status, confidence, AI-role and severity grades, MITRE ATLAS mappings, and every source with an archive copy where available.`,
+    url: ctx.siteUrl,
+    sameAs: [UPSTREAM],
+    identifier: `agentic-attack-index v${ctx.version}`,
+    version: ctx.version,
+    license: 'https://creativecommons.org/licenses/by-sa/4.0/',
+    isAccessibleForFree: true,
+    creator: { '@type': 'Organization', name: 'MLSecOpsHub', url: 'https://mlsecopshub.com' },
+    publisher: { '@type': 'Organization', name: 'MLSecOpsHub', url: 'https://mlsecopshub.com' },
+    keywords: ['AI security', 'agentic AI', 'cyberattack', 'incident tracker', 'MITRE ATLAS', 'prompt injection', 'rogue agents', 'threat intelligence'],
+    temporalCoverage: dates.length ? `${dates[0]}/${dates.at(-1)}` : undefined,
+    dateModified: modified ?? undefined,
+    distribution: [dist(`${raw}incidents.json`, 'application/json'), dist(`${raw}incidents.csv`, 'text/csv'), dist(`${raw}incidents.ndjson`, 'application/x-ndjson'), dist(`${raw}stix/bundle.json`, 'application/stix+json'), dist(`${ctx.siteUrl}feed.atom`, 'application/atom+xml'), dist(`${ctx.siteUrl}misp/manifest.json`, 'application/json')],
+    includedInDataCatalog: { '@type': 'DataCatalog', name: SITE_NAME, url: ctx.siteUrl },
+  };
+}
+
+export function incidentJsonLd(rec, ctx) {
+  const url = `${ctx.siteUrl}incident/${encodeURIComponent(rec.id)}/`;
+  const added = rec.added?.date ?? rec.date_disclosed;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: rec.name,
+    description: firstSentence(rec.summary),
+    url,
+    mainEntityOfPage: url,
+    datePublished: added,
+    dateModified: rec.last_updated ?? added,
+    author: { '@type': 'Organization', name: 'MLSecOpsHub', url: 'https://mlsecopshub.com' },
+    publisher: { '@type': 'Organization', name: 'MLSecOpsHub', url: 'https://mlsecopshub.com' },
+    image: `${ctx.siteUrl}og/${encodeURIComponent(rec.id)}.png`,
+    isPartOf: { '@type': 'Dataset', name: 'Agentic Attack Index', url: ctx.siteUrl },
+    license: 'https://creativecommons.org/licenses/by-sa/4.0/',
+    keywords: [rec.category, `status:${rec.status}`, `ai_role:${rec.ai_role ?? 'unknown'}`, ...(rec.model_families ?? [])],
+    citation: (rec.sources ?? []).map((s) => s.url),
+    identifier: rec.id,
+  };
+}
+
+export function sitemapXml(ctx) {
+  const rows = [{ loc: ctx.siteUrl, lastmod: ctx.snapshot?.fetched_at ?? null, priority: '1.0' }];
+  for (const r of ctx.incidents.slice().sort((a, b) => a.id.localeCompare(b.id))) rows.push({ loc: `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, lastmod: r.last_updated ?? r.added?.date ?? r.date_disclosed, priority: '0.8' });
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${rows.map((u) => `  <url><loc>${esc(u.loc)}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}<priority>${u.priority}</priority></url>`).join('\n')}
+</urlset>
+`;
+}
+
+export function robotsTxt(ctx) {
+  return `User-agent: *\nAllow: /\nDisallow: /embed.html\n\nSitemap: ${ctx.siteUrl}sitemap.xml\n`;
+}
+
+// ---- Navigator layers -------------------------------------------------------
+
+function techniqueCounts(records, key) {
+  const m = new Map();
+  for (const r of records.slice().sort((a, b) => a.id.localeCompare(b.id))) for (const id of r.mappings?.[key] ?? []) m.set(id, [...(m.get(id) ?? []), r.id]);
+  return [...m.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+}
+
+const LAYER_GRADIENT = ['#fde8d7', '#e07a2f', '#7f2a06'];
+
+export function attackLayer(ctx) {
+  const entries = techniqueCounts(ctx.incidents, 'mitre_attack');
+  const max = Math.max(1, ...entries.map(([, ids]) => ids.length));
+  return {
+    name: `${SITE_NAME} — ATT&CK techniques (dataset v${ctx.version})`,
+    versions: { layer: '4.5', navigator: '4.9.0' },
+    domain: 'enterprise-attack',
+    description: `Enterprise ATT&CK techniques mapped upstream in the Agentic Attack Index, dataset v${ctx.version}. Score = number of records carrying the technique; the comment lists the record ids. Mapped in ${ctx.incidents.filter((r) => (r.mappings?.mitre_attack ?? []).length).length} of ${ctx.incidents.length} records. CC BY-SA 4.0.`,
+    techniques: entries.map(([id, ids]) => ({ techniqueID: id, score: ids.length, comment: ids.join(', '), enabled: true, showSubtechniques: true, links: ids.map((rid) => ({ label: rid, url: `${ctx.siteUrl}incident/${encodeURIComponent(rid)}/` })) })),
+    gradient: { colors: LAYER_GRADIENT, minValue: 0, maxValue: max },
+    legendItems: [{ label: 'records carrying the technique', color: LAYER_GRADIENT[1] }],
+    metadata: [{ name: 'dataset', value: `agentic-attack-index v${ctx.version}` }, { name: 'license', value: 'CC BY-SA 4.0' }],
+    links: [{ label: SITE_NAME, url: ctx.siteUrl }, { label: 'Agentic Attack Index', url: UPSTREAM }],
+    layout: { layout: 'side', showID: true, showName: true },
+    hideDisabled: false,
+    sorting: 3,
+  };
+}
+
+export function atlasLayer(ctx) {
+  const entries = techniqueCounts(ctx.incidents, 'mitre_atlas');
+  const max = Math.max(1, ...entries.map(([, ids]) => ids.length));
+  return {
+    name: `${SITE_NAME} — ATLAS techniques (dataset v${ctx.version})`,
+    versions: { layer: '4.3', navigator: '4.6.4' },
+    domain: 'atlas-atlas',
+    description: `MITRE ATLAS techniques mapped upstream in the Agentic Attack Index, dataset v${ctx.version}. Score = number of records carrying the technique; the comment lists the record ids. Mapped in ${ctx.incidents.filter((r) => (r.mappings?.mitre_atlas ?? []).length).length} of ${ctx.incidents.length} records. CC BY-SA 4.0.`,
+    techniques: entries.map(([id, ids]) => ({ techniqueID: id, score: ids.length, comment: ids.join(', '), enabled: true, showSubtechniques: true })),
+    gradient: { colors: LAYER_GRADIENT, minValue: 0, maxValue: max },
+    legendItems: [{ label: 'records carrying the technique', color: LAYER_GRADIENT[1] }],
+    metadata: [{ name: 'dataset', value: `agentic-attack-index v${ctx.version}` }, { name: 'url', value: ctx.siteUrl }, { name: 'license', value: 'CC BY-SA 4.0' }],
+    hideDisabled: false,
+    sorting: 3,
+  };
+}
+
+// ---- MISP feed ---------------------------------------------------------------
+
+/** RFC 4122 v5 UUID (SHA-1) so every event and attribute id is stable across builds. */
+export function uuid5(namespace, name) {
+  const ns = Buffer.from(namespace.replace(/-/g, ''), 'hex');
+  const hash = createHash('sha1').update(Buffer.concat([ns, Buffer.from(String(name), 'utf8')])).digest();
+  const b = Buffer.from(hash.subarray(0, 16));
+  b[6] = (b[6] & 0x0f) | 0x50;
+  b[8] = (b[8] & 0x3f) | 0x80;
+  const hex = b.toString('hex');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
+export const MISP_NAMESPACE = '5b7a3f2e-9c1d-4e8a-a6f0-2d3c4b5a6e7f';
+const ORG = { name: 'MLSecOpsHub', uuid: uuid5(MISP_NAMESPACE, 'org:MLSecOpsHub') };
+const THREAT_LEVEL = { critical: '1', high: '1', medium: '2', low: '3' };
+const epoch = (iso) => String(Math.floor(Date.parse(`${iso}T00:00:00Z`) / 1000));
+
+export function mispFeed(records, ctx) {
+  const manifest = {};
+  const events = {};
+  const hashes = [];
+  for (const r of records.slice().sort((a, b) => a.id.localeCompare(b.id))) {
+    const uuid = uuid5(MISP_NAMESPACE, `event:${r.id}`);
+    const ts = epoch(r.last_updated ?? r.added?.date ?? r.date_disclosed);
+    const tags = [
+      { name: 'tlp:clear' },
+      { name: `rogue-agent-watch:status="${r.status}"` },
+      { name: `rogue-agent-watch:confidence="${r.confidence}"` },
+      { name: `rogue-agent-watch:ai-role="${r.ai_role ?? 'unknown'}"` },
+      { name: `rogue-agent-watch:category="${r.category}"` },
+      ...(r.mappings?.mitre_atlas ?? []).map((t) => ({ name: `mitre-atlas:technique="${t}"` })),
+      ...(r.mappings?.mitre_attack ?? []).map((t) => ({ name: `mitre-attack:technique="${t}"` })),
+      ...(r.mappings?.owasp_asi ?? []).map((t) => ({ name: `owasp-asi:${t}` })),
+      ...(r.model_families ?? []).map((f) => ({ name: `rogue-agent-watch:model-family="${f}"` })),
+    ];
+    const attr = (type, category, value, comment = '') => {
+      const a = { uuid: uuid5(MISP_NAMESPACE, `attr:${r.id}:${type}:${value}`), type, category, value, comment, to_ids: false, disable_correlation: false, timestamp: ts, distribution: '5' };
+      hashes.push(`${createHash('md5').update(String(value)).digest('hex')},${uuid}`);
+      return a;
+    };
+    const attributes = [
+      attr('link', 'External analysis', `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, 'Rogue Agent Watch record'),
+      attr('link', 'External analysis', ctx.upstreamIncidentUrl(r.id), 'Agentic Attack Index record (JSON)'),
+      attr('text', 'Other', r.summary, 'Summary (defensive framing, lifecycle level)'),
+      attr('text', 'Attribution', r.actor, `Actor as stated by sources (${r.actor_type})`),
+      ...(r.sources ?? []).map((s) => attr('link', 'External analysis', s.url, `${s.publisher} — ${s.title}`)),
+      ...(r.mappings?.cve ?? []).map((c) => attr('vulnerability', 'External analysis', c, 'CVE named by sources')),
+    ];
+    const head = { uuid, info: `${r.name} (${SITE_NAME})`, date: r.date_disclosed, timestamp: ts, analysis: '2', threat_level_id: THREAT_LEVEL[r.severity] ?? '4', Orgc: ORG, Tag: tags, extends_uuid: '' };
+    manifest[uuid] = head;
+    events[uuid] = { Event: { ...head, published: true, distribution: '3', Attribute: attributes } };
+  }
+  return { manifest, events, hashes: hashes.sort().join('\n') + '\n' };
+}
+
 export function loadContext(siteUrl = process.env.VITE_SITE_URL ?? DEFAULT_SITE_URL) {
   const read = (p) => JSON.parse(readFileSync(p, 'utf8'));
   const incidents = read(path.join(SNAP, 'incidents.json'));
@@ -370,17 +543,30 @@ async function main() {
   for (const rec of ctx.incidents.slice().sort((a, b) => a.id.localeCompare(b.id))) {
     const dir = path.join(DIST, 'incident', rec.id);
     mkdirSync(dir, { recursive: true });
-    writeFileSync(path.join(dir, 'index.html'), incidentHtml(rec, ctx));
+    writeFileSync(path.join(dir, 'index.html'), incidentHtml(rec, ctx).replace('</head>', `<script type="application/ld+json">${JSON.stringify(incidentJsonLd(rec, ctx)).replace(/<\//g, '<\\/')}</script>\n</head>`));
     writeFileSync(path.join(DIST, 'og', `${rec.id}.png`), await renderPng(cardSvg(rec, ctx)));
     n++;
   }
   writeFileSync(path.join(DIST, 'og', 'site.png'), await renderPng(siteCardSvg(ctx)));
   writeFileSync(path.join(DIST, 'feed.atom'), atomFeed(ctx.incidents, ctx));
   writeFileSync(path.join(DIST, 'changes.json'), JSON.stringify(changesJson(ctx.incidents, ctx), null, 2) + '\n');
+  writeFileSync(path.join(DIST, 'sitemap.xml'), sitemapXml(ctx));
+  writeFileSync(path.join(DIST, 'robots.txt'), robotsTxt(ctx));
+  mkdirSync(path.join(DIST, 'navigator'), { recursive: true });
+  writeFileSync(path.join(DIST, 'navigator', 'attack-layer.json'), JSON.stringify(attackLayer(ctx), null, 2) + '\n');
+  writeFileSync(path.join(DIST, 'navigator', 'atlas-layer.json'), JSON.stringify(atlasLayer(ctx), null, 2) + '\n');
+  const feed = mispFeed(ctx.incidents, ctx);
+  mkdirSync(path.join(DIST, 'misp'), { recursive: true });
+  writeFileSync(path.join(DIST, 'misp', 'manifest.json'), JSON.stringify(feed.manifest, null, 2) + '\n');
+  for (const [uuid, ev] of Object.entries(feed.events)) writeFileSync(path.join(DIST, 'misp', `${uuid}.json`), JSON.stringify(ev, null, 2) + '\n');
+  writeFileSync(path.join(DIST, 'misp', 'hashes.csv'), feed.hashes);
   const indexPath = path.join(DIST, 'index.html');
   const html = readFileSync(indexPath, 'utf8');
-  if (!html.includes('property="og:title"')) writeFileSync(indexPath, html.replace('</head>', `    ${siteOgTags(ctx)}  </head>`));
-  console.log(`prerender: ${n} incident pages + cards, site card, feed.atom, changes.json → ${path.relative(ROOT, DIST)} (site ${ctx.siteUrl})`);
+  if (!html.includes('property="og:title"')) {
+    const ld = `<script type="application/ld+json">${JSON.stringify(siteJsonLd(ctx)).replace(/<\//g, '<\\/')}</script>\n`;
+    writeFileSync(indexPath, html.replace('</head>', `    ${siteOgTags(ctx)}    ${ld}  </head>`));
+  }
+  console.log(`prerender: ${n} incident pages + cards, site card, feed.atom, changes.json, sitemap, robots, 2 Navigator layers, MISP feed (${Object.keys(feed.events).length} events) → ${path.relative(ROOT, DIST)} (site ${ctx.siteUrl})`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

@@ -2,7 +2,7 @@ import { barChart } from '../components/charts';
 import { incidentCard } from '../components/badges';
 import { whatChanged } from '../components/changes';
 import { mapTeaser } from '../components/map-teaser';
-import { SITE, SITE_URL, UPSTREAM_REPO_URL } from '../config';
+import { newIncidentIssueUrl, SITE, SITE_URL, UPSTREAM_REPO_URL } from '../config';
 import { headlineRecords } from '../data/adapter';
 import { href } from '../router';
 import { externalLink, h } from '../util/dom';
@@ -45,6 +45,7 @@ export function overviewView({ ds, route, root }: ViewContext): void {
   const honesty = h(
     'div',
     { class: 'honesty' },
+    h('h2', { class: 'sr-only' }, 'How solid is the evidence, and how central was the AI?'),
     h('p', { class: 'honesty-intro' }, 'Two independent axes: how well an incident is verified, and how load-bearing the AI actually was. A confirmed incident can still have an incidental AI role. ', h('a', { href: href('about') }, 'Grading scales')),
     h('div', { class: 'honesty-grid' }, barChart('Verification status', enumBars(ds, 'status', summary.by_status, 'status'), { sort: false }), barChart('AI role', enumBars(ds, 'ai_role', summary.by_ai_role, 'ai_role'), { sort: false })),
   );
@@ -71,7 +72,7 @@ export function overviewView({ ds, route, root }: ViewContext): void {
     },
     'Share',
   );
-  const actions = h('div', { class: 'hero-actions' }, h('a', { class: 'btn', href: href('map') }, 'Explore the map'), h('a', { class: 'btn btn-quiet', href: href('table') }, 'Browse the records'), shareBtn);
+  const actions = h('div', { class: 'hero-actions' }, h('a', { class: 'btn', href: href('map') }, 'Explore the map'), h('a', { class: 'btn btn-quiet', href: href('table') }, 'Browse the records'), shareBtn, externalLink(newIncidentIssueUrl(), 'Propose an incident', 'btn btn-quiet hero-propose'));
 
   root.appendChild(
     h(

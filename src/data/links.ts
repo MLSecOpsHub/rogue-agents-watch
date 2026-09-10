@@ -24,7 +24,8 @@ export function owaspLlmUrl(id: string): string {
 }
 
 export function owaspAsiUrl(_id: string): string {
-  return 'https://genai.owasp.org/initiatives/#agenticinitiative';
+  // ASI01..ASI10 live in one document (OWASP Top 10 for Agentic Applications, 2026); there are no per-risk pages.
+  return 'https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/';
 }
 
 export function cveUrl(id: string): string {

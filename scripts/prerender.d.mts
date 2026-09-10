@@ -68,3 +68,26 @@ export function incidentHtml(rec: PrerenderRecord, ctx: PrerenderContext): strin
 export function atomFeed(records: PrerenderRecord[], ctx: PrerenderContext): string;
 export function changesJson(records: PrerenderRecord[], ctx: PrerenderContext): ChangesJson;
 export function siteOgTags(ctx: PrerenderContext): string;
+export function siteJsonLd(ctx: PrerenderContext): Record<string, unknown>;
+export function incidentJsonLd(rec: PrerenderRecord, ctx: PrerenderContext): Record<string, unknown>;
+export function sitemapXml(ctx: PrerenderContext): string;
+export function robotsTxt(ctx: PrerenderContext): string;
+export interface NavigatorLayer {
+  name: string;
+  versions: { layer: string; navigator: string };
+  domain: string;
+  description: string;
+  techniques: Array<{ techniqueID: string; score: number; comment: string; enabled: boolean; showSubtechniques: boolean; links?: Array<{ label: string; url: string }> }>;
+  gradient: { colors: string[]; minValue: number; maxValue: number };
+  [extra: string]: unknown;
+}
+export function attackLayer(ctx: PrerenderContext): NavigatorLayer;
+export function atlasLayer(ctx: PrerenderContext): NavigatorLayer;
+export function uuid5(namespace: string, name: string): string;
+export const MISP_NAMESPACE: string;
+export interface MispFeed {
+  manifest: Record<string, { uuid: string; info: string; date: string; timestamp: string; analysis: string; threat_level_id: string; Orgc: { name: string; uuid: string }; Tag: Array<{ name: string }>; extends_uuid: string }>;
+  events: Record<string, { Event: { uuid: string; info: string; date: string; timestamp: string; published: boolean; Attribute: Array<{ uuid: string; type: string; category: string; value: string; comment: string; to_ids: boolean }>; Tag: Array<{ name: string }> } }>;
+  hashes: string;
+}
+export function mispFeed(records: PrerenderRecord[], ctx: PrerenderContext): MispFeed;

@@ -14,6 +14,7 @@ import { incidentView } from '../src/views/incident';
 import { overviewView } from '../src/views/overview';
 import { statsView } from '../src/views/stats';
 import { tableView } from '../src/views/table';
+import { techniquesView } from '../src/views/techniques';
 import { timelineView } from '../src/views/timeline';
 import { aboutView } from '../src/views/about';
 import { rollups } from '../src/views/shared';
@@ -274,6 +275,41 @@ describe('overview, stats, timeline, table, about', () => {
     const expected = applyFilters(ds.incidents, fromQuery(new URLSearchParams('q=copilot'))).map((i) => i.name).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
     expect(names).toEqual(expected);
     expect(sorted.root.querySelector('.downloads')?.textContent).toContain(`CSV (${names.length})`);
+  });
+
+  it('techniques view lists every mapped id with its records, states coverage, links Navigator layers, and cross-tabs models by guardrails', () => {
+    const c = ctx('#/techniques');
+    techniquesView(c);
+    const atlasIds = new Set(ds.incidents.filter((i) => i.isActiveRecord).flatMap((i) => i.mappings.mitre_atlas));
+    const rows = c.root.querySelectorAll('.technique-table tbody tr');
+    expect(rows.length).toBeGreaterThanOrEqual(atlasIds.size);
+    for (const id of atlasIds) expect(c.root.querySelector(`a[href="https://atlas.mitre.org/techniques/${id}"]`), id).not.toBeNull();
+    expect(c.root.textContent).toMatch(/Mapped in \d+ of \d+ records/);
+    expect(c.root.querySelector('a[href$="navigator/attack-layer.json"]')).not.toBeNull();
+    expect(c.root.querySelector('a[href$="navigator/atlas-layer.json"]')).not.toBeNull();
+    expect(c.root.querySelector('a[href$="misp/manifest.json"]')).not.toBeNull();
+    const m = c.root.querySelector('table.matrix')!;
+    expect(m.querySelector('caption')?.textContent).toContain('Model family by guardrail bypass');
+    const total = [...m.querySelectorAll('tbody .matrix-total')].reduce((n, td) => n + Number(td.textContent), 0);
+    expect(total).toBeGreaterThan(0);
+    expect(m.querySelector('.matrix-cell.heat a')?.getAttribute('href')).toMatch(/^#\/table\?model_families=.*guardrail_bypass=/);
+  });
+
+  it('record page shows the evidence panel and hides the autonomy % row while no record states one', () => {
+    const c = ctx(incidentHref(summary.ids[0]!));
+    incidentView(c);
+    expect(c.root.querySelector('.panel-evidence')).not.toBeNull();
+    expect(c.root.querySelector('.panel-evidence')?.textContent).toContain('Archived copies');
+    const anyStated = ds.incidents.some((i) => i.autonomy_pct !== null);
+    expect(c.root.textContent?.includes('Autonomy (source-stated %)')).toBe(anyStated);
+  });
+
+  it('stats shows the dataset gaps table with one row per optional field', () => {
+    const c = ctx('#/stats');
+    statsView(c);
+    const rows = c.root.querySelectorAll('.gaps-table tbody tr');
+    expect(rows.length).toBeGreaterThanOrEqual(12);
+    expect(c.root.querySelector('.gaps-table')?.textContent).toContain('MITRE ATT&CK mapping');
   });
 
   it('about states that the dashboard adds no facts and lists every grade definition', () => {

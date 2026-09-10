@@ -1,5 +1,6 @@
 import { barChart } from '../components/charts';
-import { UPSTREAM_REPO_URL, upstreamUrls } from '../config';
+import { newIncidentIssueUrl, UPSTREAM_REPO_URL, upstreamUrls } from '../config';
+import { fieldCoverage } from '../data/coverage';
 import { countBy } from '../data/adapter';
 import { href } from '../router';
 import { externalLink, h } from '../util/dom';
@@ -31,6 +32,7 @@ export function statsView({ ds, route, root }: ViewContext): void {
     );
   }
 
+  root.appendChild(h('h2', null, 'Breakdowns'));
   root.appendChild(
     h(
       'div',
@@ -49,6 +51,34 @@ export function statsView({ ds, route, root }: ViewContext): void {
         note: `Computed from records. ${base.filter((i) => i.targets.sectors.length === 0).length} records state no sector.`,
       }),
       barChart('Year disclosed', yearBars(summary.by_year), { sort: false }),
+    ),
+  );
+
+  const gaps = fieldCoverage(base);
+  root.appendChild(
+    h(
+      'section',
+      { class: 'panel' },
+      h('h2', null, 'Dataset gaps'),
+      h('p', null, `How many of the ${base.length} records carry each optional field. A gap is a missing value upstream, never a claim that the value is zero. Filling one needs a source that states it.`),
+      h(
+        'div',
+        { class: 'tbl-wrap' },
+        h(
+          'table',
+          { class: 'data-table gaps-table' },
+          h('caption', { class: 'sr-only' }, 'Field coverage across records'),
+          h('thead', null, h('tr', null, h('th', { scope: 'col' }, 'Field'), h('th', { scope: 'col' }, 'Records with a value'), h('th', { scope: 'col' }, 'Coverage'))),
+          h(
+            'tbody',
+            null,
+            ...gaps.map((g) =>
+              h('tr', { class: g.have === 0 ? 'gap-none' : g.have === g.total ? 'gap-full' : '' }, h('th', { scope: 'row' }, g.label), h('td', { class: 'num' }, `${g.have} of ${g.total}`), h('td', null, h('span', { class: 'count-bar', style: `--w: ${g.total ? ((g.have / g.total) * 100).toFixed(0) : 0}%`, 'aria-hidden': 'true' }), h('span', { class: 'sr-only' }, `${g.total ? Math.round((g.have / g.total) * 100) : 0}%`))),
+            ),
+          ),
+        ),
+      ),
+      h('p', { class: 'muted small' }, 'Help close a gap: ', externalLink(`${UPSTREAM_REPO_URL}/issues/new?template=data-correction.yml`, 'propose a correction', 'plain'), ' with a source, or ', externalLink(newIncidentIssueUrl(), 'propose a new incident', 'plain'), '.'),
     ),
   );
 

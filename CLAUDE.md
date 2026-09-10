@@ -64,17 +64,23 @@ product. Read the non-negotiables before changing anything.
   Actions). Served under `/rogue-agents-dashboard/`; override with
   `VITE_BASE_PATH`, and `VITE_SITE_URL` for share links and Open Graph tags.
 - The landing page keeps exactly one hero figure, bound to the map teaser's
-  replay, with the status / AI-role split in the first viewport; rationale in
-  `docs/design/landing-page-ux.md`.
-- Map encoding is fixed by `docs/design/map-ux-research.md`: hue = `ai_role`
+  replay, with the status / AI-role split in the first viewport.
+- Map encoding is fixed: hue = `ai_role`
   (one validated ordinal ramp), ring = `status`, size = `severity`, soft disc =
   illustrative centroid, pin = stated location. Category is never a map hue
   (it fails all-pairs colour-blind separation). Records without `geo` go in
   the field log.
-- Sharing is prerendered at build time by `scripts/prerender.mjs` (per-incident
-  HTML with Open Graph tags, PNG cards via resvg with the vendored OFL fonts in
-  `assets/fonts/`, `feed.atom`, `changes.json`). Fonts are build-time only;
-  the site still uses the system font stack.
+- Sharing and interop are prerendered at build time by `scripts/prerender.mjs`
+  (per-incident HTML with Open Graph tags and Article JSON-LD, PNG cards via
+  resvg with the vendored OFL fonts in `assets/fonts/`, `feed.atom`,
+  `changes.json`, `sitemap.xml`, `robots.txt`, Dataset JSON-LD in
+  `index.html`, ATT&CK and ATLAS Navigator layers, a static MISP feed with v5
+  UUIDs). Fonts are build-time only; the site still uses the system font stack.
+- Every number on the Techniques and Stats pages is a count over records.
+  Coverage tables state how many records carry a field; a gap is a missing
+  value upstream, never zero.
+- `npm test` runs axe-core structural checks over every view (jsdom, contrast
+  excluded); CI runs Lighthouse with score thresholds on the built site.
 
 ## Repo map
 
@@ -98,8 +104,10 @@ src/components/            badges (grade strip, cards), charts (d3 bars),
                            upstream-check (the one optional fetch)
 src/util/share.ts          Share URL, caption, clipboard helper
 src/embed.ts, embed.html   Second Vite entry: map-only iframe embed
-src/views/                 overview, map, timeline, table, stats, incident,
-                           about, not-found, shared rollups
+src/views/                 overview, map, timeline, table, techniques, stats,
+                           incident, about, not-found, shared rollups
+src/components/matrix.ts   Crosstab table (counts, totals, filtered-table links)
+src/data/coverage.ts       Field coverage, evidence summary (counts, no scores)
 src/styles.css             Theme tokens and all styling
 data/snapshot/             Vendored dataset (sync-data only)
 data/geo/                  Vendored world-atlas 110m topojson
@@ -108,7 +116,6 @@ scripts/validate-data.mjs  Schema + consistency validation (hermetic)
 scripts/bundle-size.mjs    Gzip report and budget gate
 scripts/prerender.mjs      Post-build: share pages, OG cards, feed, changes.json
 assets/fonts/              OFL fonts for card rendering (build-time only)
-docs/design/               UX research and design decisions
 tests/                     vitest: adapter, schema, router, filters, csv, smoke
 .github/workflows/         ci.yml, pages.yml, sync-data.yml
 ```

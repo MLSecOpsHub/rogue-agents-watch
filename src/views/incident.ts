@@ -1,6 +1,7 @@
 import { badge, gradeStrip, incidentCard, recordStatusBanner } from '../components/badges';
 import { correctionIssueUrl, shareUrl, UPSTREAM_REPO_URL, upstreamUrls } from '../config';
 import { aiidUrl, atlasUrl, attackUrl, countryFlagLabel, cveUrl, owaspAsiUrl, owaspLlmUrl } from '../data/links';
+import { datasetStatesAutonomyPct, evidenceSummary } from '../data/coverage';
 import { describe, label, values } from '../data/taxonomy';
 import type { Dataset, Incident } from '../data/types';
 import { href, incidentHref } from '../router';
@@ -81,7 +82,8 @@ export function incidentView({ ds, route, root }: ViewContext): void {
         ['Models (as named by sources)', inc.models.length ? h('ul', { class: 'inline-list' }, ...inc.models.map((m) => h('li', null, h('code', null, m)))) : muted('No model named by sources.')],
         ['Model families', inc.model_families.length ? h('div', { class: 'badges' }, ...inc.model_families.map((f) => badge(tax, 'model_families', f, { compact: true, prefix: 'Model family' }))) : muted('None recorded.')],
         ['Autonomy level', gradeWithDef(ds, 'autonomy_level', inc.autonomy_level)],
-        ['Autonomy (source-stated %)', h('span', null, fmtPct(inc.autonomy_pct))],
+        // Shown only when at least one record in the dataset states a percentage; a row that is null everywhere says nothing.
+        ...(datasetStatesAutonomyPct(ds.incidents) || inc.autonomy_pct !== null ? [['Autonomy (source-stated %)', h('span', null, fmtPct(inc.autonomy_pct))] as [string, HTMLElement]] : []),
         ['Guardrail bypass', inc.guardrail_bypass.length ? h('div', { class: 'badges' }, ...inc.guardrail_bypass.map((g) => badge(tax, 'guardrail_bypass', g, { compact: true, prefix: 'Guardrail bypass' }))) : muted('Not recorded.')],
       ]),
     ),
@@ -163,6 +165,26 @@ export function incidentView({ ds, route, root }: ViewContext): void {
         ['Dataset', h('span', null, `v${ds.summary.dataset_version}`)],
       ]),
       h('p', null, externalLink(upstreamUrls.incident(inc.id), 'Upstream JSON permalink', 'plain'), ' · ', externalLink(upstreamUrls.incidentSource(inc.id), 'Source YAML', 'plain')),
+    ),
+  );
+
+  const ev = evidenceSummary(inc);
+  const mapCount = inc.mappings.mitre_atlas.length + inc.mappings.mitre_attack.length + inc.mappings.owasp_asi.length + inc.mappings.owasp_llm.length + inc.mappings.cve.length + inc.mappings.aiid.length;
+  sideCol.appendChild(
+    h(
+      'section',
+      { class: 'panel panel-evidence' },
+      h('h2', null, 'Evidence'),
+      defList([
+        ['Sources', h('span', null, String(ev.sources))],
+        ['First-party, vendor, or government', h('span', null, `${ev.firstParty} of ${ev.sources}`)],
+        ['Archived copies', h('span', null, `${ev.archived} of ${ev.sources}`)],
+        ['Source dates', h('span', null, ev.earliest ? (ev.earliest === ev.latest ? ev.earliest : `${ev.earliest} to ${ev.latest}`) : 'not stated')],
+        ['Framework ids', h('span', null, mapCount ? `${mapCount} (ATLAS ${inc.mappings.mitre_atlas.length}, ATT&CK ${inc.mappings.mitre_attack.length}, ASI ${inc.mappings.owasp_asi.length}, LLM ${inc.mappings.owasp_llm.length}, CVE ${inc.mappings.cve.length}, AIID ${inc.mappings.aiid.length})` : 'none recorded')],
+        ['Location', h('span', null, inc.geo ? ([inc.geo.target, inc.geo.origin].filter(Boolean).every((p) => p!.illustrative) ? 'country-level only' : 'stated') : 'none')],
+        ['Figures stated', h('span', null, [inc.targets.orgs_affected !== null && 'organisations affected', inc.targets.records_exfiltrated !== null && 'records exfiltrated', inc.autonomy_pct !== null && 'autonomy %'].filter(Boolean).join(', ') || 'none')],
+      ]),
+      h('p', { class: 'muted small' }, 'Counts of what the record carries, not a score. Gaps are filled upstream with sources.'),
     ),
   );
 

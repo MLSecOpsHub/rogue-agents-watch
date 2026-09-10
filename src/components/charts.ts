@@ -33,7 +33,7 @@ export function barChart(title: string, data: BarDatum[], opts: { note?: string;
     .range([gap, height])
     .paddingInner(gap / (barH + gap));
 
-  const svg = svgEl('svg', { viewBox: `0 0 ${width} ${height}`, class: 'chart chart-bar', role: 'img', 'aria-label': `${title} bar chart` });
+  const svg = svgEl('svg', { viewBox: `0 0 ${width} ${height}`, class: 'chart chart-bar', role: 'group', 'aria-label': `${title} bar chart` });
   for (const d of rows) {
     const g = svgEl('g', { transform: `translate(0,${y(d.key) ?? 0})`, class: `bar ${d.colorClass ?? ''}` });
     if (d.description) {

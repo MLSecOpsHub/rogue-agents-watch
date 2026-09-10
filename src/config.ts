@@ -47,6 +47,11 @@ export function shareUrl(id: string): string {
   return `${SITE_URL}incident/${encodeURIComponent(id)}/`;
 }
 
+/** Opens the upstream "New incident" issue template. */
+export function newIncidentIssueUrl(): string {
+  return `${UPSTREAM_REPO_URL}/issues/new?template=new-incident.yml`;
+}
+
 export const SITE = {
   name: 'Rogue Agent Watch',
   url: SITE_URL,

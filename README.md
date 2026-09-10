@@ -23,7 +23,8 @@ live upstream.
 | `#/timeline` | Records by disclosure date, lane per category, outline by status, filterable |
 | `#/table` | Sortable, filterable by every enum field, full-text search, CSV/JSON download of the filtered view |
 | `#/incident/<id>` | Every field, grade badges with upstream definitions, lifecycle strip, mappings linked to MITRE ATLAS / ATT&CK / OWASP / NVD / AIID, every source with archive link, related records, record-status banner, citation box, "report a correction" |
-| `#/stats` | All rollups from the upstream `summary.json` |
+| `#/techniques` | The technique lens: MITRE ATLAS and ATT&CK ids with the records behind each, OWASP and CVE tables, Navigator layer downloads, model family × guardrail bypass and × AI role crosstabs, sourcing per family, lifecycle × category |
+| `#/stats` | All rollups from the upstream `summary.json`, plus a dataset-gaps table (field coverage) |
 | `#/about` | What counts as an incident, the grading scales, the illustrative-geo rule, corrections, licences |
 
 Every card, row, and page shows `status`, `confidence`, and `ai_role`. Nulls
@@ -42,11 +43,19 @@ Built at build time from the snapshot, no server involved:
   replay position travel in the hash: `embed.html#/map?ai_role=load-bearing&t=2025-08`.
 - `feed.atom` — Atom feed of records, newest additions first.
 - `changes.json` — latest additions, revisions, and record-status changes.
+- `navigator/attack-layer.json`, `navigator/atlas-layer.json` — MITRE ATT&CK
+  (layer format 4.5) and ATLAS (4.3) Navigator layers; score = number of
+  records carrying the technique, comment = record ids.
+- `misp/` — a static MISP feed (`manifest.json`, one event per record,
+  `hashes.csv`). In MISP add a feed with the URL `…/misp/` (the directory).
+  Tags carry the grades and technique ids; attributes carry the record links,
+  summary, actor as stated, source URLs, and CVEs.
+- `sitemap.xml`, `robots.txt`, schema.org `Dataset` JSON-LD on the landing
+  page and `Article` JSON-LD on each record page, for search engines and
+  Google Dataset Search.
+- The upstream `dist/stix/bundle.json` (STIX 2.1) imports into OpenCTI.
 
-The map's design rationale and research are in
-[docs/design/map-ux-research.md](docs/design/map-ux-research.md); the
-landing-page analysis is in
-[docs/design/landing-page-ux.md](docs/design/landing-page-ux.md).
+Design and product research notes are kept outside the repository.
 
 ## How data flows
 
@@ -81,7 +90,7 @@ rogue-agents-dashboard   data/snapshot/{incidents,summary,incident.schema,taxono
 nvm use            # Node 20.19
 npm ci
 npm run dev        # http://localhost:5173/rogue-agents-dashboard/
-npm test           # typecheck + lint + snapshot validation + unit tests (hermetic)
+npm test           # typecheck + lint + snapshot validation + unit tests incl. axe-core checks (hermetic)
 npm run build      # validates, then builds dist/ (reproducible)
 npm run preview    # serves dist/
 npm run size       # gzipped bundle report; core must stay under 500 KB

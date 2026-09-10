@@ -71,3 +71,66 @@ describe('prerender generators', () => {
     expect(firstSentence('No terminator here')).toBe('No terminator here');
   });
 });
+
+describe('discoverability and interop generators', () => {
+  it('site Dataset JSON-LD and per-incident Article JSON-LD are valid schema.org objects with absolute URLs', async () => {
+    const { siteJsonLd, incidentJsonLd } = await import('../scripts/prerender.mjs');
+    const ld = siteJsonLd(ctx);
+    expect(ld['@type']).toBe('Dataset');
+    expect(ld['url']).toBe('https://example.test/site/');
+    expect(ld['license']).toContain('creativecommons.org/licenses/by-sa/4.0');
+    expect(Array.isArray(ld['distribution'])).toBe(true);
+    const art = incidentJsonLd(byId.get(summary.ids[0]!)!, ctx);
+    expect(art['@type']).toBe('Article');
+    expect(art['url']).toBe(`https://example.test/site/incident/${summary.ids[0]}/`);
+    expect(art['image']).toBe(`https://example.test/site/og/${summary.ids[0]}.png`);
+  });
+
+  it('sitemap lists the landing page and one URL per record; robots allows crawling and points at it', async () => {
+    const { sitemapXml, robotsTxt } = await import('../scripts/prerender.mjs');
+    const sm = sitemapXml(ctx);
+    expect((sm.match(/<url>/g) ?? []).length).toBe(summary.total + 1);
+    for (const id of summary.ids) expect(sm).toContain(`<loc>https://example.test/site/incident/${id}/</loc>`);
+    expect(sm).not.toContain('embed.html');
+    const rb = robotsTxt(ctx);
+    expect(rb).toContain('Allow: /');
+    expect(rb).toContain('Sitemap: https://example.test/site/sitemap.xml');
+  });
+
+  it('Navigator layers carry every mapped technique with the record count as score and stable ordering', async () => {
+    const { attackLayer, atlasLayer } = await import('../scripts/prerender.mjs');
+    const atk = attackLayer(ctx);
+    const atl = atlasLayer(ctx);
+    expect(atk.domain).toBe('enterprise-attack');
+    expect(atk.versions).toEqual({ layer: '4.5', navigator: '4.9.0' });
+    expect(atl.domain).toBe('atlas-atlas');
+    expect(atl.versions.layer).toBe('4.3');
+    const expectAtlas = new Map<string, number>();
+    for (const r of ctx.incidents) for (const t of (r.mappings as { mitre_atlas?: string[] })?.mitre_atlas ?? []) expectAtlas.set(t, (expectAtlas.get(t) ?? 0) + 1);
+    expect(atl.techniques.map((t) => [t.techniqueID, t.score])).toEqual([...expectAtlas.entries()].sort((a, b) => a[0].localeCompare(b[0])));
+    for (const t of atl.techniques) expect(t.techniqueID).toMatch(/^AML\.T\d{4}(\.\d{3})?$/);
+    for (const t of atk.techniques) expect(t.techniqueID).toMatch(/^T\d{4}(\.\d{3})?$/);
+    expect(atl.gradient.maxValue).toBe(Math.max(...atl.techniques.map((t) => t.score)));
+    expect(JSON.stringify(attackLayer({ ...ctx, incidents: ctx.incidents.slice().reverse() }))).toBe(JSON.stringify(atk));
+  });
+
+  it('MISP feed has one event per record with stable v5 UUIDs, tags for grades and techniques, and source links', async () => {
+    const { mispFeed, uuid5, MISP_NAMESPACE } = await import('../scripts/prerender.mjs');
+    const feed = mispFeed(ctx.incidents, ctx);
+    expect(Object.keys(feed.events)).toHaveLength(summary.total);
+    expect(Object.keys(feed.manifest).sort()).toEqual(Object.keys(feed.events).sort());
+    const rec = byId.get(summary.ids[0]!)!;
+    const uuid = uuid5(MISP_NAMESPACE, `event:${rec.id}`);
+    expect(uuid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+    expect(uuid5(MISP_NAMESPACE, `event:${rec.id}`)).toBe(uuid);
+    const ev = feed.events[uuid]!.Event;
+    expect(ev.info).toContain(rec.name);
+    expect(ev.Tag.map((t) => t.name)).toContain(`rogue-agent-watch:status="${rec.status}"`);
+    for (const t of (rec.mappings as { mitre_atlas?: string[] })?.mitre_atlas ?? []) expect(ev.Tag.map((x) => x.name)).toContain(`mitre-atlas:technique="${t}"`);
+    const links = ev.Attribute.filter((a) => a.type === 'link').map((a) => a.value);
+    for (const s of rec.sources) expect(links).toContain(s.url);
+    expect(ev.Attribute.find((a) => a.type === 'text' && a.category === 'Attribution')?.value).toBe(rec.actor);
+    expect(feed.hashes.split('\n').filter(Boolean).every((l) => /^[0-9a-f]{32},[0-9a-f-]{36}$/.test(l))).toBe(true);
+    expect(JSON.stringify(mispFeed(ctx.incidents.slice().reverse(), ctx))).toBe(JSON.stringify(feed));
+  });
+});

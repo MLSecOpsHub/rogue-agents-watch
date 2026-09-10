@@ -51,7 +51,7 @@ function timelineChart(ds: ViewContext['ds'], list: ViewContext['ds']['incidents
   const laneH = 44;
   const margin = { top: 28, right: 24, bottom: 36, left: 200 };
   const height = margin.top + margin.bottom + cats.length * laneH;
-  const svg = svgEl('svg', { viewBox: `0 0 ${width} ${height}`, class: 'chart chart-timeline', role: 'img', 'aria-label': 'Timeline of incidents by disclosure date and category' });
+  const svg = svgEl('svg', { viewBox: `0 0 ${width} ${height}`, class: 'chart chart-timeline', role: 'group', 'aria-label': 'Timeline of incidents by disclosure date and category' });
 
   const dates = list.map((i) => new Date(i.date_disclosed));
   const [d0, d1] = extent(dates) as [Date | undefined, Date | undefined];
@@ -104,6 +104,7 @@ function timelineChart(ds: ViewContext['ds'], list: ViewContext['ds']['incidents
       transform: `translate(${cx.toFixed(2)},${cy.toFixed(2)})`,
       tabindex: 0,
       role: 'link',
+      'aria-label': `${inc.date_disclosed}: ${inc.name}`,
       'data-id': inc.id,
     });
     const title = svgEl('title');
