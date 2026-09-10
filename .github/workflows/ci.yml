@@ -1,0 +1,61 @@
+name: CI
+
+# Hermetic gate: typecheck + lint + snapshot schema validation + unit tests,
+# then a build that must be reproducible and inside the bundle budget.
+# No network is needed for any step after `npm ci`.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: test + build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+      - name: Build twice and require byte-identical output
+        run: |
+          npm run build
+          (cd dist && find . -type f | sort | xargs sha256sum) > /tmp/build-1.sha256
+          rm -rf dist
+          npm run build
+          (cd dist && find . -type f | sort | xargs sha256sum) > /tmp/build-2.sha256
+          if ! diff /tmp/build-1.sha256 /tmp/build-2.sha256; then
+            echo "::error::build is not deterministic; see the diff above"
+            exit 1
+          fi
+          echo "build is reproducible ($(wc -l < /tmp/build-1.sha256) files)"
+
+      - name: Bundle size budget (core < 500 KB gzipped, map geometry excluded)
+        run: npm run size -- --max-gzip-kb 500
+
+      - name: Snapshot must still match what sync-data would write
+        # Guards against hand edits to data/snapshot/: re-serialising the vendored
+        # files must be a no-op. (Content comes only from scripts/sync-data.mjs.)
+        run: |
+          node -e '
+            const fs = require("fs");
+            let bad = 0;
+            for (const f of ["incidents.json", "summary.json", "incident.schema.json", "taxonomy.json", "SNAPSHOT.json"]) {
+              const p = "data/snapshot/" + f;
+              const raw = fs.readFileSync(p, "utf8");
+              const norm = JSON.stringify(JSON.parse(raw), null, 2) + "\n";
+              if (raw !== norm) { console.error("::error::" + p + " is not in sync-data canonical form"); bad++; }
+            }
+            process.exit(bad ? 1 : 0);
+          '

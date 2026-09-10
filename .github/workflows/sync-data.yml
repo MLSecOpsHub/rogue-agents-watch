@@ -1,0 +1,168 @@
+name: sync-data
+
+# Weekly refresh of the vendored dataset snapshot from agentic-attack-index.
+#
+# Mirrors the upstream repo's patterns:
+#  - "single issue": a validation failure (schema drift) opens ONE tracked issue
+#    and appends to it on later runs instead of opening duplicates;
+#  - "dist drift": a changed snapshot never lands on main directly; it goes
+#    through a PR on a fixed branch (chore/sync-data) that is updated in place,
+#    so CI validates it and a human merges it.
+#
+# This is the only workflow that touches the network for data. Requires
+# Settings → Actions → General → "Allow GitHub Actions to create and approve
+# pull requests" so the built-in token can open the PR.
+on:
+  schedule:
+    - cron: '23 5 * * 1' # Mondays 05:23 UTC
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Upstream git ref (branch or tag) to sync from
+        required: false
+        default: main
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: sync-data
+  cancel-in-progress: false
+
+env:
+  SYNC_BRANCH: chore/sync-data
+
+jobs:
+  sync:
+    name: fetch upstream snapshot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+
+      - name: Record the current snapshot
+        id: before
+        run: |
+          echo "version=$(node -p "require('./data/snapshot/SNAPSHOT.json').dataset_version")" >> "$GITHUB_OUTPUT"
+          echo "total=$(node -p "require('./data/snapshot/SNAPSHOT.json').total")" >> "$GITHUB_OUTPUT"
+          echo "commit=$(node -p "require('./data/snapshot/SNAPSHOT.json').source_commit || ''")" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch upstream dist/ artifacts
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          DATA_REF: ${{ inputs.ref || 'main' }}
+        run: npm run sync:data
+
+      - name: Detect snapshot change
+        id: diff
+        run: |
+          if [ -z "$(git status --porcelain -- data/snapshot)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Snapshot already matches upstream; nothing to do."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git --no-pager diff --stat -- data/snapshot
+          fi
+
+      - name: Validate the new snapshot (typecheck + lint + schema + tests)
+        if: steps.diff.outputs.changed == 'true'
+        id: validate
+        run: |
+          set +e
+          npm test 2>&1 | tee validate.log
+          echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+
+      - name: Open or update the sync PR
+        if: steps.diff.outputs.changed == 'true' && steps.validate.outputs.exit_code == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BEFORE_VERSION: ${{ steps.before.outputs.version }}
+          BEFORE_TOTAL: ${{ steps.before.outputs.total }}
+          BEFORE_COMMIT: ${{ steps.before.outputs.commit }}
+        run: |
+          set -euo pipefail
+          VERSION=$(node -p "require('./data/snapshot/SNAPSHOT.json').dataset_version")
+          TOTAL=$(node -p "require('./data/snapshot/SNAPSHOT.json').total")
+          COMMIT=$(node -p "require('./data/snapshot/SNAPSHOT.json').source_commit || 'unknown'")
+          REF=$(node -p "require('./data/snapshot/SNAPSHOT.json').source_ref")
+          FETCHED=$(node -p "require('./data/snapshot/SNAPSHOT.json').fetched_at")
+          ADDED=$(node -e '
+            const cur = new Set(require("./data/snapshot/summary.json").ids);
+            const prev = new Set(JSON.parse(require("child_process").execSync("git show HEAD:data/snapshot/summary.json", {encoding: "utf8"})).ids);
+            console.log([...cur].filter((x) => !prev.has(x)).map((x) => "- added `" + x + "`").join("\n"));
+            console.log([...prev].filter((x) => !cur.has(x)).map((x) => "- removed `" + x + "` (ids are permanent upstream; investigate)").join("\n"));
+          ')
+          TITLE="chore(data): sync snapshot to agentic-attack-index v${VERSION} (${TOTAL} records)"
+          BODY=$(cat <<MD
+          <!-- sync-data-bot -->
+          Automated weekly sync of \`data/snapshot/\` from [MLSecOpsHub/agentic-attack-index](https://github.com/MLSecOpsHub/agentic-attack-index) (\`${REF}\` @ \`${COMMIT}\`), fetched ${FETCHED}.
+
+          | | before | after |
+          |---|---|---|
+          | dataset_version | ${BEFORE_VERSION} | ${VERSION} |
+          | records | ${BEFORE_TOTAL} | ${TOTAL} |
+          | upstream commit | \`${BEFORE_COMMIT:-unknown}\` | \`${COMMIT}\` |
+
+          ${ADDED}
+
+          The new snapshot passed \`npm test\` (schema validation included) in [run ${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}). This PR changes vendored data only; the dashboard never edits incident facts.
+          MD
+          )
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$SYNC_BRANCH"
+          git add data/snapshot
+          git commit -m "$TITLE" -m "Source: ${REF} @ ${COMMIT}. Fetched ${FETCHED}."
+          git push --force origin "$SYNC_BRANCH"
+          EXISTING=$(gh pr list --head "$SYNC_BRANCH" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh pr edit "$EXISTING" --title "$TITLE" --body "$BODY"
+            gh pr comment "$EXISTING" --body "Updated with a fresh snapshot: v${VERSION}, ${TOTAL} records, upstream \`${COMMIT}\`."
+            echo "Updated PR #$EXISTING"
+          else
+            gh pr create --base main --head "$SYNC_BRANCH" --title "$TITLE" --body "$BODY" --label data-sync || \
+            gh pr create --base main --head "$SYNC_BRANCH" --title "$TITLE" --body "$BODY"
+          fi
+
+      - name: Open or update the schema-drift issue
+        if: steps.diff.outputs.changed == 'true' && steps.validate.outputs.exit_code != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const log = fs.readFileSync('validate.log', 'utf8').slice(-6000);
+            const marker = '<!-- sync-data-drift-bot -->';
+            const title = 'sync-data: upstream snapshot fails validation (schema drift?)';
+            const label = 'data-sync';
+            const body = `${marker}\nThe weekly sync fetched a changed snapshot from agentic-attack-index but it does not pass \`npm test\` ` +
+              `(schema validation, typecheck, or unit tests). The snapshot was NOT committed; the site keeps rendering the last good one. ` +
+              `Usually this means the upstream schema or taxonomy changed and \`src/data/types.ts\`, the adapter, or \`scripts/sync-data.mjs\` need updating.\n\n` +
+              `Run: [${context.runId}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n\n` +
+              '```\n' + log + '\n```';
+
+            try {
+              await github.rest.issues.getLabel({ owner: context.repo.owner, repo: context.repo.repo, name: label });
+            } catch (e) {
+              if (e.status === 404) {
+                await github.rest.issues.createLabel({ owner: context.repo.owner, repo: context.repo.repo, name: label, color: '0e8a16', description: 'Automated dataset snapshot sync' });
+              } else {
+                throw e;
+              }
+            }
+            const open = await github.paginate(github.rest.issues.listForRepo, { owner: context.repo.owner, repo: context.repo.repo, state: 'open', labels: label, per_page: 100 });
+            const found = open.find((i) => !i.pull_request && i.body && i.body.includes(marker));
+            if (found) {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: found.number, body });
+            } else {
+              await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, labels: [label], body });
+            }
+
+      - name: Fail the job if the new snapshot did not validate
+        if: steps.diff.outputs.changed == 'true' && steps.validate.outputs.exit_code != '0'
+        run: exit 1
