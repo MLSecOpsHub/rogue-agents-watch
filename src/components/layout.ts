@@ -110,10 +110,11 @@ export function applyStoredTheme(): void {
   else delete document.documentElement.dataset.theme;
 }
 
-function currentTheme(): 'light' | 'dark' {
+/** Dark is the default: an un-stamped document renders the dark token set regardless of the OS preference. */
+export function currentTheme(): 'light' | 'dark' {
   const explicit = document.documentElement.dataset.theme;
   if (explicit === 'light' || explicit === 'dark') return explicit;
-  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return 'dark';
 }
 
 function themeToggle(): HTMLElement {

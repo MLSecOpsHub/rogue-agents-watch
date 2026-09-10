@@ -55,8 +55,9 @@ product. Read the non-negotiables before changing anything.
   record exists are headline counts recomputed client-side, with a visible note.
 - Deterministic build: same snapshot, same bytes. No build-time timestamps.
   CI builds twice and diffs.
-- Theme-aware (light/dark via `prefers-color-scheme` + explicit toggle stored
-  in `localStorage`), responsive to 400 px, keyboard-navigable, WCAG AA.
+- Dark by default for every visitor (the bare `:root` is the dark token set;
+  the OS preference is not consulted), light via the header toggle stored in
+  `localStorage`; responsive to 400 px, keyboard-navigable, WCAG AA.
 - Bundle budget: core JS+CSS under 500 KB gzipped, map geometry chunk excluded
   (`npm run size`).
 - Deployed to GitHub Pages by `.github/workflows/pages.yml` (Source = GitHub

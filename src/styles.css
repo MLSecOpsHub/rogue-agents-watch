@@ -1,7 +1,56 @@
-/* Rogue Agent Watch — theme tokens. Light on :root, dark via prefers-color-scheme
-   (guarded so an explicit toggle wins) and via [data-theme="dark"]. All text/background
-   pairs meet WCAG AA (≥ 4.5:1 for body text, ≥ 3:1 for large text and UI). */
+/* Rogue Agent Watch — theme tokens. DARK BY DEFAULT: the bare :root is the dark
+   set, so an un-stamped document renders dark whatever the OS prefers. The
+   header toggle stamps data-theme="light" (remembered in localStorage) for the
+   light set. All text/background pairs meet WCAG AA (>= 4.5:1 for body text,
+   >= 3:1 for large text and UI). */
 :root {
+  --bg: #14151a;
+  --bg-elev: #1d1f26;
+  --bg-muted: #262932;
+  --fg: #ececea;
+  --fg-muted: #b0b2b8;
+  --border: #3a3d47;
+  --accent: #ff8a4c;
+  --accent-fg: #1a0d05;
+  --link: #7fb4ff;
+  --focus: #ff8a4c;
+  --status-confirmed: #6ecf95;
+  --status-reported: #f0b658;
+  --status-test-eval: #a7a9f0;
+  --confidence-primary: #6ecf95;
+  --confidence-secondary: #f0b658;
+  --confidence-unverified: #ff8080;
+  --ai-role-load-bearing: #ff9d6b;
+  --ai-role-significant: #ff8a4c;
+  --ai-role-incidental: #b0b2b8;
+  --ai-role-disputed: #d3a6f5;
+  --ai-role-unknown: #9c9ea6;
+  --severity-critical: #ff8080;
+  --severity-high: #ff8a4c;
+  --severity-medium: #f0b658;
+  --severity-low: #8fbfd8;
+  --cat-ai-orchestrated-campaign: #ff8a4c;
+  --cat-autonomous-attack: #e0855c;
+  --cat-lab-escape-eval: #a7a9f0;
+  --cat-agent-hijack-prompt-injection: #5fd3c7;
+  --cat-infrastructure-abuse-supply-chain: #7fb4ff;
+  --record-disputed: #d3a6f5;
+  --record-retracted: #ff8080;
+  --record-superseded: #b0b2b8;
+  --map-sphere: #0e1720;
+  --map-land: #1b2733;
+  --map-land-stroke: #2c3d4f;
+  --map-graticule: #152030;
+  --role-load-bearing: #ffb070;
+  --role-significant: #e07a2f;
+  --role-incidental: #a8511f;
+  --role-none: #6f7d8a;
+  --bar: #7fb4ff;
+  --lane: rgba(255, 255, 255, 0.04);
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
   --bg: #f7f6f2;
   --bg-elev: #ffffff;
   --bg-muted: #edebe4;
@@ -56,101 +105,6 @@
   --lane: rgba(0, 0, 0, 0.035);
 
   color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --bg: #14151a;
-    --bg-elev: #1d1f26;
-    --bg-muted: #262932;
-    --fg: #ececea;
-    --fg-muted: #b0b2b8;
-    --border: #3a3d47;
-    --accent: #ff8a4c;
-    --accent-fg: #1a0d05;
-    --link: #7fb4ff;
-    --focus: #ff8a4c;
-    --status-confirmed: #6ecf95;
-    --status-reported: #f0b658;
-    --status-test-eval: #a7a9f0;
-    --confidence-primary: #6ecf95;
-    --confidence-secondary: #f0b658;
-    --confidence-unverified: #ff8080;
-    --ai-role-load-bearing: #ff9d6b;
-    --ai-role-significant: #ff8a4c;
-    --ai-role-incidental: #b0b2b8;
-    --ai-role-disputed: #d3a6f5;
-    --ai-role-unknown: #9c9ea6;
-    --severity-critical: #ff8080;
-    --severity-high: #ff8a4c;
-    --severity-medium: #f0b658;
-    --severity-low: #8fbfd8;
-    --cat-ai-orchestrated-campaign: #ff8a4c;
-    --cat-autonomous-attack: #e0855c;
-    --cat-lab-escape-eval: #a7a9f0;
-    --cat-agent-hijack-prompt-injection: #5fd3c7;
-    --cat-infrastructure-abuse-supply-chain: #7fb4ff;
-    --record-disputed: #d3a6f5;
-    --record-retracted: #ff8080;
-    --record-superseded: #b0b2b8;
-    --map-sphere: #0e1720;
-    --map-land: #1b2733;
-    --map-land-stroke: #2c3d4f;
-    --map-graticule: #152030;
-    --role-load-bearing: #ffb070;
-    --role-significant: #e07a2f;
-    --role-incidental: #a8511f;
-    --role-none: #6f7d8a;
-    --bar: #7fb4ff;
-    --lane: rgba(255, 255, 255, 0.04);
-    color-scheme: dark;
-  }
-}
-:root[data-theme='dark'] {
-  --bg: #14151a;
-  --bg-elev: #1d1f26;
-  --bg-muted: #262932;
-  --fg: #ececea;
-  --fg-muted: #b0b2b8;
-  --border: #3a3d47;
-  --accent: #ff8a4c;
-  --accent-fg: #1a0d05;
-  --link: #7fb4ff;
-  --focus: #ff8a4c;
-  --status-confirmed: #6ecf95;
-  --status-reported: #f0b658;
-  --status-test-eval: #a7a9f0;
-  --confidence-primary: #6ecf95;
-  --confidence-secondary: #f0b658;
-  --confidence-unverified: #ff8080;
-  --ai-role-load-bearing: #ff9d6b;
-  --ai-role-significant: #ff8a4c;
-  --ai-role-incidental: #b0b2b8;
-  --ai-role-disputed: #d3a6f5;
-  --ai-role-unknown: #9c9ea6;
-  --severity-critical: #ff8080;
-  --severity-high: #ff8a4c;
-  --severity-medium: #f0b658;
-  --severity-low: #8fbfd8;
-  --cat-ai-orchestrated-campaign: #ff8a4c;
-  --cat-autonomous-attack: #e0855c;
-  --cat-lab-escape-eval: #a7a9f0;
-  --cat-agent-hijack-prompt-injection: #5fd3c7;
-  --cat-infrastructure-abuse-supply-chain: #7fb4ff;
-  --record-disputed: #d3a6f5;
-  --record-retracted: #ff8080;
-  --record-superseded: #b0b2b8;
-  --map-sphere: #0e1720;
-  --map-land: #1b2733;
-  --map-land-stroke: #2c3d4f;
-  --map-graticule: #152030;
-  --role-load-bearing: #ffb070;
-  --role-significant: #e07a2f;
-  --role-incidental: #a8511f;
-  --role-none: #6f7d8a;
-  --bar: #7fb4ff;
-  --lane: rgba(255, 255, 255, 0.04);
-  color-scheme: dark;
 }
 
 /* ---- base ---------------------------------------------------------------- */

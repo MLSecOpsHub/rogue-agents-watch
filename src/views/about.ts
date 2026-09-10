@@ -68,7 +68,7 @@ export function aboutView({ ds, root }: ViewContext): void {
   root.appendChild(
     panel(
       'The map and the illustrative-geo rule',
-      h('p', null, 'A record appears on the map only if the dataset carries a geo block with coordinates for a target or an origin. Points flagged illustrative are country-level centroids, not real locations; they are drawn as hollow dashed rings and labelled as illustrative in tooltips. Stated locations are drawn as solid markers. The dashboard never geocodes a country list, an actor name, or a sector into a point, and records without geo are listed under the map rather than placed on it.'),
+      h('p', null, 'A record appears on the map only if the dataset carries a geo block with coordinates for a target or an origin. Points flagged illustrative are country-level centroids, not real locations; they are drawn as soft discs of fixed size and labelled as country-level in tooltips. Stated locations are drawn as pins. Colour on the map encodes the AI role, the ring encodes the evidence status, and size encodes severity. The dashboard never geocodes a country list, an actor name, or a sector into a point, and records without geo are listed in the field log beside the map rather than placed on it.'),
       h('p', null, 'Country outlines are Natural Earth 1:110m (public domain) via the world-atlas package, vendored so the site loads no external tiles.'),
     ),
   );
@@ -107,7 +107,7 @@ export function aboutView({ ds, root }: ViewContext): void {
     panel(
       'Licenses and privacy',
       h('p', null, 'The data is © the Agentic Attack Index contributors, licensed ', externalLink(SITE.dataLicenseUrl, 'CC BY-SA 4.0', 'plain'), '. Reuse it with attribution to "Agentic Attack Index (MLSecOpsHub)" and a link to the repository. The dashboard code is ', externalLink(SITE.repoUrl, 'MIT', 'plain'), '.'),
-      h('p', null, 'This is a static site: no server, no accounts, no analytics, no cookies, no third-party fonts or scripts. Your theme preference is stored locally in your browser only.'),
+      h('p', null, 'This is a static site: no server, no accounts, no analytics, no cookies, no third-party fonts or scripts. The site is dark by default; if you switch to the light theme, that preference is stored locally in your browser only.'),
     ),
   );
 
