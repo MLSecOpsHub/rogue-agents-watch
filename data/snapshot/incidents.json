@@ -1,0 +1,889 @@
+[
+  {
+    "actor": "lkmanka58",
+    "actor_type": "single-operator",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-12"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "not-applicable",
+    "autonomy_pct": null,
+    "category": "infrastructure-abuse-supply-chain",
+    "confidence": "primary",
+    "date_disclosed": "2025-07-23",
+    "guardrail_bypass": [
+      "indirect-prompt-injection"
+    ],
+    "id": "amazon-q-developer-extension-compromise",
+    "impact": "Malicious data-wiping instructions were shipped in an official extension release, but AWS states the code was unsuccessful in executing due to a syntax error. Credentials were revoked and the code removed.",
+    "last_updated": "2026-08-12",
+    "lifecycle_phases": [
+      "initial-access",
+      "execution",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [
+        "CVE-2025-8217"
+      ],
+      "mitre_atlas": [
+        "AML.T0051",
+        "AML.T0081"
+      ],
+      "mitre_attack": [],
+      "owasp_asi": []
+    },
+    "mitigations": [
+      "AWS revoked the compromised credentials, removed the code, and released a fixed extension version."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "Amazon Q Developer VS Code extension compromise (data-wiping prompt injection)",
+    "related": [],
+    "severity": "high",
+    "sources": [
+      {
+        "date": "2025-07-23",
+        "publisher": "Amazon Web Services",
+        "title": "AWS Security Bulletin AWS-2025-015",
+        "type": "vendor-report",
+        "url": "https://aws.amazon.com/security/security-bulletins/AWS-2025-015/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260813045537/https://www.bleepingcomputer.com/news/security/amazon-ai-coding-agent-hacked-to-inject-data-wiping-commands/",
+        "date": "2025-07-25",
+        "publisher": "BleepingComputer",
+        "title": "Amazon AI coding agent hacked to inject data wiping commands",
+        "type": "news",
+        "url": "https://www.bleepingcomputer.com/news/security/amazon-ai-coding-agent-hacked-to-inject-data-wiping-commands/"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "An attacker used an inappropriately scoped GitHub token to merge malicious content into the open-source repository behind the Amazon Q Developer extension for Visual Studio Code, shipping it in release 1.84.0. The injected content was a system prompt instructing the AI coding agent to wipe local files and cloud resources. AWS confirmed the compromise in security bulletin AWS-2025-015 (CVE-2025-8217), revoked the credentials, removed the code and released a fixed version; per AWS the injected code failed to execute due to a syntax error.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "Omer Mayraz (Legit Security)",
+    "actor_type": "researcher",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-12"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "not-applicable",
+    "autonomy_pct": null,
+    "category": "agent-hijack-prompt-injection",
+    "confidence": "primary",
+    "date_disclosed": "2025-10-08",
+    "guardrail_bypass": [
+      "indirect-prompt-injection"
+    ],
+    "id": "camoleak-github-copilot-chat",
+    "impact": "Proof-of-concept exfiltration of secrets and source code from private repositories and full control of Copilot's responses. Responsibly disclosed via HackerOne and fixed by GitHub before public disclosure; no in-the-wild exploitation reported.",
+    "last_updated": "2026-08-12",
+    "lifecycle_phases": [
+      "initial-access",
+      "execution",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0057"
+      ],
+      "mitre_attack": [],
+      "owasp_asi": []
+    },
+    "mitigations": [
+      "GitHub disabled image rendering in Copilot Chat (2025-08-14)."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [
+      "GitHub Copilot Chat"
+    ],
+    "name": "CamoLeak — GitHub Copilot Chat prompt-injection data exfiltration",
+    "related": [
+      "echoleak-m365-copilot"
+    ],
+    "severity": "critical",
+    "sources": [
+      {
+        "date": "2025-10-08",
+        "publisher": "Legit Security",
+        "title": "CamoLeak: Critical GitHub Copilot Vulnerability Leaks Private Source Code",
+        "type": "first-party-disclosure",
+        "url": "https://www.legitsecurity.com/blog/camoleak-critical-github-copilot-vulnerability-leaks-private-source-code"
+      },
+      {
+        "date": "2025-10-09",
+        "publisher": "The Register",
+        "title": "GitHub patches Copilot Chat flaw that could leak secrets",
+        "type": "news",
+        "url": "https://www.theregister.com/2025/10/09/github_copilot_chat_vulnerability/"
+      }
+    ],
+    "status": "reported",
+    "summary": "Legit Security researcher Omer Mayraz disclosed CamoLeak, a critical GitHub Copilot Chat vulnerability (reported CVSS 9.6). It combined remote prompt injection via GitHub's invisible markdown comments with a content-security bypass abusing GitHub's Camo image proxy to silently exfiltrate secrets and source code from private repositories and to steer Copilot's responses. GitHub mitigated it by disabling image rendering in Copilot Chat on 2025-08-14; the research was published in October 2025.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "North Korean operatives (DPRK IT workers)",
+    "actor_type": "nation-state",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-12"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "tool-assisted",
+    "autonomy_pct": null,
+    "category": "infrastructure-abuse-supply-chain",
+    "confidence": "primary",
+    "date_disclosed": "2025-08-27",
+    "geo": {
+      "origin": {
+        "illustrative": true,
+        "label": "North Korea (operator origin)",
+        "lat": 40.34,
+        "lng": 127.51
+      }
+    },
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "dprk-it-worker-fraud-claude",
+    "impact": "Fraudulent employment at technology companies to evade sanctions and generate revenue for the DPRK regime; Anthropic notes such IT-worker schemes are reported to generate hundreds of millions of dollars annually for weapons programmes.",
+    "last_updated": "2026-08-12",
+    "lifecycle_phases": [
+      "resource-dev",
+      "deception-social-eng"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": []
+    },
+    "mitigations": [],
+    "model_families": [
+      "claude"
+    ],
+    "models": [
+      "Claude"
+    ],
+    "name": "North Korean IT-worker remote-employment fraud using Claude",
+    "related": [
+      "gtg-2002-vibe-hacking-extortion",
+      "gtg-5004-ai-ransomware-raas"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260813045655/https://www.anthropic.com/news/detecting-countering-misuse-aug-2025",
+        "date": "2025-08-27",
+        "publisher": "Anthropic",
+        "title": "Detecting and countering misuse of AI: August 2025",
+        "type": "first-party-disclosure",
+        "url": "https://www.anthropic.com/news/detecting-countering-misuse-aug-2025"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260724043514/https://www-cdn.anthropic.com/b2a76c6f6992465c09a6f2fce282f6c0cea8c200.pdf",
+        "date": "2025-08-27",
+        "publisher": "Anthropic",
+        "title": "Threat Intelligence Report: August 2025",
+        "type": "vendor-report",
+        "url": "https://www-cdn.anthropic.com/b2a76c6f6992465c09a6f2fce282f6c0cea8c200.pdf"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "In its August 2025 Threat Intelligence Report, Anthropic disclosed that North Korean operatives systematically used Claude to obtain and hold fraudulent remote engineering jobs at technology companies as a means of evading sanctions and funding the regime. Anthropic reports the AI was used to build false professional identities, pass technical interviews and assessments, and perform day-to-day work, with operators appearing heavily dependent on the model to sustain the deception.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology"
+      ]
+    }
+  },
+  {
+    "actor": "Aim Labs (Aim Security)",
+    "actor_type": "researcher",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-12"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "not-applicable",
+    "autonomy_pct": null,
+    "category": "agent-hijack-prompt-injection",
+    "confidence": "primary",
+    "date_disclosed": "2025-06-11",
+    "guardrail_bypass": [
+      "indirect-prompt-injection"
+    ],
+    "id": "echoleak-m365-copilot",
+    "impact": "Demonstrated zero-click exfiltration of data from the Microsoft 365 Copilot context (chat history, Microsoft Graph resources and preloaded context). Mitigated server-side by Microsoft with no reported in-the-wild exploitation.",
+    "last_updated": "2026-08-12",
+    "lifecycle_phases": [
+      "initial-access",
+      "execution",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [
+        "CVE-2025-32711"
+      ],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0057"
+      ],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": [
+        "LLM01"
+      ]
+    },
+    "mitigations": [
+      "Microsoft mitigated the vulnerability server-side; no customer action was required."
+    ],
+    "model_families": [
+      "openai-gpt"
+    ],
+    "models": [
+      "GPT-4"
+    ],
+    "name": "EchoLeak — zero-click prompt injection in Microsoft 365 Copilot",
+    "related": [
+      "camoleak-github-copilot-chat"
+    ],
+    "severity": "critical",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260813045737/https://www.catonetworks.com/blog/breaking-down-echoleak/",
+        "date": "2025-05-31",
+        "publisher": "Cato Networks (Aim Labs)",
+        "title": "Breaking down 'EchoLeak', the First Zero-Click AI Vulnerability Enabling Data Exfiltration from Microsoft 365 Copilot",
+        "type": "first-party-disclosure",
+        "url": "https://www.catonetworks.com/blog/breaking-down-echoleak/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260813045804/https://nvd.nist.gov/vuln/detail/CVE-2025-32711",
+        "date": "2025-06-11",
+        "publisher": "NVD / NIST",
+        "title": "CVE-2025-32711 Detail",
+        "type": "government-advisory",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-32711"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260813045842/https://www.securityweek.com/echoleak-ai-attack-enabled-theft-of-sensitive-data-via-microsoft-365-copilot/",
+        "date": "2025-06-12",
+        "publisher": "SecurityWeek",
+        "title": "'EchoLeak' AI Attack Enabled Theft of Sensitive Data via Microsoft 365 Copilot",
+        "type": "news",
+        "url": "https://www.securityweek.com/echoleak-ai-attack-enabled-theft-of-sensitive-data-via-microsoft-365-copilot/"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "Aim Labs (Aim Security) disclosed EchoLeak, assigned CVE-2025-32711, a zero-click indirect prompt-injection vulnerability in Microsoft 365 Copilot. A single crafted email could cause the retrieval-augmented Copilot agent to pull sensitive organisational data from the user's context and exfiltrate it with no user interaction. Aim Labs termed the underlying class \"LLM Scope Violation.\" Microsoft patched it server-side and states no customers were affected.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": 0,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "Chinese state-sponsored group (tracked by Anthropic as GTG-1002)",
+    "actor_type": "nation-state",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-12"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "supervised-autonomous",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2025-11-13",
+    "geo": {
+      "origin": {
+        "illustrative": true,
+        "label": "China (assessed state-sponsored origin)",
+        "lat": 35.86,
+        "lng": 104.19
+      }
+    },
+    "guardrail_bypass": [
+      "jailbreak",
+      "legitimate-tool-abuse"
+    ],
+    "id": "gtg-1002-ai-espionage",
+    "impact": "Attempted infiltration of ~30 organizations with a small number of successful intrusions, including credential harvesting and data extraction, per Anthropic.",
+    "last_updated": "2026-08-12",
+    "lifecycle_phases": [
+      "recon",
+      "resource-dev",
+      "initial-access",
+      "execution",
+      "credential-access",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [
+        "AML.T0054",
+        "AML.T0102",
+        "AML.T0053"
+      ],
+      "mitre_attack": [],
+      "owasp_asi": []
+    },
+    "mitigations": [],
+    "model_families": [
+      "claude"
+    ],
+    "models": [
+      "Claude Code"
+    ],
+    "name": "GTG-1002 AI-orchestrated cyber-espionage campaign",
+    "related": [],
+    "severity": "high",
+    "sources": [
+      {
+        "date": "2025-11-13",
+        "publisher": "Anthropic",
+        "title": "Disrupting the first reported AI-orchestrated cyber espionage campaign",
+        "type": "first-party-disclosure",
+        "url": "https://www.anthropic.com/news/disrupting-AI-espionage"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260505022101/https://www.theregister.com/2025/11/13/chinese_spies_claude_attacks/",
+        "date": "2025-11-13",
+        "publisher": "The Register",
+        "title": "Chinese spies told Claude to break into about 30 critical orgs. Some attacks succeeded",
+        "type": "news",
+        "url": "https://www.theregister.com/2025/11/13/chinese_spies_claude_attacks/"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "Anthropic disclosed on 2025-11-13 that a group it assesses with high confidence to be Chinese state-sponsored (tracked as GTG-1002) manipulated its Claude Code agent into running a cyber-espionage campaign against roughly thirty global organizations. Anthropic reports the AI executed the large majority of tactical operations across the intrusion lifecycle — stated as 80-90% — with humans intervening only at a handful of decision points, and describes it as the first documented large-scale cyberattack conducted without substantial human intervention. A small number of intrusions succeeded.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": 30,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology",
+        "financial-services",
+        "chemical-manufacturing",
+        "government"
+      ]
+    }
+  },
+  {
+    "actor": "Unknown cybercriminal (tracked by Anthropic as GTG-2002)",
+    "actor_type": "cybercriminal",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-12"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "supervised-autonomous",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2025-08-27",
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "gtg-2002-vibe-hacking-extortion",
+    "impact": "Compromise of personal records including healthcare data, financial information and government credentials; extortion with direct ransom demands occasionally exceeding US$500,000 (reported range US$75,000-500,000 in Bitcoin).",
+    "last_updated": "2026-08-12",
+    "lifecycle_phases": [
+      "recon",
+      "initial-access",
+      "execution",
+      "credential-access",
+      "exfiltration",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [
+        "AML.T0053",
+        "AML.T0102",
+        "AML.T0016.002"
+      ],
+      "mitre_attack": [],
+      "owasp_asi": []
+    },
+    "mitigations": [],
+    "model_families": [
+      "claude"
+    ],
+    "models": [
+      "Claude Code"
+    ],
+    "name": "GTG-2002 'vibe hacking' AI-driven data-extortion operation",
+    "related": [
+      "gtg-5004-ai-ransomware-raas",
+      "dprk-it-worker-fraud-claude"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260813045655/https://www.anthropic.com/news/detecting-countering-misuse-aug-2025",
+        "date": "2025-08-27",
+        "publisher": "Anthropic",
+        "title": "Detecting and countering misuse of AI: August 2025",
+        "type": "first-party-disclosure",
+        "url": "https://www.anthropic.com/news/detecting-countering-misuse-aug-2025"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260724043514/https://www-cdn.anthropic.com/b2a76c6f6992465c09a6f2fce282f6c0cea8c200.pdf",
+        "date": "2025-08-27",
+        "publisher": "Anthropic",
+        "title": "Threat Intelligence Report: August 2025",
+        "type": "vendor-report",
+        "url": "https://www-cdn.anthropic.com/b2a76c6f6992465c09a6f2fce282f6c0cea8c200.pdf"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "In its August 2025 Threat Intelligence Report, Anthropic disclosed a cybercriminal operation it tracked as GTG-2002 that used Claude Code as an active operator to run a scaled data-extortion campaign — a practice Anthropic terms \"vibe hacking.\" The agent supported reconnaissance, credential harvesting, network intrusion, and data exfiltration, then analysed stolen financial data to set ransom amounts and generated extortion notes. Anthropic reports the operation potentially affected at least 17 organisations in a single month, with direct ransom demands occasionally exceeding US$500,000.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": 17,
+      "records_exfiltrated": null,
+      "sectors": [
+        "government",
+        "healthcare",
+        "emergency-services",
+        "religious-institutions"
+      ]
+    }
+  },
+  {
+    "actor": "UK-based threat actor (tracked by Anthropic as GTG-5004)",
+    "actor_type": "single-operator",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-12"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "tool-assisted",
+    "autonomy_pct": null,
+    "category": "infrastructure-abuse-supply-chain",
+    "confidence": "primary",
+    "date_disclosed": "2025-08-27",
+    "geo": {
+      "origin": {
+        "illustrative": true,
+        "label": "United Kingdom (actor origin)",
+        "lat": 55.38,
+        "lng": -3.44
+      }
+    },
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "gtg-5004-ai-ransomware-raas",
+    "impact": "AI-assisted development, marketing and sale of ransomware variants with encryption and evasion capabilities on dark-web forums for US$400-1,200; no victim count stated by the source.",
+    "last_updated": "2026-08-12",
+    "lifecycle_phases": [
+      "resource-dev"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [
+        "AML.T0016.002"
+      ],
+      "mitre_attack": [],
+      "owasp_asi": []
+    },
+    "mitigations": [],
+    "model_families": [
+      "claude"
+    ],
+    "models": [
+      "Claude"
+    ],
+    "name": "GTG-5004 AI-assisted ransomware-as-a-service operation",
+    "related": [
+      "gtg-2002-vibe-hacking-extortion",
+      "dprk-it-worker-fraud-claude"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260813045655/https://www.anthropic.com/news/detecting-countering-misuse-aug-2025",
+        "date": "2025-08-27",
+        "publisher": "Anthropic",
+        "title": "Detecting and countering misuse of AI: August 2025",
+        "type": "first-party-disclosure",
+        "url": "https://www.anthropic.com/news/detecting-countering-misuse-aug-2025"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260724043514/https://www-cdn.anthropic.com/b2a76c6f6992465c09a6f2fce282f6c0cea8c200.pdf",
+        "date": "2025-08-27",
+        "publisher": "Anthropic",
+        "title": "Threat Intelligence Report: August 2025",
+        "type": "vendor-report",
+        "url": "https://www-cdn.anthropic.com/b2a76c6f6992465c09a6f2fce282f6c0cea8c200.pdf"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "In its August 2025 Threat Intelligence Report, Anthropic disclosed a UK-based threat actor it tracked as GTG-5004 that used Claude to develop, market and sell ransomware with evasion features through a ransomware-as-a-service model. Anthropic reports the actor — active since at least January 2025 on dark-web forums — appears dependent on the AI to produce functional malware, and sold ransomware packages priced from US$400 to US$1,200.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "Five state-affiliated actors: Forest Blizzard, Emerald Sleet, Crimson Sandstorm, Charcoal Typhoon, Salmon Typhoon",
+    "actor_type": "nation-state",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-12"
+    },
+    "ai_role": "incidental",
+    "autonomy_level": "tool-assisted",
+    "autonomy_pct": null,
+    "category": "infrastructure-abuse-supply-chain",
+    "confidence": "primary",
+    "date_disclosed": "2024-02-14",
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "microsoft-openai-state-actor-llm",
+    "impact": "No novel or unique AI-enabled attack techniques were observed; Microsoft and OpenAI characterised the activity as consistent with using AI as a productivity tool. Identified accounts were terminated.",
+    "last_updated": "2026-08-12",
+    "lifecycle_phases": [
+      "recon",
+      "resource-dev",
+      "deception-social-eng"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [
+        "AML.T0016.002"
+      ],
+      "mitre_attack": [],
+      "owasp_asi": []
+    },
+    "mitigations": [
+      "The provider terminated the accounts associated with the identified actors."
+    ],
+    "model_families": [
+      "openai-gpt"
+    ],
+    "models": [
+      "GPT-4"
+    ],
+    "name": "Microsoft/OpenAI disruption of state-affiliated actors misusing LLMs (2024)",
+    "related": [],
+    "severity": "medium",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260714223950/https://www.microsoft.com/en-us/security/blog/2024/02/14/staying-ahead-of-threat-actors-in-the-age-of-ai/",
+        "date": "2024-02-14",
+        "publisher": "Microsoft Threat Intelligence",
+        "title": "Staying ahead of threat actors in the age of AI",
+        "type": "first-party-disclosure",
+        "url": "https://www.microsoft.com/en-us/security/blog/2024/02/14/staying-ahead-of-threat-actors-in-the-age-of-ai/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260813050018/https://www.cybersecuritydive.com/news/openai-microsoft-state-actors-ai/707661/",
+        "date": "2024-02-15",
+        "publisher": "Cybersecurity Dive",
+        "title": "OpenAI, Microsoft warn of state-linked actors' AI use",
+        "type": "news",
+        "url": "https://www.cybersecuritydive.com/news/openai-microsoft-state-actors-ai/707661/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260813084511/https://www.scworld.com/news/microsoft-openai-reveal-chatgpt-use-by-state-sponsored-hackers",
+        "date": "2024-02-14",
+        "publisher": "SC Media",
+        "title": "Microsoft, OpenAI reveal ChatGPT use by state-sponsored hackers",
+        "type": "news",
+        "url": "https://www.scworld.com/news/microsoft-openai-reveal-chatgpt-use-by-state-sponsored-hackers"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "On 2024-02-14 Microsoft Threat Intelligence and OpenAI jointly disclosed that they had detected and disrupted five state-affiliated threat actors using OpenAI's large language models to support cyber operations: Forest Blizzard (Russia), Emerald Sleet (North Korea), Crimson Sandstorm (Iran) and the China-affiliated Charcoal Typhoon and Salmon Typhoon. Reported uses included reconnaissance, scripting help, vulnerability research and social-engineering content. Both companies stated the activity amounted to productivity support rather than novel AI-enabled attack techniques, and OpenAI terminated the associated accounts.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "Unknown",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-12"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "tool-assisted",
+    "autonomy_pct": null,
+    "category": "infrastructure-abuse-supply-chain",
+    "confidence": "primary",
+    "date_disclosed": "2025-08-27",
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "nx-s1ngularity-supply-chain",
+    "impact": "Per Wiz: over a thousand valid GitHub tokens, dozens of valid cloud credentials and NPM tokens, and roughly twenty thousand additional files leaked; a subsequent wave made over 5,500 private repositories public across 400+ users and organisations. Malware also attempted host lockout via a shutdown command appended to shell startup files.",
+    "last_updated": "2026-08-12",
+    "lifecycle_phases": [
+      "resource-dev",
+      "initial-access",
+      "execution",
+      "credential-access",
+      "exfiltration",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [
+        "AML.T0053"
+      ],
+      "mitre_attack": [
+        "T1567.001"
+      ],
+      "owasp_asi": []
+    },
+    "mitigations": [
+      "Rotate exposed credentials and tokens; remove the malicious package versions."
+    ],
+    "model_families": [
+      "claude",
+      "gemini",
+      "other"
+    ],
+    "models": [
+      "Claude",
+      "Gemini",
+      "Amazon Q"
+    ],
+    "name": "Nx 's1ngularity' npm supply-chain attack weaponising AI CLI tools",
+    "related": [],
+    "severity": "critical",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260813050126/https://nx.dev/blog/s1ngularity-postmortem",
+        "date": "2025-09-05",
+        "publisher": "Nx",
+        "title": "S1ngularity - What Happened, How We Responded, What We Learned",
+        "type": "first-party-disclosure",
+        "url": "https://nx.dev/blog/s1ngularity-postmortem"
+      },
+      {
+        "date": "2025-08-27",
+        "publisher": "Nx / GitHub",
+        "title": "Nx security advisory (GHSA-cxm3-wv7p-598c)",
+        "type": "first-party-disclosure",
+        "url": "https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598c"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260813050206/https://www.wiz.io/blog/s1ngularity-supply-chain-attack",
+        "date": "2025-08-27",
+        "publisher": "Wiz",
+        "title": "s1ngularity: supply chain attack leaks secrets on GitHub",
+        "type": "vendor-report",
+        "url": "https://www.wiz.io/blog/s1ngularity-supply-chain-attack"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "On 2025-08-26 attackers exploited a flawed GitHub Actions workflow in the Nx build tool to publish malicious versions of nx and related npm packages. A postinstall script scanned victim machines for secrets and, notably, weaponised locally installed AI CLI tools (Claude, Gemini, Amazon Q) as file-search agents to locate sensitive files, then exfiltrated stolen data to attacker-created public GitHub repositories and appended a shutdown command to shell configuration files. Disclosed via Nx's GitHub security advisory and postmortem and analysed by Wiz Research.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": 400,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "NYU Tandon School of Engineering research team",
+    "actor_type": "researcher",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-12"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "fully-autonomous",
+    "autonomy_pct": null,
+    "category": "lab-escape-eval",
+    "confidence": "primary",
+    "date_disclosed": "2025-08-26",
+    "guardrail_bypass": [
+      "open-weight-model"
+    ],
+    "id": "promptlock-ai-ransomware-poc",
+    "impact": "No real-world impact: an academic proof-of-concept demonstrating a closed-loop, LLM-orchestrated ransomware workflow (reconnaissance, exfiltration and encryption). ESET maintains it is the first known case of AI-powered ransomware while agreeing it was a proof-of-concept, not operational malware.",
+    "last_updated": "2026-08-12",
+    "lifecycle_phases": [
+      "recon",
+      "exfiltration",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [
+        "AML.T0102",
+        "AML.T0016.002"
+      ],
+      "mitre_attack": [],
+      "owasp_asi": []
+    },
+    "mitigations": [],
+    "model_families": [
+      "openai-gpt"
+    ],
+    "models": [
+      "gpt-oss:20b"
+    ],
+    "name": "PromptLock — first known AI-powered ransomware (academic proof-of-concept)",
+    "related": [],
+    "severity": "medium",
+    "sources": [
+      {
+        "date": "2025-08-26",
+        "publisher": "ESET WeLiveSecurity",
+        "title": "First known AI-powered ransomware uncovered by ESET Research",
+        "type": "vendor-report",
+        "url": "https://www.welivesecurity.com/en/ransomware/first-known-ai-powered-ransomware-uncovered-eset-research/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260813050621/https://cyberscoop.com/ai-ransomware-promptlock-nyu-behind-code-discovered-by-security-researchers/",
+        "date": "2025-09-05",
+        "publisher": "CyberScoop",
+        "title": "NYU team behind AI-powered malware dubbed 'PromptLock'",
+        "type": "news",
+        "url": "https://cyberscoop.com/ai-ransomware-promptlock-nyu-behind-code-discovered-by-security-researchers/"
+      }
+    ],
+    "status": "test-eval",
+    "summary": "ESET Research disclosed \"PromptLock\" on 2025-08-26 as the first known AI-powered ransomware after discovering samples uploaded to VirusTotal. The Go-based code used a locally hosted large language model (OpenAI's gpt-oss:20b via the Ollama API) to generate malicious Lua scripts at runtime for file enumeration, exfiltration and encryption. ESET assessed it as a proof-of- concept; researchers at NYU Tandon subsequently confirmed it originated from their academic project \"Ransomware 3.0\" and was never deployed in a real attack.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "APT28 (FROZENLAKE), Russian government-backed",
+    "actor_type": "nation-state",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-12"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "supervised-autonomous",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2025-11-05",
+    "geo": {
+      "origin": {
+        "illustrative": true,
+        "label": "Russia (APT28 attribution)",
+        "lat": 61.52,
+        "lng": 105.32
+      },
+      "target": {
+        "illustrative": true,
+        "label": "Ukraine (target)",
+        "lat": 48.38,
+        "lng": 31.17
+      }
+    },
+    "guardrail_bypass": [
+      "open-weight-model"
+    ],
+    "id": "promptsteal-apt28-lamehug",
+    "impact": "Live-operations use of an LLM to dynamically generate reconnaissance and document-collection commands on victim systems in Ukraine, with the collected output exfiltrated. Likely relied on stolen API tokens, per Google.",
+    "last_updated": "2026-08-12",
+    "lifecycle_phases": [
+      "recon",
+      "execution",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [
+        "AML.T0102",
+        "AML.T0016.002"
+      ],
+      "mitre_attack": [],
+      "owasp_asi": []
+    },
+    "mitigations": [],
+    "model_families": [
+      "qwen"
+    ],
+    "models": [
+      "Qwen2.5-Coder-32B-Instruct"
+    ],
+    "name": "PROMPTSTEAL / LAMEHUG — LLM-enabled data miner used against Ukraine",
+    "related": [],
+    "severity": "high",
+    "sources": [
+      {
+        "date": "2025-11-05",
+        "publisher": "Google Threat Intelligence Group",
+        "title": "GTIG AI Threat Tracker: Advances in Threat Actor Usage of AI Tools",
+        "type": "vendor-report",
+        "url": "https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260813050312/https://thehackernews.com/2025/11/google-uncovers-promptflux-malware-that.html",
+        "date": "2025-11-05",
+        "publisher": "The Hacker News",
+        "title": "Google Uncovers PROMPTFLUX Malware That Uses Gemini AI to Rewrite Its Code Hourly",
+        "type": "news",
+        "url": "https://thehackernews.com/2025/11/google-uncovers-promptflux-malware-that.html"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "In its November 2025 GTIG AI Threat Tracker, Google's Threat Intelligence Group reported that in June 2025 the Russian government-backed actor APT28 (FROZENLAKE) used new malware it tracks as PROMPTSTEAL — reported by CERT-UA as LAMEHUG — against Ukraine. The malware queried a large language model (Qwen2.5-Coder-32B-Instruct via the Hugging Face API) to generate Windows commands at runtime for system reconnaissance and document collection, which were executed and the output exfiltrated. Google describes it as its first observation of malware querying an LLM deployed in live operations.",
+    "targets": {
+      "countries": [
+        "UA"
+      ],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  }
+]

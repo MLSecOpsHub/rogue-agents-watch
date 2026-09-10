@@ -1,0 +1,18 @@
+{
+  "source_repo": "https://github.com/MLSecOpsHub/agentic-attack-index",
+  "source_ref": "main",
+  "source_commit": "a10de226f39f8247da05068d1fdaf3217f8de8b1",
+  "source_commit_date": "2026-08-13T09:27:24Z",
+  "dataset_version": "0.2.0",
+  "schema_id": "https://raw.githubusercontent.com/MLSecOpsHub/agentic-attack-index/main/schema/incident.schema.json",
+  "total": 11,
+  "fetched_at": "2026-09-10",
+  "files": {
+    "incidents.json": "https://raw.githubusercontent.com/MLSecOpsHub/agentic-attack-index/main/dist/incidents.json",
+    "summary.json": "https://raw.githubusercontent.com/MLSecOpsHub/agentic-attack-index/main/dist/summary.json",
+    "incident.schema.json": "https://raw.githubusercontent.com/MLSecOpsHub/agentic-attack-index/main/schema/incident.schema.json",
+    "taxonomy.json": "https://raw.githubusercontent.com/MLSecOpsHub/agentic-attack-index/main/taxonomy/*.yml"
+  },
+  "data_license": "CC-BY-SA-4.0",
+  "attribution": "Agentic Attack Index (MLSecOpsHub) — https://github.com/MLSecOpsHub/agentic-attack-index"
+}

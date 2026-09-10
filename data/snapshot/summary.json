@@ -1,0 +1,68 @@
+{
+  "dataset_version": "0.2.0",
+  "schema": "https://raw.githubusercontent.com/MLSecOpsHub/agentic-attack-index/main/schema/incident.schema.json",
+  "total": 11,
+  "archive_coverage": {
+    "sources": 25,
+    "archived": 18,
+    "pct": 72
+  },
+  "by_category": {
+    "agent-hijack-prompt-injection": 2,
+    "ai-orchestrated-campaign": 3,
+    "infrastructure-abuse-supply-chain": 5,
+    "lab-escape-eval": 1
+  },
+  "by_severity": {
+    "critical": 3,
+    "high": 6,
+    "medium": 2
+  },
+  "by_status": {
+    "confirmed": 9,
+    "reported": 1,
+    "test-eval": 1
+  },
+  "by_actor_type": {
+    "cybercriminal": 1,
+    "nation-state": 4,
+    "researcher": 3,
+    "single-operator": 2,
+    "unknown": 1
+  },
+  "by_autonomy_level": {
+    "fully-autonomous": 1,
+    "not-applicable": 3,
+    "supervised-autonomous": 3,
+    "tool-assisted": 4
+  },
+  "by_ai_role": {
+    "incidental": 1,
+    "load-bearing": 6,
+    "significant": 4
+  },
+  "by_model_family": {
+    "claude": 5,
+    "gemini": 1,
+    "openai-gpt": 3,
+    "other": 3,
+    "qwen": 1
+  },
+  "by_year": {
+    "2024": 1,
+    "2025": 10
+  },
+  "ids": [
+    "amazon-q-developer-extension-compromise",
+    "camoleak-github-copilot-chat",
+    "dprk-it-worker-fraud-claude",
+    "echoleak-m365-copilot",
+    "gtg-1002-ai-espionage",
+    "gtg-2002-vibe-hacking-extortion",
+    "gtg-5004-ai-ransomware-raas",
+    "microsoft-openai-state-actor-llm",
+    "nx-s1ngularity-supply-chain",
+    "promptlock-ai-ransomware-poc",
+    "promptsteal-apt28-lamehug"
+  ]
+}

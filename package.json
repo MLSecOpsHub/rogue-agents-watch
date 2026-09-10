@@ -1,0 +1,63 @@
+{
+  "name": "rogue-agents-dashboard",
+  "version": "0.1.0",
+  "description": "Static dashboard for Rogue Agent Watch: renders the agentic-attack-index dataset (AI-agent-executed and rogue-agent cyber incidents). Presentation layer only; never edits incident data.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MLSecOpsHub/rogue-agents-dashboard.git"
+  },
+  "homepage": "https://mlsecopshub.com",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run validate:data && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "npm run typecheck && npm run lint && npm run validate:data && vitest run",
+    "test:unit": "vitest run",
+    "size": "node scripts/bundle-size.mjs",
+    "sync:data": "node scripts/sync-data.mjs",
+    "validate:data": "node scripts/validate-data.mjs"
+  },
+  "dependencies": {
+    "d3-array": "3.2.4",
+    "d3-axis": "3.0.0",
+    "d3-geo": "3.1.1",
+    "d3-scale": "4.0.2",
+    "d3-selection": "3.0.0",
+    "d3-shape": "3.2.0",
+    "d3-zoom": "3.0.0",
+    "topojson-client": "3.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@types/d3-array": "3.2.2",
+    "@types/d3-axis": "3.0.6",
+    "@types/d3-geo": "3.1.1",
+    "@types/d3-scale": "4.0.9",
+    "@types/d3-selection": "3.0.11",
+    "@types/d3-shape": "3.1.5",
+    "@types/d3-zoom": "3.0.8",
+    "@types/geojson": "7946.0.16",
+    "@types/node": "20.19.43",
+    "@types/topojson-client": "3.1.5",
+    "@types/topojson-specification": "1.0.5",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "eslint": "9.39.5",
+    "globals": "17.12.0",
+    "happy-dom": "20.14.3",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.70.0",
+    "vite": "7.3.6",
+    "vitest": "4.1.11",
+    "world-atlas": "2.0.2",
+    "yaml": "2.9.0"
+  }
+}

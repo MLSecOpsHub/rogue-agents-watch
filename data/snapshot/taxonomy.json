@@ -1,0 +1,487 @@
+{
+  "actor_type": {
+    "title": "Actor type",
+    "values": [
+      {
+        "id": "nation-state",
+        "label": "Nation-state",
+        "description": "State-sponsored or state-directed actor, as attributed by sources."
+      },
+      {
+        "id": "cybercriminal",
+        "label": "Cybercriminal",
+        "description": "Financially motivated criminal actor or group."
+      },
+      {
+        "id": "single-operator",
+        "label": "Single operator",
+        "description": "An individual acting alone, per sources."
+      },
+      {
+        "id": "lab-test-eval",
+        "label": "Lab test / evaluation",
+        "description": "The \"actor\" is a research lab or evaluator in a controlled setting."
+      },
+      {
+        "id": "researcher",
+        "label": "Researcher",
+        "description": "Security researcher acting in a disclosure or proof-of-concept context."
+      },
+      {
+        "id": "unknown",
+        "label": "Unknown",
+        "description": "Attribution not established by sources. Unknown is a valid and common value — never attribute beyond what sources state."
+      }
+    ]
+  },
+  "ai_role": {
+    "title": "AI role",
+    "values": [
+      {
+        "id": "load-bearing",
+        "label": "Load-bearing",
+        "description": "AI was central — the operation as described could not have happened at this scale or in this form without it."
+      },
+      {
+        "id": "significant",
+        "label": "Significant",
+        "description": "AI materially enabled or accelerated the operation, but was one of several important components."
+      },
+      {
+        "id": "incidental",
+        "label": "Incidental",
+        "description": "AI played a minor or supporting role (e.g. a productivity aid); sources indicate it did not provide novel capability."
+      },
+      {
+        "id": "disputed",
+        "label": "Disputed",
+        "description": "Sources conflict on AI's role, or a vendor's framing of AI's centrality is contested."
+      },
+      {
+        "id": "unknown",
+        "label": "Unknown",
+        "description": "Sources do not support an assessment of how central AI was."
+      }
+    ]
+  },
+  "autonomy_level": {
+    "title": "Agentic autonomy level",
+    "values": [
+      {
+        "id": "tool-assisted",
+        "label": "Tool-assisted",
+        "description": "The AI was used as a productivity aid (code generation, drafting, research) while humans performed the operation. The AI did not act."
+      },
+      {
+        "id": "human-in-the-loop",
+        "label": "Human-in-the-loop",
+        "description": "The AI executed steps of the operation but a human approved or directed each significant action."
+      },
+      {
+        "id": "supervised-autonomous",
+        "label": "Supervised-autonomous",
+        "description": "The AI executed the majority of tactical actions on its own, with humans intervening only at occasional decision points or checkpoints."
+      },
+      {
+        "id": "fully-autonomous",
+        "label": "Fully-autonomous",
+        "description": "The AI executed the operation end-to-end with negligible human intervention. Rare; grade conservatively and only where sources support it."
+      },
+      {
+        "id": "not-applicable",
+        "label": "Not applicable",
+        "description": "The AI is the victim/target of the incident (e.g. agent-hijack or a vulnerability), not the operator — an autonomy level does not apply."
+      },
+      {
+        "id": "unknown",
+        "label": "Unknown",
+        "description": "Sources do not support an autonomy-level assessment."
+      }
+    ]
+  },
+  "category": {
+    "title": "Incident category",
+    "values": [
+      {
+        "id": "ai-orchestrated-campaign",
+        "label": "AI-orchestrated campaign",
+        "description": "A human-directed attack campaign in which an AI agent orchestrated or executed substantial portions of the operation across multiple phases."
+      },
+      {
+        "id": "autonomous-attack",
+        "label": "Autonomous attack",
+        "description": "An attack executed largely or wholly by an AI agent with minimal human intervention during the operation itself."
+      },
+      {
+        "id": "lab-escape-eval",
+        "label": "Lab escape / evaluation",
+        "description": "A controlled test or evaluation in which an AI system exhibited offensive capability, escaped intended constraints, or was red-teamed into attack behavior. Not a real-world attack; pair with status: test-eval."
+      },
+      {
+        "id": "agent-hijack-prompt-injection",
+        "label": "Agent hijack / prompt injection",
+        "description": "A deployed AI agent subverted by an attacker — e.g. via prompt injection, poisoned context, or tool abuse — to act against its operator or users."
+      },
+      {
+        "id": "infrastructure-abuse-supply-chain",
+        "label": "Infrastructure abuse / supply chain",
+        "description": "Abuse of AI infrastructure, platforms, models, or the AI supply chain (model registries, agent tooling, MCP servers, plugins) to enable attacks."
+      }
+    ]
+  },
+  "confidence": {
+    "title": "Sourcing confidence",
+    "values": [
+      {
+        "id": "primary",
+        "label": "Primary",
+        "description": "Backed by primary sourcing — first-party disclosure, vendor incident report, government advisory, or court documents."
+      },
+      {
+        "id": "secondary",
+        "label": "Secondary",
+        "description": "Backed by secondhand reporting (news, analyst write-ups) without a primary source."
+      },
+      {
+        "id": "unverified",
+        "label": "Unverified",
+        "description": "A single unconfirmed source. Treat claims with caution."
+      }
+    ]
+  },
+  "guardrail_bypass": {
+    "title": "Guardrail bypass",
+    "values": [
+      {
+        "id": "jailbreak",
+        "label": "Jailbreak",
+        "description": "The attacker defeated a hosted model's safety training/policy via crafted prompts, roleplay, task decomposition, or similar."
+      },
+      {
+        "id": "open-weight-model",
+        "label": "Open-weight model",
+        "description": "An open-weight or self-hostable model (run locally or via an inference API) was used, sidestepping a provider's usage controls entirely."
+      },
+      {
+        "id": "legitimate-tool-abuse",
+        "label": "Legitimate tool abuse",
+        "description": "A sanctioned AI product or agent (e.g. a coding agent) was used for its intended capabilities but toward malicious ends."
+      },
+      {
+        "id": "indirect-prompt-injection",
+        "label": "Indirect prompt injection",
+        "description": "A deployed AI agent was subverted through untrusted content it processed (email, documents, repository data, tool output)."
+      },
+      {
+        "id": "none-observed",
+        "label": "None observed",
+        "description": "No guardrail was bypassed — e.g. the model was used within policy, or the relevant control did not exist."
+      },
+      {
+        "id": "unknown",
+        "label": "Unknown",
+        "description": "Sources do not describe how safety controls were handled."
+      }
+    ]
+  },
+  "lifecycle_phases": {
+    "title": "Attack lifecycle phase",
+    "values": [
+      {
+        "id": "recon",
+        "label": "Reconnaissance",
+        "description": "Target discovery and information gathering."
+      },
+      {
+        "id": "resource-dev",
+        "label": "Resource development",
+        "description": "Building or acquiring capability and infrastructure for the operation."
+      },
+      {
+        "id": "initial-access",
+        "label": "Initial access",
+        "description": "First foothold in the target environment."
+      },
+      {
+        "id": "execution",
+        "label": "Execution",
+        "description": "Running attacker-controlled logic in the target environment."
+      },
+      {
+        "id": "credential-access",
+        "label": "Credential access",
+        "description": "Theft or harvesting of credentials."
+      },
+      {
+        "id": "privilege-escalation",
+        "label": "Privilege escalation",
+        "description": "Gaining higher levels of permission."
+      },
+      {
+        "id": "persistence",
+        "label": "Persistence",
+        "description": "Maintaining access across restarts or remediation attempts."
+      },
+      {
+        "id": "exfiltration",
+        "label": "Exfiltration",
+        "description": "Removal of data from the target environment."
+      },
+      {
+        "id": "deception-social-eng",
+        "label": "Deception / social engineering",
+        "description": "Manipulating humans — phishing, impersonation, fraud."
+      },
+      {
+        "id": "impact",
+        "label": "Impact",
+        "description": "Destruction, disruption, extortion, or other end effects."
+      }
+    ]
+  },
+  "model_families": {
+    "title": "Model family",
+    "values": [
+      {
+        "id": "claude",
+        "label": "Claude (Anthropic)",
+        "description": "Anthropic Claude models."
+      },
+      {
+        "id": "openai-gpt",
+        "label": "GPT (OpenAI)",
+        "description": "OpenAI GPT-series chat/completions models."
+      },
+      {
+        "id": "openai-codex",
+        "label": "Codex (OpenAI)",
+        "description": "OpenAI Codex coding models/agents."
+      },
+      {
+        "id": "gemini",
+        "label": "Gemini (Google)",
+        "description": "Google Gemini models."
+      },
+      {
+        "id": "deepseek",
+        "label": "DeepSeek",
+        "description": "DeepSeek models."
+      },
+      {
+        "id": "qwen",
+        "label": "Qwen (Alibaba)",
+        "description": "Alibaba Qwen open-weight models and derivatives (e.g. Qwen2.5-Coder)."
+      },
+      {
+        "id": "llama",
+        "label": "Llama (Meta)",
+        "description": "Meta Llama open-weight models and derivatives."
+      },
+      {
+        "id": "mistral",
+        "label": "Mistral",
+        "description": "Mistral AI models and derivatives."
+      },
+      {
+        "id": "hermes",
+        "label": "Hermes (Nous Research)",
+        "description": "Nous Research Hermes fine-tunes."
+      },
+      {
+        "id": "other",
+        "label": "Other / unspecified",
+        "description": "A model family not listed above, or sources do not name the model family."
+      }
+    ]
+  },
+  "record_status": {
+    "title": "Record status",
+    "values": [
+      {
+        "id": "active",
+        "label": "Active",
+        "description": "The current, maintained record. The default when record_status is omitted."
+      },
+      {
+        "id": "disputed",
+        "label": "Disputed",
+        "description": "The record's facts or framing are contested by credible sources. Kept visible with the dispute noted; grade cautiously."
+      },
+      {
+        "id": "retracted",
+        "label": "Retracted",
+        "description": "Withdrawn after the underlying claim did not hold up. Retained (not deleted) for citation stability; explain in revisions[]."
+      },
+      {
+        "id": "superseded",
+        "label": "Superseded",
+        "description": "Replaced by another record (set superseded_by). Kept so existing citations still resolve."
+      }
+    ]
+  },
+  "sectors": {
+    "title": "Target sector",
+    "values": [
+      {
+        "id": "technology",
+        "label": "Technology",
+        "description": "Software, hardware, cloud, and IT service companies."
+      },
+      {
+        "id": "financial-services",
+        "label": "Financial services",
+        "description": "Banks, insurers, payment providers, and financial institutions."
+      },
+      {
+        "id": "government",
+        "label": "Government",
+        "description": "Public-sector bodies and agencies."
+      },
+      {
+        "id": "healthcare",
+        "label": "Healthcare",
+        "description": "Hospitals, providers, health systems, and medical data holders."
+      },
+      {
+        "id": "emergency-services",
+        "label": "Emergency services",
+        "description": "Police, fire, EMS, and emergency response organizations."
+      },
+      {
+        "id": "chemical-manufacturing",
+        "label": "Chemical manufacturing",
+        "description": "Chemical producers and industrial manufacturers."
+      },
+      {
+        "id": "defense",
+        "label": "Defense",
+        "description": "Defense contractors and military-adjacent organizations."
+      },
+      {
+        "id": "energy",
+        "label": "Energy / utilities",
+        "description": "Power, oil and gas, water, and utility providers."
+      },
+      {
+        "id": "telecommunications",
+        "label": "Telecommunications",
+        "description": "Telecom carriers and network operators."
+      },
+      {
+        "id": "education",
+        "label": "Education",
+        "description": "Schools, universities, and research/education institutions."
+      },
+      {
+        "id": "retail",
+        "label": "Retail / e-commerce",
+        "description": "Consumer retail and online commerce."
+      },
+      {
+        "id": "media",
+        "label": "Media",
+        "description": "News, publishing, and media organizations."
+      },
+      {
+        "id": "legal",
+        "label": "Legal",
+        "description": "Law firms and legal-services organizations."
+      },
+      {
+        "id": "religious-institutions",
+        "label": "Religious institutions",
+        "description": "Churches, faith-based organizations, and religious bodies."
+      },
+      {
+        "id": "critical-infrastructure",
+        "label": "Critical infrastructure",
+        "description": "Infrastructure not covered by a more specific sector above."
+      }
+    ]
+  },
+  "severity": {
+    "title": "Severity",
+    "values": [
+      {
+        "id": "critical",
+        "label": "Critical",
+        "description": "Broad real-world harm — e.g. many organizations compromised, large-scale exfiltration, or critical-infrastructure impact."
+      },
+      {
+        "id": "high",
+        "label": "High",
+        "description": "Significant confirmed harm to one or more organizations."
+      },
+      {
+        "id": "medium",
+        "label": "Medium",
+        "description": "Limited or contained harm, or high-signal capability demonstration."
+      },
+      {
+        "id": "low",
+        "label": "Low",
+        "description": "Minimal direct harm; primarily notable as a precedent or signal."
+      }
+    ]
+  },
+  "source_type": {
+    "title": "Source type",
+    "values": [
+      {
+        "id": "first-party-disclosure",
+        "label": "First-party disclosure",
+        "description": "Disclosure by the victim, the platform, or another directly involved party."
+      },
+      {
+        "id": "vendor-report",
+        "label": "Vendor report",
+        "description": "Incident or threat-intelligence report by a security or AI vendor."
+      },
+      {
+        "id": "government-advisory",
+        "label": "Government advisory",
+        "description": "Advisory, alert, or indictment from a government body."
+      },
+      {
+        "id": "research-paper",
+        "label": "Research paper",
+        "description": "Peer-reviewed paper or formal technical report."
+      },
+      {
+        "id": "news",
+        "label": "News",
+        "description": "Journalistic reporting."
+      },
+      {
+        "id": "blog",
+        "label": "Blog",
+        "description": "Informal write-up by a researcher or practitioner."
+      },
+      {
+        "id": "other",
+        "label": "Other",
+        "description": "Anything else — prefer a more specific type when possible."
+      }
+    ]
+  },
+  "status": {
+    "title": "Verification status",
+    "values": [
+      {
+        "id": "confirmed",
+        "label": "Confirmed",
+        "description": "Confirmed by a first-party disclosure or multiple independent credible sources."
+      },
+      {
+        "id": "reported",
+        "label": "Reported",
+        "description": "Publicly reported but not independently confirmed. Never present a reported incident as confirmed."
+      },
+      {
+        "id": "test-eval",
+        "label": "Test / evaluation",
+        "description": "Occurred in a controlled lab test, red-team exercise, or evaluation — not a real-world attack."
+      }
+    ]
+  }
+}
