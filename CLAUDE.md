@@ -61,7 +61,16 @@ product. Read the non-negotiables before changing anything.
   (`npm run size`).
 - Deployed to GitHub Pages by `.github/workflows/pages.yml` (Source = GitHub
   Actions). Served under `/rogue-agents-dashboard/`; override with
-  `VITE_BASE_PATH`.
+  `VITE_BASE_PATH`, and `VITE_SITE_URL` for share links and Open Graph tags.
+- Map encoding is fixed by `docs/design/map-ux-research.md`: hue = `ai_role`
+  (one validated ordinal ramp), ring = `status`, size = `severity`, soft disc =
+  illustrative centroid, pin = stated location. Category is never a map hue
+  (it fails all-pairs colour-blind separation). Records without `geo` go in
+  the field log.
+- Sharing is prerendered at build time by `scripts/prerender.mjs` (per-incident
+  HTML with Open Graph tags, PNG cards via resvg with the vendored OFL fonts in
+  `assets/fonts/`, `feed.atom`, `changes.json`). Fonts are build-time only;
+  the site still uses the system font stack.
 
 ## Repo map
 
@@ -78,7 +87,11 @@ src/data/taxonomy.ts       Label and definition lookups
 src/data/links.ts          Official URLs for ATLAS, ATT&CK, OWASP, NVD, AIID
 src/components/            badges (grade strip, cards), charts (d3 bars),
                            filters panel, layout (header/footer/theme),
+                           replay (map scrubber), drawer (incident panel),
+                           changes (what-changed strip),
                            upstream-check (the one optional fetch)
+src/util/share.ts          Share URL, caption, clipboard helper
+src/embed.ts, embed.html   Second Vite entry: map-only iframe embed
 src/views/                 overview, map, timeline, table, stats, incident,
                            about, not-found, shared rollups
 src/styles.css             Theme tokens and all styling
@@ -87,6 +100,9 @@ data/geo/                  Vendored world-atlas 110m topojson
 scripts/sync-data.mjs      Fetch upstream artifacts, write snapshot
 scripts/validate-data.mjs  Schema + consistency validation (hermetic)
 scripts/bundle-size.mjs    Gzip report and budget gate
+scripts/prerender.mjs      Post-build: share pages, OG cards, feed, changes.json
+assets/fonts/              OFL fonts for card rendering (build-time only)
+docs/design/               UX research and design decisions
 tests/                     vitest: adapter, schema, router, filters, csv, smoke
 .github/workflows/         ci.yml, pages.yml, sync-data.yml
 ```
@@ -97,7 +113,8 @@ tests/                     vitest: adapter, schema, router, filters, csv, smoke
 npm ci
 npm run dev            # dev server
 npm test               # typecheck + lint + validate:data + vitest (hermetic)
-npm run build          # validate:data + vite build -> dist/
+npm run build          # validate:data + vite build + prerender -> dist/
+npm run prerender      # share pages, cards, feed (needs an existing dist/)
 npm run preview        # serve dist/
 npm run size           # bundle report and budget
 npm run sync:data      # refresh data/snapshot from upstream (network)

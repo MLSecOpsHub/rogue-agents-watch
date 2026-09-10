@@ -29,7 +29,11 @@ try {
   process.exit(1);
 }
 
+const rel = (f) => path.relative(DIST, f);
+const isPrerender = (f) => /^(incident\/|og\/|feed\.atom$|changes\.json$)/.test(rel(f).split(path.sep).join('/'));
+const prerender = files.filter(isPrerender);
 const rows = files
+  .filter((f) => !isPrerender(f))
   .filter((f) => /\.(js|css|html)$/.test(f))
   .map((f) => {
     const buf = readFileSync(f);
@@ -47,6 +51,8 @@ console.log('bundle-size (gzip level 9):');
 for (const r of rows) console.log(`  ${kb(r.gzip)} gz  ${kb(r.raw)} raw  ${r.file}${isGeometry(r) ? '  (map geometry, lazy, excluded from budget)' : ''}`);
 console.log(`  core (JS+CSS+HTML, excl. geometry): ${kb(coreGzip)} gz  — budget ${MAX_KB} KB`);
 console.log(`  map geometry chunk:                  ${kb(geoGzip)} gz`);
+const preBytes = prerender.reduce((n, f) => n + statSync(f).size, 0);
+console.log(`  prerendered share pages/cards/feed:  ${prerender.length} files, ${kb(preBytes)} raw (not in the budget; fetched only when a link is unfurled)`);
 
 if (coreGzip > MAX_KB * 1024) {
   console.error(`bundle-size: FAIL — core bundle ${(coreGzip / 1024).toFixed(1)} KB gz exceeds ${MAX_KB} KB`);

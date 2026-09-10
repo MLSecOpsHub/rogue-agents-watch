@@ -35,8 +35,21 @@ export function correctionIssueUrl(id: string): string {
   return `${UPSTREAM_REPO_URL}/issues/new?${params.toString()}`;
 }
 
+/**
+ * Canonical public URL of the deployed site, with a trailing slash. Used for
+ * share links and Open Graph tags; override at build time with VITE_SITE_URL
+ * (e.g. for a custom domain). Keep in step with `base` in vite.config.ts.
+ */
+export const SITE_URL: string = (import.meta.env.VITE_SITE_URL as string | undefined) ?? 'https://mlsecopshub.github.io/rogue-agents-dashboard/';
+
+/** Share link: the prerendered per-incident page that unfurls with a card and redirects to the hash route. */
+export function shareUrl(id: string): string {
+  return `${SITE_URL}incident/${encodeURIComponent(id)}/`;
+}
+
 export const SITE = {
   name: 'Rogue Agent Watch',
+  url: SITE_URL,
   tagline: 'Real-world cyberattacks executed or orchestrated by AI agents, and rogue-agent incidents',
   publisher: 'MLSecOpsHub',
   publisherUrl: 'https://mlsecopshub.com',

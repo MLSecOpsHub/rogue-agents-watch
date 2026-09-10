@@ -119,31 +119,79 @@ describe('map', () => {
     for (const m of markers) expect(m.point.illustrative).toBe(m.inc.geo?.[m.kind]?.illustrative);
   });
 
-  it('renders exactly the geo records, styles illustrative points distinctly, and lists the rest', async () => {
+  it('renders exactly the geo records, styles illustrative points distinctly, and logs the rest', async () => {
     const c = ctx('#/map');
     await mapView(c);
     const markers = collectMarkers(ds.incidents, false);
     const drawn = c.root.querySelectorAll('g.marker');
-    expect(drawn).toHaveLength(markers.length);
+    expect(drawn).toHaveLength(collectMarkers(ds.incidents, true).length);
     expect(c.root.querySelectorAll('g.marker.illustrative')).toHaveLength(markers.filter((m) => m.point.illustrative).length);
     expect(c.root.querySelectorAll('g.marker.stated')).toHaveLength(markers.filter((m) => !m.point.illustrative).length);
     for (const g of drawn) {
       const title = g.querySelector('title')?.textContent ?? '';
+      const inc = ds.byId.get((g as SVGGElement).dataset.id ?? '')!;
+      // hue = ai_role, ring = status, size = severity: encoded as classes the CSS tokens key on
+      expect(g.classList.contains(`role-${inc.ai_role}`)).toBe(true);
+      expect(g.classList.contains(`status-${inc.status}`)).toBe(true);
+      expect(g.querySelector('.marker-status')).not.toBeNull();
       if (g.classList.contains('illustrative')) {
         expect(title).toContain('illustrative, country-level');
-        expect(g.querySelector('.marker-ring')).not.toBeNull();
+        expect(g.querySelector('.marker-halo')).not.toBeNull();
+        expect(g.querySelector('.marker-pin')).toBeNull();
       } else {
         expect(title).toContain('stated location');
         expect(g.querySelector('.marker-pin')).not.toBeNull();
       }
+      expect(g.querySelector('.marker-label')?.textContent).toMatch(/^(origin|target)$/);
     }
     // Country outlines came from the vendored topojson.
     expect(c.root.querySelectorAll('path.map-country').length).toBeGreaterThan(100);
-    // Records without geo are named as not on the map, never plotted.
+    // Records without geo are named in the field log, never plotted.
     const withoutGeo = ds.incidents.filter((i) => i.isActiveRecord && !i.hasGeo);
     expect(c.root.textContent).toContain(`${withoutGeo.length} record${withoutGeo.length === 1 ? ' has' : 's have'} no geo block`);
-    expect(c.root.querySelectorAll('.plain-list li')).toHaveLength(withoutGeo.length);
-    expect(c.root.querySelector('.legend')?.textContent).toContain('illustrative');
+    expect(c.root.querySelectorAll('.log-row')).toHaveLength(ds.incidents.length);
+    expect(c.root.querySelectorAll('.log-row .log-where.off')).toHaveLength(ds.incidents.filter((i) => !i.hasGeo).length);
+    for (const row of c.root.querySelectorAll('.log-row')) expect(row.querySelector('.log-dot')).not.toBeNull();
+    expect(c.root.querySelector('.map-legend')?.textContent).toContain('country-level');
+    // Replay opens at the end of the range with everything shown and the latest named.
+    expect(c.root.querySelector('.hud-count')?.textContent).toBe(String(ds.incidents.filter((i) => i.isActiveRecord).length));
+    const latest = [...ds.incidents].filter((i) => i.isActiveRecord).sort((a, b) => (a.date_disclosed < b.date_disclosed ? 1 : -1))[0]!;
+    expect(c.root.querySelector('.hud-caption')?.textContent).toContain(latest.name);
+    expect(c.root.querySelector('.replay-range')).not.toBeNull();
+    expect(c.root.querySelector('.drawer')?.hasAttribute('hidden')).toBe(true);
+    // What changed strip comes from the snapshot.
+    expect(c.root.querySelector('.changes')?.textContent).toContain('Latest additions');
+  });
+
+  it('honours replay position, filters, and the open drawer from the URL', async () => {
+    const c = ctx('#/map?t=2025-06&ai_role=load-bearing&open=echoleak-m365-copilot');
+    await mapView(c);
+    const cutoff = Date.UTC(2025, 5, 30);
+    const expected = ds.incidents.filter((i) => i.isActiveRecord && i.ai_role === 'load-bearing' && Date.parse(`${i.date_disclosed}T00:00:00Z`) <= cutoff);
+    expect(c.root.querySelector('.hud-count')?.textContent).toBe(String(expected.length));
+    expect(c.root.querySelector('.replay-when')?.textContent).toBe('2025-06');
+    expect(c.root.querySelector('button.chip[data-value="load-bearing"]')?.getAttribute('aria-pressed')).toBe('true');
+    expect(c.root.querySelectorAll('.log-row.filtered').length).toBe(ds.incidents.filter((i) => i.ai_role !== 'load-bearing').length);
+    const drawer = c.root.querySelector('.drawer')!;
+    expect(drawer.hasAttribute('hidden')).toBe(false);
+    expect(drawer.querySelector('h2')?.textContent).toBe(ds.byId.get('echoleak-m365-copilot')!.name);
+    expect(drawer.querySelectorAll('.badge-status, .badge-confidence, .badge-ai_role').length).toBeGreaterThanOrEqual(3);
+    expect(drawer.querySelector(`a[href="${incidentHref('echoleak-m365-copilot')}"]`)).not.toBeNull();
+    expect(drawer.textContent).toContain('Copy share link');
+  });
+
+  it('opens the drawer from a field-log row and closes it with Escape', async () => {
+    const c = ctx('#/map');
+    await mapView(c);
+    const row = c.root.querySelector<HTMLButtonElement>('.log-row[data-id="gtg-1002-ai-espionage"]')!;
+    row.click();
+    const drawer = c.root.querySelector('.drawer')!;
+    expect(drawer.hasAttribute('hidden')).toBe(false);
+    expect(drawer.querySelector('h2')?.textContent).toBe(ds.byId.get('gtg-1002-ai-espionage')!.name);
+    expect(c.root.querySelector('g.marker.active')).not.toBeNull();
+    c.root.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(drawer.hasAttribute('hidden')).toBe(true);
+    expect(c.root.querySelector('g.marker.active')).toBeNull();
   });
 });
 

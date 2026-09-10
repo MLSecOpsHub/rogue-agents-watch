@@ -1,11 +1,12 @@
 import { badge, gradeStrip, incidentCard, recordStatusBanner } from '../components/badges';
-import { correctionIssueUrl, UPSTREAM_REPO_URL, upstreamUrls } from '../config';
+import { correctionIssueUrl, shareUrl, UPSTREAM_REPO_URL, upstreamUrls } from '../config';
 import { aiidUrl, atlasUrl, attackUrl, countryFlagLabel, cveUrl, owaspAsiUrl, owaspLlmUrl } from '../data/links';
 import { describe, label, values } from '../data/taxonomy';
 import type { Dataset, Incident } from '../data/types';
 import { href, incidentHref } from '../router';
 import { externalLink, h } from '../util/dom';
 import { fmtDate, fmtInt, fmtPct } from '../util/format';
+import { copyToClipboard, shareCaption } from '../util/share';
 import { relatedIncidents } from './shared';
 import type { ViewContext } from './types';
 
@@ -195,6 +196,25 @@ export function incidentView({ ds, route, root }: ViewContext): void {
         ),
         ' ',
         h('a', { class: 'btn btn-small btn-quiet', href: incidentHref(inc.id) }, 'Permalink'),
+      ),
+    ),
+  );
+
+  sideCol.appendChild(
+    h(
+      'section',
+      { class: 'panel' },
+      h('h2', null, 'Share'),
+      h('p', { class: 'muted small' }, 'The share link is a prerendered page that unfurls with a card showing the grades, then opens this record. No tracking parameters.'),
+      h('pre', { class: 'cite' }, shareUrl(inc.id)),
+      h(
+        'p',
+        null,
+        h('button', { type: 'button', class: 'btn btn-small', onClick: (e: Event) => void copyToClipboard(shareUrl(inc.id), e.currentTarget as HTMLButtonElement, 'Link copied') }, 'Copy share link'),
+        ' ',
+        h('button', { type: 'button', class: 'btn btn-small btn-quiet', onClick: (e: Event) => void copyToClipboard(shareCaption(tax, inc), e.currentTarget as HTMLButtonElement, 'Caption copied') }, 'Copy caption'),
+        ' ',
+        h('a', { class: 'btn btn-small btn-quiet', href: href('map', { open: inc.id }) }, 'Show on map'),
       ),
     ),
   );

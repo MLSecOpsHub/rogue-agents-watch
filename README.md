@@ -19,7 +19,7 @@ live upstream.
 | Route | View |
 |---|---|
 | `#/` | Overview: headline count, verification status next to AI role, category, model family, autonomy level, year, most recent records |
-| `#/map` | World map of records that carry stated coordinates; illustrative (country-centroid) points are drawn distinctly; records without geo are listed, not plotted |
+| `#/map` | World map of records that carry stated coordinates, replayed by disclosure date, with a field log of every record beside it; colour is AI role, ring is evidence, size is severity, a soft disc marks a country-level centroid; click opens the record in a drawer; "what changed" strip below |
 | `#/timeline` | Records by disclosure date, lane per category, outline by status, filterable |
 | `#/table` | Sortable, filterable by every enum field, full-text search, CSV/JSON download of the filtered view |
 | `#/incident/<id>` | Every field, grade badges with upstream definitions, lifecycle strip, mappings linked to MITRE ATLAS / ATT&CK / OWASP / NVD / AIID, every source with archive link, related records, record-status banner, citation box, "report a correction" |
@@ -29,6 +29,22 @@ live upstream.
 Every card, row, and page shows `status`, `confidence`, and `ai_role`. Nulls
 render as "not stated", never as zero. Retracted and superseded records are
 flagged and excluded from headline counts by default, with a toggle.
+
+## Sharing, embedding, subscribing
+
+Built at build time from the snapshot, no server involved:
+
+- `incident/<id>/` — a prerendered page per record with Open Graph and Twitter
+  tags and a 1200×630 card (`og/<id>.png`), so links unfurl with the grades,
+  then redirect to `#/incident/<id>`. Every record page and the map drawer have
+  "Copy share link" and "Copy caption".
+- `embed.html#/map` — the map and field log alone, for iframes. Filters and
+  replay position travel in the hash: `embed.html#/map?ai_role=load-bearing&t=2025-08`.
+- `feed.atom` — Atom feed of records, newest additions first.
+- `changes.json` — latest additions, revisions, and record-status changes.
+
+The map's design rationale and research are in
+[docs/design/map-ux-research.md](docs/design/map-ux-research.md).
 
 ## How data flows
 
@@ -90,7 +106,8 @@ One-time setup in the GitHub repository:
    weekly `sync-data` workflow).
 
 The site is served under `/rogue-agents-dashboard/`. For a custom domain set
-`VITE_BASE_PATH=/` in the build step.
+`VITE_BASE_PATH=/` and `VITE_SITE_URL=https://your.domain/` in the build step;
+the latter is what share links and Open Graph tags use.
 
 ## Licences
 
@@ -103,6 +120,8 @@ The site is served under `/rogue-agents-dashboard/`. For a custom domain set
   (MLSecOpsHub)" with a link and be shared alike.
 - **Map geometry** under `data/geo/`: Natural Earth (public domain) via
   [world-atlas](https://github.com/topojson/world-atlas) (ISC).
+- **Fonts** under `assets/fonts/`: Barlow, Barlow Condensed, IBM Plex Mono,
+  SIL Open Font License 1.1, used only at build time to render share cards.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the non-negotiables and
 [SECURITY.md](SECURITY.md) for the security and content policy.

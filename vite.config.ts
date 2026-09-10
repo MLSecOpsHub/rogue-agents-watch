@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 
 // Deterministic build: Vite's asset hashes are content-derived, and nothing
@@ -12,6 +13,12 @@ export default defineConfig({
     sourcemap: false,
     reportCompressedSize: true,
     rollupOptions: {
+      // Two entries: the site and the iframe-able map embed. Both share the
+      // same modules, so the geometry chunk and data are built once.
+      input: {
+        main: fileURLToPath(new URL('./index.html', import.meta.url)),
+        embed: fileURLToPath(new URL('./embed.html', import.meta.url)),
+      },
       output: {
         manualChunks(id) {
           // Map geometry is large and only needed on #/map; keep it separate
