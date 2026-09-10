@@ -6,3 +6,6 @@ dist/
 coverage/
 # Local working notes
 notes/
+
+# Misc
+local/
