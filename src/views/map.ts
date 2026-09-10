@@ -1,44 +1,22 @@
-// World map: d3-geo + topojson-client with vendored Natural Earth 110m geometry.
-// Markers come ONLY from each record's `geo` block. Encoding (see
-// docs/design/map-ux-research.md): hue = ai_role (one ordinal ramp), ring =
-// status, size = severity, soft disc = illustrative centroid, pin = stated
-// location. Records without geo appear in the field log, never as a pin.
-import { geoNaturalEarth1, geoPath, geoGraticule10 } from 'd3-geo';
-import { feature } from 'topojson-client';
-import type { Topology, GeometryCollection } from 'topojson-specification';
-import type { FeatureCollection, Geometry } from 'geojson';
+// World map: the shared canvas (src/components/map-canvas.ts) plus filter
+// chips, a replay scrubber, the field log, and an in-place drawer. Encoding
+// per docs/design/map-ux-research.md. Records without geo appear in the field
+// log, never as a pin.
 import { recordStatusTag } from '../components/badges';
 import { whatChanged } from '../components/changes';
 import { incidentDrawer } from '../components/drawer';
+import { attachTooltip, collectMarkers, createMapCanvas } from '../components/map-canvas';
 import { createReplay, dateMs, formatT, parseT, replayBounds } from '../components/replay';
 import { describe, label, values } from '../data/taxonomy';
-import type { Dataset, GeoPoint, Incident } from '../data/types';
+import type { Incident } from '../data/types';
 import { applyFilters, fieldValues, fromQuery, matches, toQuery, toggleValue, type FilterField, type FilterState } from '../filters';
 import { replaceQuery } from '../router';
 import { h, svgEl } from '../util/dom';
 import type { ViewContext } from './types';
 
-interface Marker {
-  inc: Incident;
-  kind: 'target' | 'origin';
-  point: GeoPoint;
-}
+export { collectMarkers } from '../components/map-canvas';
 
-export function collectMarkers(incidents: Incident[], includeInactive: boolean): Marker[] {
-  const out: Marker[] = [];
-  for (const inc of incidents) {
-    if (!inc.geo) continue;
-    if (!includeInactive && !inc.isActiveRecord) continue;
-    if (inc.geo.target) out.push({ inc, kind: 'target', point: inc.geo.target });
-    if (inc.geo.origin) out.push({ inc, kind: 'origin', point: inc.geo.origin });
-  }
-  return out;
-}
-
-const SEVERITY_R: Record<string, number> = { critical: 7.5, high: 6, medium: 4.8, low: 4 };
 const MAP_FILTERS: FilterField[] = ['ai_role', 'status'];
-const W = 960;
-const H = 500;
 
 export async function mapView({ ds, route, root }: ViewContext): Promise<void> {
   const tax = ds.taxonomy;
@@ -140,113 +118,21 @@ export async function mapView({ ds, route, root }: ViewContext): Promise<void> {
   root.appendChild(h('div', { class: 'map-layout' }, stage, logBox));
 
   // ---- map ------------------------------------------------------------------
-  const projection = geoNaturalEarth1().fitExtent([[6, 6], [W - 6, H - 6]], { type: 'Sphere' });
-  const path = geoPath(projection);
-  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, class: 'map', role: 'img', 'aria-label': 'World map of incidents with stated coordinates, replayed by disclosure date' });
-  const defs = svgEl('defs');
-  for (const role of ['load-bearing', 'significant', 'incidental', 'disputed', 'unknown']) {
-    const grad = svgEl('radialGradient', { id: `halo-${role}`, class: `halo-grad role-${role}` });
-    grad.appendChild(svgEl('stop', { offset: '0%', 'stop-opacity': 0.5 }));
-    grad.appendChild(svgEl('stop', { offset: '55%', 'stop-opacity': 0.16 }));
-    grad.appendChild(svgEl('stop', { offset: '100%', 'stop-opacity': 0 }));
-    defs.appendChild(grad);
-  }
-  svg.appendChild(defs);
-  const gLand = svgEl('g', { class: 'map-land' });
-  const gArcs = svgEl('g', { class: 'map-arcs' });
-  const gMarkers = svgEl('g', { class: 'map-markers' });
-  svg.appendChild(svgEl('path', { d: path({ type: 'Sphere' }) ?? '', class: 'map-sphere' }));
-  svg.appendChild(svgEl('path', { d: path(geoGraticule10()) ?? '', class: 'map-graticule' }));
-  svg.appendChild(gLand);
-  svg.appendChild(gArcs);
-  svg.appendChild(gMarkers);
-  stage.appendChild(svg);
-
+  const canvas = createMapCanvas(ds, {
+    ariaLabel: 'World map of incidents with stated coordinates, replayed by disclosure date',
+    onSelect: (inc) => openDrawer(inc),
+    onHover: attachTooltip(ds, stage),
+  });
+  stage.insertBefore(canvas.svg, stage.firstChild);
   const status = h('p', { class: 'map-status', 'aria-live': 'polite' }, 'Loading map geometry…');
   stage.appendChild(status);
-  try {
-    const topo = (await import('../../data/geo/countries-110m.json')).default as unknown as Topology<{ countries: GeometryCollection }>;
-    const countries = feature(topo, topo.objects.countries) as FeatureCollection<Geometry>;
-    for (const f of countries.features) gLand.appendChild(svgEl('path', { d: path(f) ?? '', class: 'map-country' }));
-    status.remove();
-  } catch {
-    status.textContent = 'Map geometry could not be loaded; markers and the field log still work.';
-  }
+  if (await canvas.loadGeometry()) status.remove();
+  else status.textContent = 'Map geometry could not be loaded; markers and the field log still work.';
 
   // HUD: hero count + caption
   const count = h('div', { class: 'hud-count num' }, '0');
   const caption = h('div', { class: 'hud-caption' });
   stage.appendChild(h('div', { class: 'map-hud', 'aria-live': 'polite' }, count, caption));
-
-  // tooltip
-  const tooltip = h('div', { class: 'tooltip', role: 'tooltip', hidden: true });
-  stage.appendChild(tooltip);
-
-  // arcs (origin → target when both stated)
-  const arcs: Array<{ inc: Incident; el: SVGElement }> = [];
-  for (const inc of ds.incidents) {
-    if (inc.geo?.origin && inc.geo.target) {
-      const line = { type: 'LineString' as const, coordinates: [[inc.geo.origin.lng, inc.geo.origin.lat], [inc.geo.target.lng, inc.geo.target.lat]] };
-      const el = svgEl('path', { d: path(line) ?? '', class: `map-arc${inc.geo.origin.illustrative || inc.geo.target.illustrative ? ' illustrative' : ''}` });
-      const title = svgEl('title');
-      title.textContent = `${inc.name}: origin to target${inc.geo.origin.illustrative || inc.geo.target.illustrative ? ', country-level' : ''}`;
-      el.appendChild(title);
-      gArcs.appendChild(el);
-      arcs.push({ inc, el });
-    }
-  }
-
-  // markers
-  const marks: Array<{ m: Marker; g: SVGGElement; xy: [number, number] }> = [];
-  for (const m of allMarkers) {
-    const xy = projection([m.point.lng, m.point.lat]);
-    if (!xy) continue;
-    const r = SEVERITY_R[m.inc.severity] ?? 5;
-    const g = svgEl('g', {
-      class: `marker ${m.kind} ${m.point.illustrative ? 'illustrative' : 'stated'} role-${m.inc.ai_role} status-${m.inc.status}${m.inc.isActiveRecord ? '' : ' inactive'}`,
-      transform: `translate(${xy[0].toFixed(2)},${xy[1].toFixed(2)})`,
-      tabindex: 0,
-      role: 'button',
-      'aria-label': `${m.inc.name}, ${m.kind} ${m.point.label}${m.point.illustrative ? ', country-level' : ''}`,
-      'data-id': m.inc.id,
-      'data-kind': m.kind,
-      'data-illustrative': String(m.point.illustrative),
-    });
-    const title = svgEl('title');
-    title.textContent = tooltipText(ds, m);
-    g.appendChild(title);
-    if (m.point.illustrative) g.appendChild(svgEl('circle', { r: 30, class: 'marker-halo', fill: `url(#halo-${m.inc.ai_role})` }));
-    g.appendChild(svgEl('circle', { r: r + 6, class: 'marker-pulse' }));
-    g.appendChild(svgEl('circle', { r, class: m.point.illustrative ? 'marker-core' : 'marker-core marker-pin' }));
-    g.appendChild(svgEl('circle', { r: r + 3.2, class: 'marker-status' }));
-    if (!m.point.illustrative) g.appendChild(svgEl('circle', { r: 1.6, class: 'marker-dot' }));
-    const lab = svgEl('text', { y: r + 14, class: 'marker-label', 'text-anchor': 'middle' });
-    lab.textContent = m.kind;
-    g.appendChild(lab);
-    const open = () => openDrawer(m.inc);
-    g.addEventListener('click', open);
-    g.addEventListener('keydown', (e) => {
-      if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
-        e.preventDefault();
-        open();
-      }
-    });
-    const show = () => {
-      tooltip.textContent = tooltipText(ds, m);
-      tooltip.hidden = false;
-      tooltip.style.left = `${(xy[0] / W) * 100}%`;
-      tooltip.style.top = `${(xy[1] / H) * 100}%`;
-    };
-    const hide = () => {
-      tooltip.hidden = true;
-    };
-    g.addEventListener('mouseenter', show);
-    g.addEventListener('focus', show);
-    g.addEventListener('mouseleave', hide);
-    g.addEventListener('blur', hide);
-    gMarkers.appendChild(g);
-    marks.push({ m, g, xy: [xy[0], xy[1]] });
-  }
 
   // ---- replay ---------------------------------------------------------------
   const replay = createReplay(
@@ -284,7 +170,7 @@ export async function mapView({ ds, route, root }: ViewContext): Promise<void> {
   };
   root.addEventListener('keydown', onKey);
   function paintActive(): void {
-    for (const { m, g } of marks) g.classList.toggle('active', m.inc.id === openId);
+    canvas.setActive(openId);
     for (const r of logRows) r.el.classList.toggle('active', r.inc.id === openId);
   }
 
@@ -330,27 +216,12 @@ export async function mapView({ ds, route, root }: ViewContext): Promise<void> {
 
   // ---- render ---------------------------------------------------------------
   let lastShown: Set<string> | null = null;
-  function visible(inc: Incident): boolean {
-    return matches(inc, state) && dateMs(inc.date_disclosed) <= t;
-  }
   function render(): void {
     const shown = new Set(applyFilters(ds.incidents, state).filter((i) => dateMs(i.date_disclosed) <= t).map((i) => i.id));
     let latest: Incident | null = null;
     for (const inc of ds.incidents) if (shown.has(inc.id) && (!latest || inc.date_disclosed > latest.date_disclosed)) latest = inc;
-    const firstPaint = lastShown === null;
-    for (const { m, g } of marks) {
-      const inc = m.inc;
-      g.classList.toggle('future', dateMs(inc.date_disclosed) > t);
-      g.classList.toggle('filtered', !matches(inc, state));
-      const isNew = shown.has(inc.id) && (firstPaint ? latest?.id === inc.id : !lastShown!.has(inc.id));
-      if (isNew && !reduced) {
-        g.classList.remove('just');
-        void g.getBoundingClientRect();
-        g.classList.add('just');
-        window.setTimeout(() => g.classList.remove('just'), 1700);
-      }
-    }
-    for (const a of arcs) a.el.classList.toggle('hidden', !shown.has(a.inc.id));
+    const pulse = lastShown === null ? new Set(latest ? [latest.id] : []) : new Set([...shown].filter((id) => !lastShown!.has(id)));
+    canvas.paint(shown, { future: (inc) => dateMs(inc.date_disclosed) > t, filtered: (inc) => !matches(inc, state), pulse, reduced });
     for (const r of logRows) {
       r.el.classList.toggle('future', dateMs(r.inc.date_disclosed) > t);
       r.el.classList.toggle('filtered', !matches(r.inc, state));
@@ -364,16 +235,9 @@ export async function mapView({ ds, route, root }: ViewContext): Promise<void> {
     lastShown = shown;
   }
   render();
-  void visible;
 
   if (openId && ds.byId.has(openId)) openDrawer(ds.byId.get(openId)!);
   else openId = null;
-}
-
-function tooltipText(ds: Dataset, m: Marker): string {
-  const kind = m.kind === 'target' ? 'Target' : 'Origin';
-  const how = m.point.illustrative ? 'illustrative, country-level centroid' : 'stated location';
-  return `${m.inc.name}\n${kind}: ${m.point.label} (${how})\n${label(ds.taxonomy, 'status', m.inc.status)} · AI ${label(ds.taxonomy, 'ai_role', m.inc.ai_role).toLowerCase()} · ${label(ds.taxonomy, 'severity', m.inc.severity).toLowerCase()} · ${m.inc.sources.length} source${m.inc.sources.length === 1 ? '' : 's'}`;
 }
 
 function legend(illustrative: number, total: number): HTMLElement {

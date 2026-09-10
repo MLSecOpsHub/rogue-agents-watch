@@ -196,18 +196,46 @@ describe('map', () => {
 });
 
 describe('overview, stats, timeline, table, about', () => {
-  it('overview leads with status and AI role side by side and uses summary.json counts', () => {
+  it('overview leads with one hero figure, the honesty split, and a live map teaser', () => {
     const c = ctx('#/');
     overviewView(c);
-    const pair = c.root.querySelector('.chart-pair-grid');
-    expect(pair?.querySelectorAll('svg.chart-bar')).toHaveLength(2);
-    expect(pair?.textContent).toContain('Verification status');
-    expect(pair?.textContent).toContain('AI role');
-    expect(c.root.querySelector('.stat-value')?.textContent).toBe(String(summary.total));
+    // Exactly one hero figure on the view, bound to the teaser's replay and equal to the headline count at rest.
+    const figures = c.root.querySelectorAll('.hero-number');
+    expect(figures).toHaveLength(1);
+    expect(figures[0]?.textContent).toBe(String(summary.total));
+    expect(c.root.querySelector('.hud-count')).toBeNull();
+    const latest = [...ds.incidents].filter((i) => i.isActiveRecord).sort((a, b) => (a.date_disclosed < b.date_disclosed ? 1 : -1))[0]!;
+    expect(c.root.querySelector('.hero-caption')?.textContent).toContain(latest.name);
+    // Honesty split stays in the hero, status next to AI role.
+    const honesty = c.root.querySelector('.honesty')!;
+    expect(honesty.querySelectorAll('svg.chart-bar')).toHaveLength(2);
+    expect(honesty.textContent).toContain('Verification status');
+    expect(honesty.textContent).toContain('AI role');
+    // Live map teaser with every marker, clicking through to the map view.
+    const teaser = c.root.querySelector('.map-teaser')!;
+    expect(teaser.querySelectorAll('g.marker')).toHaveLength(collectMarkers(ds.incidents, false).length);
+    expect(teaser.querySelector('.replay-range')).not.toBeNull();
+    expect(teaser.querySelector<HTMLAnchorElement>('a.teaser-open')?.getAttribute('href')).toBe('#/map');
+    // Share affordance and the small numbers.
+    expect(c.root.querySelector('.hero-share')).not.toBeNull();
+    expect(c.root.querySelector('.hero-smalls')?.textContent).toContain(`${summary.by_status['confirmed']} confirmed`);
+    expect(c.root.querySelectorAll('.stat')).toHaveLength(0);
+    // Latest and what-changed sit above the breakdowns.
+    const text = c.root.textContent ?? '';
+    expect(text.indexOf('Latest')).toBeLessThan(text.indexOf('Breakdowns'));
+    expect(c.root.querySelector('.recent .changes')).not.toBeNull();
     for (const card of c.root.querySelectorAll('.card')) {
       const g = gradesOn(card);
       expect(g.status && g.confidence && g.ai_role, 'card grades').toBeTruthy();
     }
+  });
+
+  it('overview teaser opens the full map with the record when a marker is activated', () => {
+    const c = ctx('#/');
+    overviewView(c);
+    const marker = c.root.querySelector<SVGGElement>('.map-teaser g.marker')!;
+    marker.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(window.location.hash).toBe(`#/map?open=${marker.dataset.id}`);
   });
 
   it('stats renders one chart per breakdown from summary.json', () => {

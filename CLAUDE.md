@@ -62,6 +62,9 @@ product. Read the non-negotiables before changing anything.
 - Deployed to GitHub Pages by `.github/workflows/pages.yml` (Source = GitHub
   Actions). Served under `/rogue-agents-dashboard/`; override with
   `VITE_BASE_PATH`, and `VITE_SITE_URL` for share links and Open Graph tags.
+- The landing page keeps exactly one hero figure, bound to the map teaser's
+  replay, with the status / AI-role split in the first viewport; rationale in
+  `docs/design/landing-page-ux.md`.
 - Map encoding is fixed by `docs/design/map-ux-research.md`: hue = `ai_role`
   (one validated ordinal ramp), ring = `status`, size = `severity`, soft disc =
   illustrative centroid, pin = stated location. Category is never a map hue
@@ -87,6 +90,8 @@ src/data/taxonomy.ts       Label and definition lookups
 src/data/links.ts          Official URLs for ATLAS, ATT&CK, OWASP, NVD, AIID
 src/components/            badges (grade strip, cards), charts (d3 bars),
                            filters panel, layout (header/footer/theme),
+                           map-canvas (shared map drawing + encoding),
+                           map-teaser (landing hero map bound to the figure),
                            replay (map scrubber), drawer (incident panel),
                            changes (what-changed strip),
                            upstream-check (the one optional fetch)

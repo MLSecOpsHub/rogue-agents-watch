@@ -18,7 +18,7 @@ live upstream.
 
 | Route | View |
 |---|---|
-| `#/` | Overview: headline count, verification status next to AI role, category, model family, autonomy level, year, most recent records |
+| `#/` | Overview: one hero figure bound to a live map teaser with replay, the verification-status / AI-role honesty split, latest disclosures and what changed, then category, model family, autonomy level, and year |
 | `#/map` | World map of records that carry stated coordinates, replayed by disclosure date, with a field log of every record beside it; colour is AI role, ring is evidence, size is severity, a soft disc marks a country-level centroid; click opens the record in a drawer; "what changed" strip below |
 | `#/timeline` | Records by disclosure date, lane per category, outline by status, filterable |
 | `#/table` | Sortable, filterable by every enum field, full-text search, CSV/JSON download of the filtered view |
@@ -44,7 +44,9 @@ Built at build time from the snapshot, no server involved:
 - `changes.json` — latest additions, revisions, and record-status changes.
 
 The map's design rationale and research are in
-[docs/design/map-ux-research.md](docs/design/map-ux-research.md).
+[docs/design/map-ux-research.md](docs/design/map-ux-research.md); the
+landing-page analysis is in
+[docs/design/landing-page-ux.md](docs/design/landing-page-ux.md).
 
 ## How data flows
 
