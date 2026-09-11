@@ -1058,12 +1058,37 @@ svg a:focus .bar-rect {
   text-align: right;
 }
 .replay-ticks {
-  display: flex;
-  justify-content: space-between;
+  position: relative;
+  height: 1em;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.68rem;
   color: var(--fg-muted);
   padding-inline: 4.4rem 7.6ch;
+}
+.replay-ticks-inner {
+  position: relative;
+  height: 100%;
+}
+.replay-tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.replay-tick::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -0.35rem;
+  width: 1px;
+  height: 0.3rem;
+  background: var(--fg-muted);
+}
+.replay-tick.start {
+  transform: none;
+}
+.replay-tick.start::before {
+  left: 0;
 }
 .tooltip {
   position: absolute;

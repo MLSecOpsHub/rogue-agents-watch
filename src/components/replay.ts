@@ -5,29 +5,51 @@ import type { Incident } from '../data/types';
 import { h } from '../util/dom';
 
 export interface ReplayBounds {
-  /** Jan 1 of the earliest disclosure year, ms UTC. */
+  /** One quarter (three calendar months) before the earliest disclosure in the set, ms UTC. */
   start: number;
   /** Dec 31 of the latest disclosure year, ms UTC. */
   end: number;
+  /** The earliest date_disclosed in the set, ms UTC. */
+  earliest: number;
   /** The latest date_disclosed in the set, ms UTC. */
   latest: number;
 }
+
+export const LEAD_MONTHS = 3;
 
 export function dateMs(iso: string): number {
   return Date.parse(`${iso.slice(0, 10)}T00:00:00Z`);
 }
 
+/** The same calendar day `n` months earlier (UTC), clamped to the target month's last day. */
+export function minusMonths(ms: number, n: number): number {
+  const d = new Date(ms);
+  const y = d.getUTCFullYear();
+  const m = d.getUTCMonth() - n;
+  const lastDay = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+  return Date.UTC(y, m, Math.min(d.getUTCDate(), lastDay));
+}
+
+/**
+ * Replay bounds for the records the map shows. The track opens one quarter
+ * before the first disclosure so the first incident does not sit on the left
+ * edge, and closes at the end of the latest disclosure year.
+ */
 export function replayBounds(incidents: Incident[]): ReplayBounds {
-  if (incidents.length === 0) return { start: Date.UTC(2024, 0, 1), end: Date.UTC(2024, 11, 31), latest: Date.UTC(2024, 0, 1) };
-  let minY = Infinity;
+  if (incidents.length === 0) {
+    const earliest = Date.UTC(2024, 0, 1);
+    return { start: minusMonths(earliest, LEAD_MONTHS), end: Date.UTC(2024, 11, 31), earliest, latest: earliest };
+  }
   let maxY = -Infinity;
+  let earliest = Infinity;
   let latest = -Infinity;
   for (const i of incidents) {
-    minY = Math.min(minY, i.year);
     maxY = Math.max(maxY, i.year);
-    latest = Math.max(latest, dateMs(i.date_disclosed));
+    const t = dateMs(i.date_disclosed);
+    earliest = Math.min(earliest, t);
+    latest = Math.max(latest, t);
   }
-  return { start: Date.UTC(minY, 0, 1), end: Date.UTC(maxY, 11, 31), latest };
+  return { start: minusMonths(earliest, LEAD_MONTHS), end: Date.UTC(maxY, 11, 31), earliest, latest };
 }
 
 /** YYYY-MM for URLs and labels. */
@@ -70,11 +92,21 @@ export function createReplay(bounds: ReplayBounds, initial: number, onChange: (t
   const play = h('button', { type: 'button', class: 'btn btn-small replay-play', 'aria-label': 'Play replay' }, 'Play');
   const range = h('input', { type: 'range', class: 'replay-range', min: 0, max: 1000, value: 0, 'aria-label': 'Replay position by disclosure date', 'aria-valuetext': formatT(t) }) as HTMLInputElement;
   const when = h('span', { class: 'replay-when mono', 'aria-live': 'polite' }, formatT(t));
+  // Year ticks at their true positions on the track; the track no longer starts on a January 1.
   const ticks = h('div', { class: 'replay-ticks', 'aria-hidden': 'true' });
+  const inner = h('div', { class: 'replay-ticks-inner' });
+  ticks.appendChild(inner);
+  const pctOf = (t: number) => ((t - bounds.start) / span) * 100;
+  inner.appendChild(h('span', { class: 'replay-tick start', style: 'left: 0%' }, formatT(bounds.start)));
   const y0 = new Date(bounds.start).getUTCFullYear();
   const y1 = new Date(bounds.end).getUTCFullYear();
-  for (let y = y0; y <= y1; y++) ticks.appendChild(h('span', null, String(y)));
-  ticks.appendChild(h('span', null, 'end'));
+  for (let y = y0; y <= y1; y++) {
+    const jan1 = Date.UTC(y, 0, 1);
+    if (jan1 < bounds.start || jan1 > bounds.end) continue;
+    const pct = pctOf(jan1);
+    if (pct < 9 || pct > 94) continue; // would collide with the start label or the end of the track
+    inner.appendChild(h('span', { class: 'replay-tick', style: `left: ${pct.toFixed(2)}%` }, String(y)));
+  }
   const el = h('div', { class: 'replay', role: 'group', 'aria-label': 'Replay by disclosure date' }, h('div', { class: 'replay-row' }, play, range, when), ticks);
 
   const paint = () => {
