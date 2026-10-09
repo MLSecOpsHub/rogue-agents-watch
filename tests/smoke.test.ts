@@ -307,6 +307,46 @@ describe('overview, stats, timeline, table, about', () => {
     expect(c.root.textContent?.includes('Autonomy (source-stated %)')).toBe(anyStated);
   });
 
+  it('stats surfaces the upstream geo_coverage: records with points, and points by role and by basis', () => {
+    const c = ctx('#/stats');
+    statsView(c);
+    const panel = c.root.querySelector('.panel-geo');
+    expect(panel).not.toBeNull();
+    expect(panel!.textContent).toContain(`${summary.geo_coverage.records} of ${summary.total} records carry at least one map point`);
+    expect(panel!.textContent).toContain(`${summary.geo_coverage.illustrative} illustrative`);
+    const titles = [...panel!.querySelectorAll('.chart-card h3')].map((e) => e.textContent);
+    expect(titles).toEqual(['Points by role', 'Points by basis']);
+    const basisRows = [...panel!.querySelectorAll('.chart-card')].find((s) => s.querySelector('h3')?.textContent === 'Points by basis')!.querySelectorAll('tbody tr');
+    const rendered = Object.fromEntries([...basisRows].map((r) => [r.querySelector('th')?.textContent, Number(r.querySelector('td')?.textContent)]));
+    const basisTax = taxonomy.geo_basis?.values ?? [];
+    expect(basisTax.length).toBeGreaterThan(0);
+    for (const v of basisTax) expect(rendered[v.label], v.id).toBe((summary.geo_coverage.by_basis as Record<string, number>)[v.id] ?? 0);
+    const roleRows = [...panel!.querySelectorAll('.chart-card')].find((s) => s.querySelector('h3')?.textContent === 'Points by role')!.querySelectorAll('tbody tr');
+    const roles = Object.fromEntries([...roleRows].map((r) => [r.querySelector('th')?.textContent, Number(r.querySelector('td')?.textContent)]));
+    expect(roles).toEqual({ Origin: summary.geo_coverage.by_role.origin ?? 0, Target: summary.geo_coverage.by_role.target ?? 0 });
+  });
+
+  it('record page lists every map point with its basis and the publisher that stated it, or says that no source states a location', () => {
+    const withGeo = ds.incidents.find((i) => i.hasGeo)!;
+    const c = ctx(incidentHref(withGeo.id));
+    incidentView(c);
+    const items = c.root.querySelectorAll('.geo-points-detail > li');
+    expect(items).toHaveLength(withGeo.geo!.points.length);
+    withGeo.geo!.points.forEach((p, i) => {
+      const text = items[i]!.textContent ?? '';
+      expect(text).toContain(p.label);
+      expect(text).toContain(p.attributed_by!);
+      expect(text).toContain(taxonomy.geo_basis?.values.find((v) => v.id === p.basis)?.label ?? 'missing-label');
+      expect(text).toContain(p.illustrative ? 'country-level centroid' : 'stated location');
+      expect(items[i]!.querySelector('a.plain')?.getAttribute('href')).toBe(withGeo.sources.find((s) => s.publisher === p.attributed_by)?.url);
+    });
+    const without = ds.incidents.find((i) => !i.hasGeo)!;
+    const d = ctx(incidentHref(without.id));
+    incidentView(d);
+    expect(d.root.querySelector('.geo-points-detail')).toBeNull();
+    expect(d.root.textContent).toContain('No cited source states a location');
+  });
+
   it('stats shows the dataset gaps table with one row per optional field', () => {
     const c = ctx('#/stats');
     statsView(c);

@@ -1341,6 +1341,9 @@ svg a:focus .bar-rect {
 .geo-points li + li {
   margin-top: 0.2rem;
 }
+.geo-points-detail li + li {
+  margin-top: 0.7rem;
+}
 .drawer-summary {
   font-size: 0.93rem;
   margin: 0;

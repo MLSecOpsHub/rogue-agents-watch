@@ -1,7 +1,8 @@
-import { barChart } from '../components/charts';
+import { barChart, type BarDatum } from '../components/charts';
 import { newIncidentIssueUrl, UPSTREAM_REPO_URL, upstreamUrls } from '../config';
 import { fieldCoverage } from '../data/coverage';
 import { countBy } from '../data/adapter';
+import { values } from '../data/taxonomy';
 import { href } from '../router';
 import { externalLink, h } from '../util/dom';
 import { enumBars, rollups, yearBars } from './shared';
@@ -93,6 +94,38 @@ export function statsView({ ds, route, root }: ViewContext): void {
         `${ds.summary.archive_coverage.archived} of ${ds.summary.archive_coverage.sources} source URLs (${ds.summary.archive_coverage.pct}%) have a Wayback Machine snapshot recorded upstream, so the evidence survives link rot. Help raise it via `,
         externalLink(UPSTREAM_REPO_URL, 'agentic-attack-index', 'plain'),
         '.',
+      ),
+    ),
+  );
+
+  // Map coverage: the upstream geo_coverage counts (schema 0.3.0), recomputed
+  // only when inactive records are hidden. Counts of points, never positions.
+  const geo = summary.geo_coverage;
+  const stated = geo.points - geo.illustrative;
+  const basisBars: BarDatum[] = values(ds.taxonomy, 'geo_basis').map((v) => ({ key: v.id, label: v.label, value: geo.by_basis[v.id] ?? 0, description: v.description }));
+  for (const [k, v] of Object.entries(geo.by_basis)) if (!basisBars.some((b) => b.key === k)) basisBars.push({ key: k, label: k, value: v });
+  const roleBars: BarDatum[] = [
+    { key: 'origin', label: 'Origin', value: geo.by_role['origin'] ?? 0, description: 'Where the attack came from, by the stated basis.' },
+    { key: 'target', label: 'Target', value: geo.by_role['target'] ?? 0, description: 'Where the attack was aimed, as a source states it.' },
+  ];
+  root.appendChild(
+    h(
+      'section',
+      { class: 'panel panel-geo' },
+      h('h2', null, 'Map coverage'),
+      h(
+        'p',
+        null,
+        `${geo.records} of ${summary.total} records carry at least one map point: ${geo.points} point${geo.points === 1 ? '' : 's'} in all, ${geo.illustrative} illustrative (country-level centroid${geo.illustrative === 1 ? '' : 's'}) and ${stated} stated location${stated === 1 ? '' : 's'}. `,
+        'A point exists only where a cited source states a location and on what basis, so these counts describe sourcing, not risk. ',
+        h('a', { href: href('map') }, 'Open the map'),
+        '.',
+      ),
+      h(
+        'div',
+        { class: 'chart-grid' },
+        barChart('Points by role', roleBars, { sort: false, note: 'Origin = where the attack came from, by the stated basis; target = where it was aimed.' }),
+        barChart('Points by basis', basisBars, { sort: false, note: 'Why each point exists, as the cited source states it. A state sponsor is not an operator location.' }),
       ),
     ),
   );

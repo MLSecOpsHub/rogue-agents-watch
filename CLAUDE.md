@@ -27,10 +27,15 @@ product. Read the non-negotiables before changing anything.
 7. **Privacy.** No analytics, trackers, cookies, or external fonts.
 8. **`null` means "not stated", never `0`.** `autonomy_pct`, `orgs_affected`,
    `records_exfiltrated` render as "not stated" when null.
-9. **Geo is never fabricated.** Markers come only from a record's `geo` block.
-   `illustrative: true` points render as hollow dashed rings and say
-   "illustrative, country-level" in tooltips; records without `geo` are listed
-   under the map, never plotted.
+9. **Geo is never fabricated.** Markers come only from a record's
+   `geo.points[]` (upstream schema 0.3.0; the old `geo.target` / `geo.origin`
+   slots are gone). Every point is shown with its `role`, its `basis` (why it
+   exists, from the `geo_basis` taxonomy) and `attributed_by` (the cited
+   publisher that stated it); a state sponsor is never presented as an
+   operator location. `illustrative: true` points render as soft discs and say
+   "illustrative, country-level centroid" in tooltips; `stated-location`
+   points render as pins; records without `geo` are listed under the map,
+   never plotted.
 10. **Retracted and superseded records** are flagged and excluded from headline
     counts by default, with a toggle to include them. Missing `record_status`
     means `active`.

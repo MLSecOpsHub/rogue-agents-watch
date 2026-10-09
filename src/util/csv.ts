@@ -19,6 +19,8 @@ const COLUMNS: Array<[string, (i: Incident) => string]> = [
   ['lifecycle_phases', (i) => i.lifecycle_phases.join('; ')],
   ['sectors', (i) => i.targets.sectors.join('; ')],
   ['countries', (i) => i.targets.countries.join('; ')],
+  // Mirrors the upstream dist/incidents.csv column: one role:basis:country entry per map point ("-" for a region centroid).
+  ['geo_points', (i) => (i.geo?.points ?? []).map((p) => `${p.role}:${p.basis ?? '-'}:${p.country ?? '-'}`).join('; ')],
   ['orgs_affected', (i) => (i.targets.orgs_affected === null ? '' : String(i.targets.orgs_affected))],
   ['records_exfiltrated', (i) => (i.targets.records_exfiltrated === null ? '' : String(i.targets.records_exfiltrated))],
   ['mitre_atlas', (i) => i.mappings.mitre_atlas.join('; ')],
