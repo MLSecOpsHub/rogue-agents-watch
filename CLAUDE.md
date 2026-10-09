@@ -68,13 +68,15 @@ product. Read the non-negotiables before changing anything.
   `localStorage`; responsive to 400 px, keyboard-navigable, WCAG AA.
 - Bundle budget: core JS+CSS under 500 KB gzipped, map geometry chunk excluded
   (`npm run size`).
-- Base path and canonical URL come from `scripts/site-env.mjs`, which reads
-  the build environment: Vercel serves at `/`; GitHub Pages
-  (`.github/workflows/pages.yml`, Source = GitHub Actions) serves under
-  `/<repo>/` derived from `GITHUB_REPOSITORY`; a local build serves at `/`
-  with `http://localhost:4173/` as its canonical URL. `VITE_BASE_PATH` and
-  `VITE_SITE_URL` override everything (custom domain). Never hard-code a
-  host or path elsewhere.
+- Deployed by Vercel's GitHub integration to `https://www.rogueagentswatch.com/`
+  (`main` = production, PRs = previews). GitHub Pages is intentionally off:
+  a second host with its own canonical splits search signals. Base path and
+  canonical URL come from `scripts/site-env.mjs`, which reads the build
+  environment: Vercel serves at `/`; a GitHub Actions build (CI only) uses
+  `/<repo>/` from `GITHUB_REPOSITORY`; a local build serves at `/` with
+  `http://localhost:4173/` as its canonical URL. `VITE_BASE_PATH` and
+  `VITE_SITE_URL` override everything. Never hard-code a host or path
+  elsewhere.
 - The landing page keeps exactly one hero figure, bound to the map teaser's
   replay, with the status / AI-role split in the first viewport.
 - Map encoding is fixed: hue = `ai_role`
@@ -145,7 +147,7 @@ scripts/bundle-size.mjs    Gzip report and budget gate
 scripts/prerender.mjs      Post-build: share pages, OG cards, feed, changes.json
 assets/fonts/              OFL fonts for card rendering (build-time only)
 tests/                     vitest: adapter, schema, router, filters, csv, smoke
-.github/workflows/         ci.yml, pages.yml, sync-data.yml
+.github/workflows/         ci.yml, sync-data.yml (deploys are Vercel's integration, no workflow)
 ```
 
 ## Commands

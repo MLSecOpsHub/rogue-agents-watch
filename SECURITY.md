@@ -4,8 +4,9 @@
 
 `rogue-agents-dashboard` is a static site: no server, no database, no accounts,
 no cookies, no analytics. It is built from a vendored data snapshot and served
-from GitHub Pages. The attack surface is therefore the build pipeline, the
-client-side rendering of dataset strings, and the GitHub Actions workflows.
+by Vercel at www.rogueagentswatch.com. The attack surface is therefore the
+build pipeline, the client-side rendering of dataset strings, the GitHub
+Actions workflows, and the Vercel project configuration.
 
 Things we consider in scope:
 

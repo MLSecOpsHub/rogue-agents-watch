@@ -80,7 +80,7 @@ rogue-agents-dashboard   data/snapshot/{incidents,summary,incident.schema,taxono
                                               │
                    scripts/validate-data.mjs  │  ajv 2020-12 + ajv-formats; build fails on drift
                                               ▼
-                         vite build  ─▶  dist/  ─▶  GitHub Pages
+                         vite build  ─▶  dist/  ─▶  Vercel (www.rogueagentswatch.com)
 ```
 
 - The site makes **no runtime network request for data**. Everything is
@@ -126,13 +126,18 @@ on the next snapshot sync. Rendering bugs belong in this repository's issues.
 
 ## Deploying
 
-The `pages.yml` workflow builds and deploys `dist/` on every push to `main`.
-One-time setup in the GitHub repository:
+The site is served by Vercel at <https://www.rogueagentswatch.com/>
+(`rogueagentswatch.com` redirects to `www`). Vercel's GitHub integration
+builds `npm run build` on every push: `main` deploys to production, every
+pull request gets a preview. `vercel.json` sets `trailingSlash`, the CORS
+header the Navigator layers and MISP feed need, and long-lived caching for
+hashed assets. There is no GitHub Pages deployment: a second host serving
+the same pages under a different canonical splits search signals.
 
-1. Settings → Pages → Build and deployment → **Source: GitHub Actions**.
-2. Settings → Actions → General → Workflow permissions → enable
-   **Allow GitHub Actions to create and approve pull requests** (needed by the
-   weekly `sync-data` workflow).
+One-time setup in the GitHub repository: Settings → Actions → General →
+Workflow permissions → enable **Allow GitHub Actions to create and approve
+pull requests** (needed by the weekly `sync-data` workflow; it must also be
+allowed at the organisation level).
 
 The asset base path and the canonical URL (share links, Open Graph tags,
 feed, sitemap) are resolved together in `scripts/site-env.mjs`:
@@ -141,15 +146,15 @@ feed, sitemap) are resolved together in `scripts/site-env.mjs`:
   canonical URL is the preview address `http://localhost:4173/`. A build with
   no deploy environment is a local one, so its share links say so rather
   than pointing at a host it was not built for.
-- **GitHub Pages**: no configuration. The workflow build derives
-  `/<repo>/` and `https://<owner>.github.io/<repo>/` from
-  `GITHUB_REPOSITORY`, so renaming the repository needs no code change.
 - **Vercel**: no configuration. The build detects Vercel's environment,
-  serves at `/`, and uses the production host (or the preview deployment's
-  host) as the canonical URL. `vercel.json` adds the CORS header the
-  Navigator layers and MISP feed need, and long-lived caching for hashed
-  assets.
-- **Custom domain anywhere**: set `VITE_BASE_PATH=/` and
+  serves at `/`, and uses the production host (the custom domain) or the
+  preview deployment's host as the canonical URL.
+- **GitHub Actions** (the CI build, not a deployment): served under
+  `/<repo>/` with `https://<owner>.github.io/<repo>/` as the canonical, so
+  the Lighthouse job audits the same layout a Pages deployment would have.
+  Re-enabling GitHub Pages would need only a deploy workflow; the resolver
+  already handles it.
+- **Custom domain anywhere else**: set `VITE_BASE_PATH=/` and
   `VITE_SITE_URL=https://your.domain/` in the build step; explicit values
   always win.
 
