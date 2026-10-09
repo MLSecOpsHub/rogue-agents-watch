@@ -1092,7 +1092,11 @@ svg a:focus .bar-rect {
 }
 .tooltip {
   position: absolute;
-  transform: translate(-50%, calc(-100% - 14px));
+  /* Above and centred by default; .below and .edge-* keep it inside the
+     stage (which clips overflow) for markers near the top or the sides. */
+  --tip-x: -50%;
+  --tip-y: calc(-100% - 14px);
+  transform: translate(var(--tip-x), var(--tip-y));
   background: var(--fg);
   color: var(--bg);
   padding: 0.45rem 0.65rem;
@@ -1102,6 +1106,15 @@ svg a:focus .bar-rect {
   pointer-events: none;
   max-width: 280px;
   z-index: 2;
+}
+.tooltip.below {
+  --tip-y: 14px;
+}
+.tooltip.edge-left {
+  --tip-x: -12px;
+}
+.tooltip.edge-right {
+  --tip-x: calc(-100% + 12px);
 }
 .tooltip[hidden] {
   display: none;

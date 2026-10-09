@@ -118,6 +118,26 @@ describe('every id in summary.ids', () => {
 });
 
 describe('map', () => {
+  it('places the hover tooltip inside the stage: below near the top, edge-anchored at the sides', async () => {
+    const { tooltipPlacement, attachTooltip, MAP_W, MAP_H } = await import('../src/components/map-canvas');
+    expect(tooltipPlacement([MAP_W / 2, MAP_H / 2])).toEqual({ below: false, edge: null });
+    expect(tooltipPlacement([MAP_W / 2, 40])).toEqual({ below: true, edge: null });
+    expect(tooltipPlacement([30, MAP_H / 2])).toEqual({ below: false, edge: 'left' });
+    expect(tooltipPlacement([MAP_W - 30, 20])).toEqual({ below: true, edge: 'right' });
+    const stage = document.createElement('div');
+    const hover = attachTooltip(ds, stage);
+    const m = collectMarkers(ds.incidents, false)[0]!;
+    hover(m, [MAP_W - 30, 20]);
+    const tip = stage.querySelector<HTMLElement>('.tooltip')!;
+    expect(tip.hidden).toBe(false);
+    expect(tip.className).toBe('tooltip below edge-right');
+    expect(tip.textContent).toContain(m.inc.name);
+    hover(m, [MAP_W / 2, MAP_H / 2]);
+    expect(tip.className).toBe('tooltip');
+    hover(null, [0, 0]);
+    expect(tip.hidden).toBe(true);
+  });
+
   it('collects markers only from records with geo, preserving the illustrative flag', () => {
     const markers = collectMarkers(ds.incidents, false);
     const expected = ds.incidents.filter((i) => i.isActiveRecord && i.hasGeo);
@@ -139,7 +159,10 @@ describe('map', () => {
     expect(c.root.querySelectorAll('g.marker.illustrative')).toHaveLength(markers.filter((m) => m.point.illustrative).length);
     expect(c.root.querySelectorAll('g.marker.stated')).toHaveLength(markers.filter((m) => !m.point.illustrative).length);
     for (const g of drawn) {
-      const title = g.querySelector('title')?.textContent ?? '';
+      // Hover text lives in <desc> (no native browser tooltip on top of the positioned one); the name is the aria-label.
+      expect(g.querySelector('title')).toBeNull();
+      expect(g.getAttribute('aria-label')).toBeTruthy();
+      const title = g.querySelector('desc')?.textContent ?? '';
       const inc = ds.byId.get((g as SVGGElement).dataset.id ?? '')!;
       // hue = ai_role, ring = status, size = severity: encoded as classes the CSS tokens key on
       expect(g.classList.contains(`role-${inc.ai_role}`)).toBe(true);

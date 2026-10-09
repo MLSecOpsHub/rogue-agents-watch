@@ -81,6 +81,15 @@ export function tooltipText(ds: Dataset, m: Marker): string {
   return `${m.inc.name}\n${kind}: ${m.point.label} (${how})\n${basisText(ds, m.point)}\n${label(ds.taxonomy, 'status', m.inc.status)} · AI ${label(ds.taxonomy, 'ai_role', m.inc.ai_role).toLowerCase()} · ${label(ds.taxonomy, 'severity', m.inc.severity).toLowerCase()} · ${n} source${n === 1 ? '' : 's'}`;
 }
 
+/**
+ * Where to hang the tooltip so it stays inside the stage, which clips
+ * overflow: below the marker in the top third, and anchored to the near edge
+ * in the outer quarters. Pure, so the smoke test can pin it.
+ */
+export function tooltipPlacement(xy: [number, number]): { below: boolean; edge: 'left' | 'right' | null } {
+  return { below: xy[1] < MAP_H / 3, edge: xy[0] < MAP_W / 4 ? 'left' : xy[0] > (MAP_W * 3) / 4 ? 'right' : null };
+}
+
 /** A tooltip element positioned inside `stage`; returns the hover handler to pass as `onHover`. */
 export function attachTooltip(ds: Dataset, stage: HTMLElement): (m: Marker | null, xy: [number, number]) => void {
   const tip = h('div', { class: 'tooltip', role: 'tooltip', hidden: true });
@@ -90,7 +99,9 @@ export function attachTooltip(ds: Dataset, stage: HTMLElement): (m: Marker | nul
       tip.hidden = true;
       return;
     }
+    const place = tooltipPlacement(xy);
     tip.textContent = tooltipText(ds, m);
+    tip.className = `tooltip${place.below ? ' below' : ''}${place.edge ? ` edge-${place.edge}` : ''}`;
     tip.hidden = false;
     tip.style.left = `${(xy[0] / MAP_W) * 100}%`;
     tip.style.top = `${(xy[1] / MAP_H) * 100}%`;
@@ -157,9 +168,12 @@ export function createMapCanvas(ds: Dataset, opts: CanvasOptions = {}): MapCanva
       'data-kind': m.kind,
       'data-illustrative': String(m.point.illustrative),
     });
-    const title = svgEl('title');
-    title.textContent = tooltipText(ds, m);
-    g.appendChild(title);
+    // <desc>, not <title>: the marker's accessible name is its aria-label and
+    // its hover text is the positioned .tooltip; an SVG <title> would add the
+    // browser's native tooltip on top of it.
+    const desc = svgEl('desc');
+    desc.textContent = tooltipText(ds, m);
+    g.appendChild(desc);
     if (m.point.illustrative) g.appendChild(svgEl('circle', { r: 30, class: 'marker-halo', fill: `url(#halo-${m.inc.ai_role})` }));
     g.appendChild(svgEl('circle', { r: r + 6, class: 'marker-pulse' }));
     g.appendChild(svgEl('circle', { r, class: m.point.illustrative ? 'marker-core' : 'marker-core marker-pin' }));
