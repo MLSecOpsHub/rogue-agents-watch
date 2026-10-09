@@ -73,6 +73,86 @@
     }
   },
   {
+    "actor": "Anthropic evaluation agents (Claude Opus 4.7, Claude Mythos 5, an early Claude Opus 4.6 checkpoint and an internal research model) acting outside their intended scope during cybersecurity evaluations",
+    "actor_type": "lab-test-eval",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "fully-autonomous",
+    "autonomy_pct": null,
+    "category": "autonomous-attack",
+    "confidence": "primary",
+    "date_disclosed": "2026-07-30",
+    "guardrail_bypass": [
+      "none-observed"
+    ],
+    "id": "anthropic-cyber-evals-real-target-incidents",
+    "impact": "Per Anthropic: a real company's application and infrastructure credentials and several hundred rows of production data accessed; a package live on a public registry for about one hour that ran on 15 real systems and yielded a security company's credentials, which were used to reach further infrastructure; about 9,000 targets scanned and one company's internet-facing application compromised; a fourth, earlier incident not analysed in depth. No victim is named.",
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "recon",
+      "initial-access",
+      "execution",
+      "credential-access"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Anthropic halted the evaluations on 2026-07-23, notified the evaluation partner and the three affected organizations on 2026-07-27, and scanned roughly 481 million transcripts for further cases.",
+      "Anthropic identifies the root causes as evaluation machines having live internet access through a misconfiguration and a prompt that wrongly stated there was none; it engaged METR for an independent investigation."
+    ],
+    "model_families": [
+      "claude"
+    ],
+    "models": [
+      "Claude Opus 4.7",
+      "Claude Mythos 5",
+      "Claude Opus 4.6 (early checkpoint)",
+      "Anthropic internal research model (unnamed)"
+    ],
+    "name": "Anthropic cybersecurity-evaluation agents reached real third-party systems (four incidents, 2026)",
+    "related": [
+      "openai-eval-agents-hugging-face-intrusion",
+      "openai-agent-services-australia-medicare-portal"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "date": "2026-07-30",
+        "publisher": "Anthropic",
+        "title": "Investigating three real-world incidents in our cybersecurity evaluations",
+        "type": "first-party-disclosure",
+        "url": "https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261009172701/https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents",
+        "date": "2026-09-09",
+        "publisher": "Anthropic",
+        "title": "An alignment assessment of recent cybersecurity incidents",
+        "type": "first-party-disclosure",
+        "url": "https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "On 2026-07-30 Anthropic disclosed that Claude models running as agents in cybersecurity evaluations conducted with the partner Irregular had, in three incidents across six of 141,006 reviewed runs, acted against real third-party systems. In four runs Claude Opus 4.7 accessed a real company's application and infrastructure credentials and a database holding several hundred rows of production data; in one run Claude Mythos 5 published a package that was live on a public registry for about an hour, ran on 15 real systems and yielded a security company's credentials; in one run an internal research model scanned about 9,000 targets and compromised one company's internet-facing application. Anthropic's stated root cause is a misconfiguration that gave evaluation machines live internet access while the prompt said there was none. Evaluations were halted on 2026-07-23 and Irregular and the three affected organizations were notified on 2026-07-27. A 2026-09-09 alignment assessment added a fourth incident involving an early Claude Opus 4.6 checkpoint (seven runs in total), reported a scan of roughly 481 million transcripts that found no further cases of similar severity, judged the earlier claim that Claude believed the targets were simulated to be overstated, and attributed the behaviour to biased reasoning and recklessness. METR is conducting an independent investigation.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": 3,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology"
+      ]
+    }
+  },
+  {
     "actor": "Omer Mayraz (Legit Security)",
     "actor_type": "researcher",
     "added": {
@@ -140,6 +220,235 @@
     ],
     "status": "reported",
     "summary": "Legit Security researcher Omer Mayraz disclosed CamoLeak, a critical GitHub Copilot Chat vulnerability (reported CVSS 9.6). It combined remote prompt injection via GitHub's invisible markdown comments with a content-security bypass abusing GitHub's Camo image proxy to silently exfiltrate secrets and source code from private repositories and to steer Copilot's responses. GitHub mitigated it by disabling image rendering in Copilot Chat on 2025-08-14; the research was published in October 2025.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "Unknown (operators identified only by ClawHub handles; financially motivated per Antiy CERT)",
+    "actor_type": "cybercriminal",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "incidental",
+    "autonomy_level": "not-applicable",
+    "autonomy_pct": null,
+    "category": "infrastructure-abuse-supply-chain",
+    "confidence": "primary",
+    "date_disclosed": "2026-02-01",
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "clawhavoc-clawhub-malicious-skills",
+    "impact": "At least 1,184 malicious skills on ClawHub as of 2026-02-05 per Antiy CERT (341 flagged in Koi Security's audit per eSecurity Planet); 14,285 downloads of 60 packages from one uploader; credential and wallet theft capability on affected systems. No confirmed victim count.",
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "resource-dev",
+      "initial-access",
+      "execution",
+      "credential-access",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Antiy CERT advises users to audit recent skill installs, remove malicious skills, rotate credentials, deploy endpoint security and avoid connecting sensitive platforms to agent tools; and advises platform operators to add automated static, semantic and sandbox review plus manual review and user-report handling.",
+      "Antiy CERT states the reporting measures OpenClaw added are necessary but not sufficient."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "ClawHavoc: large-scale poisoning of the OpenClaw ClawHub skill marketplace with credential-stealing skills",
+    "related": [
+      "amazon-q-developer-extension-compromise",
+      "nx-s1ngularity-supply-chain"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260904125516/https://www.antiy.net/p/clawhavoc-analysis-of-large-scale-poisoning-campaign-targeting-the-openclaw-skill-market-for-ai-agents/",
+        "date": "2026-02-06",
+        "publisher": "Antiy CERT",
+        "title": "ClawHavoc: Analysis of Large-Scale Poisoning Campaign Targeting the OpenClaw Skill Market for AI Agents",
+        "type": "vendor-report",
+        "url": "https://www.antiy.net/p/clawhavoc-analysis-of-large-scale-poisoning-campaign-targeting-the-openclaw-skill-market-for-ai-agents/"
+      },
+      {
+        "date": "2026-02-03",
+        "publisher": "eSecurity Planet",
+        "title": "Hundreds of Malicious Skills Found in OpenClaw's ClawHub",
+        "type": "news",
+        "url": "https://www.esecurityplanet.com/threats/hundreds-of-malicious-skills-found-in-openclaws-clawhub"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "Koi Security disclosed on 2026-02-01 a campaign it named ClawHavoc, in which malicious \"skills\" were uploaded at scale to ClawHub, the skill marketplace for the OpenClaw AI agent. eSecurity Planet reported on 2026-02-03 that Koi had flagged 341 of 2,857 audited skills, 335 tied to one campaign. Antiy CERT's 2026-02-06 analysis counted at least 1,184 malicious skills from 12 author ids as of 2026-02-05, with the first upload on 2026-01-27 and 677 skills from a single uploader. The skills delivered information stealers, remote access tools and lures for further malware, targeting cryptocurrency wallets and exchange API keys, developer cloud and SSH credentials, browser sessions, corporate documents, email and credentials for paid AI services. Antiy states that 60 packages from one uploader had accumulated 14,285 downloads; no source gives a victim count or names a victim. Motive is described as financial; operators are identified only by platform handles. The AI agent platform is the attack surface rather than the attacker.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology"
+      ]
+    }
+  },
+  {
+    "actor": "Unknown (an \"unauthorized party\" per Cline; the researcher states a different actor reused his proof-of-concept)",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "not-applicable",
+    "autonomy_pct": null,
+    "category": "agent-hijack-prompt-injection",
+    "confidence": "primary",
+    "date_disclosed": "2026-02-09",
+    "guardrail_bypass": [
+      "indirect-prompt-injection"
+    ],
+    "id": "clinejection-cline-triage-npm-publish",
+    "impact": "Unauthorized cline@2.3.0 published to npm and available for about eight hours; the package added a postinstall step that globally installed another package. Cline states no user data was accessed or exfiltrated.",
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "initial-access",
+      "credential-access",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Cline removed its AI-powered triage workflows; future automation is limited to read-only operations with no shell access.",
+      "Cline rotated all publication credentials, removed GitHub Actions cache use from workflows handling publication credentials, moved npm publishing to OIDC provenance with no long-lived tokens, and now verifies rotation against the credential itself.",
+      "Cline is establishing a formal vulnerability disclosure process with SLAs and third-party CI/CD audits."
+    ],
+    "model_families": [
+      "claude"
+    ],
+    "models": [
+      "claude-opus-4-5-20251101"
+    ],
+    "name": "Clinejection: prompt injection of Cline's Claude issue-triage workflow led to an unauthorized npm release",
+    "related": [
+      "nx-s1ngularity-supply-chain",
+      "camoleak-github-copilot-chat"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "date": "2026-02-24",
+        "publisher": "Cline",
+        "title": "Post-mortem: Unauthorized Cline CLI npm publish on February 17, 2026",
+        "type": "first-party-disclosure",
+        "url": "https://cline.bot/blog/post-mortem-unauthorized-cline-cli-npm"
+      },
+      {
+        "date": "2026-02-09",
+        "publisher": "Adnan Khan",
+        "title": "Clinejection — Compromising Cline's Production Releases just by Prompting an Issue Triager",
+        "type": "blog",
+        "url": "https://adnanthekhan.com/posts/clinejection/"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "Security researcher Adnan Khan found in late December 2025 that the Cline project's GitHub issue-triage workflow, which ran the Anthropic claude-code-action with shell access on issues filed by any user, could be steered by a crafted issue into exposing publication credentials. Khan reported it privately on 2026-01-01 and published on 2026-02-09; Cline removed the workflows within 30 minutes but rotated the wrong npm token. Khan states that \"a different actor found my PoC on my test repository and used it to directly attack Cline\". On 2026-02-17 at 03:26 PT an unauthorized party used the still-valid token to publish cline@2.3.0 to npm; the CLI was byte-identical to the prior release plus a postinstall step that globally installed the openclaw package. A corrected version shipped about eight hours later. Cline states no user data was accessed or exfiltrated and does not identify the publishing party. Cline removed its AI-powered triage workflows, rotated all publication credentials and moved npm publishing to OIDC provenance.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": 1,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology"
+      ]
+    }
+  },
+  {
+    "actor": "Coral Sleet (North Korean state actor, formerly Storm-1877, per Microsoft Threat Intelligence)",
+    "actor_type": "nation-state",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "unknown",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2026-03-06",
+    "geo": {
+      "points": [
+        {
+          "attributed_by": "Microsoft Threat Intelligence",
+          "basis": "sponsor-attribution",
+          "country": "KP",
+          "illustrative": true,
+          "label": "North Korea (state sponsor, per Microsoft Threat Intelligence)",
+          "lat": 40.34,
+          "lng": 127.51,
+          "role": "origin"
+        }
+      ]
+    },
+    "guardrail_bypass": [
+      "jailbreak",
+      "legitimate-tool-abuse"
+    ],
+    "id": "coral-sleet-agentic-ai-workflow",
+    "impact": null,
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "resource-dev",
+      "deception-social-eng"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Microsoft recommends treating fraudulent employment and misuse of legitimate access as insider risk, hardening accounts and enforcing MFA, prioritizing behavioural signals over static or linguistic indicators, user awareness training, governing enterprise AI use and monitoring AI assets and agents, and deploying AI-specific tooling such as jailbreak detection."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "Coral Sleet (North Korea) operationalizes agentic AI tools across its attack workflow",
+    "related": [
+      "dprk-it-worker-fraud-claude",
+      "microsoft-openai-state-actor-llm"
+    ],
+    "severity": "medium",
+    "sources": [
+      {
+        "date": "2026-03-06",
+        "publisher": "Microsoft Threat Intelligence",
+        "title": "AI as tradecraft: How threat actors operationalize AI",
+        "type": "vendor-report",
+        "url": "https://www.microsoft.com/en-us/security/blog/2026/03/06/ai-as-tradecraft-how-threat-actors-operationalize-ai/"
+      }
+    ],
+    "status": "reported",
+    "summary": "In its 2026-03-06 report \"AI as tradecraft\", Microsoft Threat Intelligence described how Coral Sleet, a North Korean state actor formerly tracked as Storm-1877, has adopted agentic AI tools across its operations: lure development including fake company websites, remote infrastructure provisioning, and rapid payload testing and deployment. Microsoft states the actor created new payloads by jailbreaking LLM software to generate code that bypasses built-in safeguards, and links AI-assisted iterative development to a sample of the OtterCookie malware family. No dates, targets, sectors, victim counts or AI products are stated for this actor. Microsoft notes it has not yet observed large-scale use of agentic AI by threat actors, citing reliability and operational constraints, while describing early signals of a transition toward agentic use.",
     "targets": {
       "countries": [],
       "orgs_affected": null,
@@ -424,6 +733,162 @@
     }
   },
   {
+    "actor": "Unknown",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "not-applicable",
+    "autonomy_pct": null,
+    "category": "agent-hijack-prompt-injection",
+    "confidence": "secondary",
+    "date_disclosed": "2026-05-04",
+    "guardrail_bypass": [
+      "indirect-prompt-injection"
+    ],
+    "id": "grok-bankr-prompt-injection-wallet-drain",
+    "impact": "About 3 billion DRB tokens transferred and liquidated, reported as worth US$150,000 to 200,000 at the time; about 80% later returned per Giskard.",
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "initial-access",
+      "execution",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Giskard recommends adversarial testing and continuous red teaming of AI agents, human-in-the-loop confirmation for high-value irreversible actions, least-privilege access with per-transaction limits and capability sandboxing, and treating instructions from untrusted inputs as suspect before they reach action-capable components."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [
+      "Grok"
+    ],
+    "name": "Prompt injection of Grok drained a Grok-linked crypto wallet via the Bankr trading agent",
+    "related": [
+      "echoleak-m365-copilot",
+      "forcedleak-salesforce-agentforce"
+    ],
+    "severity": "medium",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261004112808/https://www.giskard.ai/knowledge/how-grok-got-prompt-injected-an-x-user-drained-150-000-from-an-ai-wallet",
+        "date": "2026-05-07",
+        "publisher": "Giskard",
+        "title": "How Grok got prompt-injected: an X user drained $150,000 from an AI wallet",
+        "type": "blog",
+        "url": "https://www.giskard.ai/knowledge/how-grok-got-prompt-injected-an-x-user-drained-150-000-from-an-ai-wallet"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260802214323/https://oecd.ai/en/incidents/2026-05-04-4a73",
+        "date": "2026-05-04",
+        "publisher": "OECD.AI Incidents Monitor",
+        "title": "AI Prompt Injection Exploit Drains Grok-Linked Crypto Wallet",
+        "type": "other",
+        "url": "https://oecd.ai/en/incidents/2026-05-04-4a73"
+      }
+    ],
+    "status": "reported",
+    "summary": "In early May 2026 an unnamed X user reportedly used a prompt-injection message that xAI's Grok processed, causing the Bankr trading agent connected to a Grok-linked cryptocurrency wallet to transfer about 3 billion DRB tokens, reported as worth roughly US$150,000 to 200,000, which were then liquidated. Giskard's 2026-05-07 analysis states that about 80% of the value was later returned after the DRB community identified the attacker. The OECD.AI incidents monitor logged the event on 2026-05-04 from twelve press reports, mostly crypto-focused outlets. No first-party statement from xAI or Bankr is cited by either source, no victim is named beyond the Grok-linked wallet and DRB token holders, and the attacker is described only as an X user. The AI systems were the hijacked components: Grok interpreted the injected instruction and Bankr executed it.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": [
+        "financial-services"
+      ]
+    }
+  },
+  {
+    "actor": "Chinese-speaking operators (tracked by Anthropic as GTG-10007), two identified as university undergraduates; no state sponsorship asserted",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "supervised-autonomous",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2026-09-10",
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "gtg-10007-agent-swarm-intrusions",
+    "impact": "Per Anthropic: hundreds of megabytes of bulk student personal data taken from an education-technology company's cloud storage; citizen records (names, phone numbers, home addresses) from a Southeast Asian government agency; access to a retail company's production systems with the ability to modify the live environment; multiple previously unknown vulnerabilities discovered.",
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "recon",
+      "resource-dev",
+      "initial-access",
+      "execution",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Anthropic banned accounts associated with the actors and deployed additional monitoring to detect and ban related activity."
+    ],
+    "model_families": [
+      "claude"
+    ],
+    "models": [],
+    "name": "GTG-10007 Claude 'agent swarm' espionage and vulnerability-discovery program",
+    "related": [
+      "gtg-1002-ai-espionage",
+      "gtg-20006-agentic-espionage",
+      "gtg-50014-agentic-mass-exfiltration",
+      "gtg-50029-hacktivist-agentic-recon",
+      "gtg-50020-ai-vendor-api-key-theft"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261009173227/https://www.anthropic.com/threat-intelligence-report-september-2026",
+        "date": "2026-09-10",
+        "publisher": "Anthropic",
+        "title": "Countering misuse of AI: September 2026",
+        "type": "first-party-disclosure",
+        "url": "https://www.anthropic.com/threat-intelligence-report-september-2026"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "In its September 2026 report \"Countering misuse of AI\", Anthropic disclosed a sustained espionage operation it tracks as GTG-10007, run by \"Chinese-speaking operators likely residing in Changsha in China's Hunan province\", two of whom it identifies as undergraduate students. Anthropic makes no finding of state sponsorship, while describing the actor's collection platform as aligned with state intelligence priorities. The operators used Claude as the engineering and orchestration layer of an offensive program, routinely running \"agent swarms\" in which a lead agent dispatched work to many parallel subagents, plus a fleet of thirteen standing collection agents on a scheduled job. Roughly fifty organizations across education, retail, energy, technology, healthcare, finance, manufacturing and government were targeted globally, with reconnaissance against foreign government networks in the Middle East, Europe and Southeast Asia and hands-on intrusion concentrated on domestic Chinese victims. Confirmed impact includes hundreds of megabytes of student personal data from an education-technology company, citizen records from a Southeast Asian government agency, and access to a retail company's production systems. Anthropic banned the associated accounts and deployed additional monitoring.",
+    "targets": {
+      "countries": [
+        "CN"
+      ],
+      "orgs_affected": 50,
+      "records_exfiltrated": null,
+      "sectors": [
+        "education",
+        "retail",
+        "energy",
+        "technology",
+        "healthcare",
+        "financial-services",
+        "government",
+        "manufacturing"
+      ]
+    }
+  },
+  {
     "actor": "Chinese state-sponsored group (tracked by Anthropic as GTG-1002)",
     "actor_type": "nation-state",
     "added": {
@@ -519,6 +984,83 @@
     }
   },
   {
+    "actor": "Russia-nexus espionage actor (tracked by Anthropic as GTG-20006; attribution described as consistent with public reporting on Midnight Blizzard)",
+    "actor_type": "nation-state",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "supervised-autonomous",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2026-09-10",
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "gtg-20006-agentic-espionage",
+    "impact": "Per Anthropic: at least three hospitality vendors compromised; mail records exfiltrated from at least eight organizations; hundreds of gigabytes of stolen data extracted and organized with AI, including more than 300,000 national identity records and commercial registry data on more than half a million companies from a North African government technology authority.",
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "initial-access",
+      "credential-access",
+      "persistence",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Anthropic states it disrupted the activity, strengthened its safeguards and shared intelligence with authorities and industry partners where appropriate."
+    ],
+    "model_families": [
+      "claude"
+    ],
+    "models": [
+      "Claude Code"
+    ],
+    "name": "GTG-20006 agentic espionage against government, defense and diplomatic targets (Russia-nexus)",
+    "related": [
+      "gtg-1002-ai-espionage",
+      "gtg-2002-vibe-hacking-extortion",
+      "gtg-50014-agentic-mass-exfiltration",
+      "gtg-10007-agent-swarm-intrusions",
+      "gtg-50029-hacktivist-agentic-recon",
+      "gtg-50020-ai-vendor-api-key-theft"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261009173227/https://www.anthropic.com/threat-intelligence-report-september-2026",
+        "date": "2026-09-10",
+        "publisher": "Anthropic",
+        "title": "Countering misuse of AI: September 2026",
+        "type": "first-party-disclosure",
+        "url": "https://www.anthropic.com/threat-intelligence-report-september-2026"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "In its September 2026 report \"Countering misuse of AI\", Anthropic disclosed a cluster it tracks as GTG-20006 that ran from December 2025 through August 2026. Anthropic describes the attribution as \"consistent with public reporting linking the actor to Midnight Blizzard\" and one operator's tradecraft and targeting as \"consistent with Russian state-nexus espionage\". The operator modified Claude Code skills to support intrusions against more than 20 distinct organizations: government ministries, defense and intelligence bodies, embassies and diplomatic missions, think tanks and defense-industrial companies, concentrated in Ukraine and Europe and extending to the Middle East and Asia. At least three hospitality vendors were compromised and mail records were exfiltrated from at least eight organizations. Humans set targets and reviewed exfiltration, while scheduled jobs renewed stolen access tokens and harvested victim cloud storage with no human involvement. Anthropic states it used AI to extract and organize hundreds of gigabytes of stolen data, including more than 300,000 national identity records and registry data on more than half a million companies taken from a North African government technology authority.",
+    "targets": {
+      "countries": [
+        "UA"
+      ],
+      "orgs_affected": 20,
+      "records_exfiltrated": 300000,
+      "sectors": [
+        "government",
+        "defense",
+        "hospitality"
+      ]
+    }
+  },
+  {
     "actor": "Unknown cybercriminal (tracked by Anthropic as GTG-2002)",
     "actor_type": "cybercriminal",
     "added": {
@@ -598,6 +1140,229 @@
         "healthcare",
         "emergency-services",
         "religious-institutions"
+      ]
+    }
+  },
+  {
+    "actor": "Suspected ShinyHunters affiliates (tracked by Anthropic as GTG-50014)",
+    "actor_type": "cybercriminal",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "supervised-autonomous",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2026-09-10",
+    "guardrail_bypass": [
+      "unknown"
+    ],
+    "id": "gtg-50014-agentic-mass-exfiltration",
+    "impact": "Per Anthropic: more than a terabyte of data exfiltrated from a technology provider, including hundreds of thousands of national identifiers and millions of payment card records; tens of millions of passenger records from an airline; over 2,100 Azure AD token sets across more than 40 corporate tenants; a SaaS provider compromise exposing roughly 200 downstream customer organizations; a ~400,000-record telecom/ISP dataset aggregated into a searchable service. Pay-or-leak extortion is the stated business model.",
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "initial-access",
+      "credential-access",
+      "exfiltration",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Anthropic detected and banned accounts associated with the ShinyHunters associates, implemented measures to detect and disrupt future misuse from the actors, and engaged government authorities, industry partners and victims to remediate."
+    ],
+    "model_families": [
+      "claude"
+    ],
+    "models": [],
+    "name": "GTG-50014 ShinyHunters-linked agentic mass data theft and extortion",
+    "related": [
+      "gtg-2002-vibe-hacking-extortion",
+      "gtg-20006-agentic-espionage",
+      "gtg-10007-agent-swarm-intrusions",
+      "gtg-50029-hacktivist-agentic-recon",
+      "gtg-50020-ai-vendor-api-key-theft"
+    ],
+    "severity": "critical",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261009173227/https://www.anthropic.com/threat-intelligence-report-september-2026",
+        "date": "2026-09-10",
+        "publisher": "Anthropic",
+        "title": "Countering misuse of AI: September 2026",
+        "type": "first-party-disclosure",
+        "url": "https://www.anthropic.com/threat-intelligence-report-september-2026"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "In its September 2026 report \"Countering misuse of AI\", Anthropic disclosed a financially motivated cluster it tracks as GTG-50014, whose operators it describes as \"suspected to be affiliates of the ShinyHunters collective\". Between December 2025 and August 2026 the affiliates used Claude across multiple intrusions: a technology provider lost more than a terabyte of data including hundreds of thousands of national identifiers and millions of payment card records; an airline lost tens of millions of passenger records; an energy company, a French retail chain, a Web3 identity platform, a nonprofit and an enterprise software company were also hit; and a SaaS provider compromise reached roughly 200 downstream customer organizations. Over 2,100 Azure AD token sets spanning more than 40 corporate tenants were harvested in about 34 hours. Anthropic states that for the SaaS session-store dump \"AI agents performed nearly all of the work\", with humans setting targets and reviewing exfiltration. Anthropic detected and banned the associated accounts and engaged authorities, industry partners and victims.",
+    "targets": {
+      "countries": [
+        "FR"
+      ],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology",
+        "energy",
+        "retail",
+        "telecommunications",
+        "aviation",
+        "nonprofit"
+      ]
+    }
+  },
+  {
+    "actor": "Russian-speaking, financially motivated actor (tracked by Anthropic as GTG-50020)",
+    "actor_type": "cybercriminal",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "fully-autonomous",
+    "autonomy_pct": null,
+    "category": "infrastructure-abuse-supply-chain",
+    "confidence": "primary",
+    "date_disclosed": "2026-09-10",
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "gtg-50020-ai-vendor-api-key-theft",
+    "impact": "Per Anthropic: roughly 26 gigabytes of data exfiltrated from one victim; production AI API keys stolen from AI vendors' customer environments and reused for the actor's own workloads; extortion or dark-web sale sought at US$1.5 to 2.5 million; the actor's goal of reaching a pre-release Claude model failed on every path.",
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "recon",
+      "initial-access",
+      "execution",
+      "credential-access",
+      "exfiltration",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Anthropic states the actor never compromised Anthropic's own systems; the stolen keys were customers' keys taken from customers' environments. The report publishes egress indicators for the cluster."
+    ],
+    "model_families": [
+      "claude"
+    ],
+    "models": [],
+    "name": "GTG-50020 autonomous exploitation pipeline against ~30 AI companies and theft of production API keys",
+    "related": [
+      "gtg-2002-vibe-hacking-extortion",
+      "gtg-5004-ai-ransomware-raas",
+      "gtg-20006-agentic-espionage",
+      "gtg-50014-agentic-mass-exfiltration",
+      "gtg-10007-agent-swarm-intrusions",
+      "gtg-50029-hacktivist-agentic-recon"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261009173227/https://www.anthropic.com/threat-intelligence-report-september-2026",
+        "date": "2026-09-10",
+        "publisher": "Anthropic",
+        "title": "Countering misuse of AI: September 2026",
+        "type": "first-party-disclosure",
+        "url": "https://www.anthropic.com/threat-intelligence-report-september-2026"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "In its September 2026 report \"Countering misuse of AI\", Anthropic disclosed a cluster it tracks as GTG-50020, \"a Russian-speaking, financially-motivated actor\" with a history of intrusions against hotel booking and financial technology platforms. In roughly four days the actor attacked about thirty AI companies, running an exploitation pipeline that Anthropic states operated \"without human supervision\". The actor's stated goal was access to a pre-release Claude model; Anthropic reports that every attempted path failed and that its own systems were never compromised. Along the way the actor took production AI API keys from AI vendors' customer environments and used them for its own workloads, exfiltrated roughly 26 gigabytes of data from one victim, and sought between US$1.5 and 2.5 million through extortion or sale on dark-web forums. The report's indicator tables place the activity between 21 May and 16 June 2026.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": 30,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology"
+      ]
+    }
+  },
+  {
+    "actor": "Single French-speaking hacktivist (tracked by Anthropic as GTG-50029)",
+    "actor_type": "single-operator",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "human-in-the-loop",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2026-09-10",
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "gtg-50029-hacktivist-agentic-recon",
+    "impact": "Per Anthropic: internal access to at least 14 of 42 tracked entities; about 140,000 records including users' political opinions taken from a political campaign management platform; party donor and member records, student application records including minors, and payment-provider data exposed; an estimated 12 to 26 GB of database dumps and a 15,000-message mailbox taken; a doxxing platform holding tens of millions of rows built by one person.",
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "recon",
+      "resource-dev",
+      "initial-access",
+      "exfiltration",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Anthropic states it investigated and disrupted the campaign and published indicators in the report's IOC tables."
+    ],
+    "model_families": [
+      "claude"
+    ],
+    "models": [],
+    "name": "GTG-50029 single hacktivist's Claude-built mass privacy attack on European political targets",
+    "related": [
+      "gtg-2002-vibe-hacking-extortion",
+      "gtg-20006-agentic-espionage",
+      "gtg-50014-agentic-mass-exfiltration",
+      "gtg-10007-agent-swarm-intrusions",
+      "gtg-50020-ai-vendor-api-key-theft"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261009173227/https://www.anthropic.com/threat-intelligence-report-september-2026",
+        "date": "2026-09-10",
+        "publisher": "Anthropic",
+        "title": "Countering misuse of AI: September 2026",
+        "type": "first-party-disclosure",
+        "url": "https://www.anthropic.com/threat-intelligence-report-september-2026"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "In its September 2026 report \"Countering misuse of AI\", Anthropic disclosed a hacktivist campaign it tracks as GTG-50029, observed in the spring of 2026 and run by \"a single French-speaking actor\" who used Claude to target European political parties, media outlets, think tanks and the SaaS providers those organizations rely on. Across 42 tracked target entities the actor gained internal access to at least 14. Affected data included party donor and member records, student application records including minors, payment-provider data, approximately 140,000 records from a political campaign management platform including users' political opinions, an estimated 12 to 26 GB of database dumps and a 15,000-message mailbox. The actor also built a purpose-built doxxing platform loaded with tens of millions of rows, which Anthropic states was created by one person. Anthropic frames the case as AI-assisted software engineering applied directly to a mass attack on privacy, and states it investigated and disrupted the campaign.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": 14,
+      "records_exfiltrated": 140000,
+      "sectors": [
+        "political-parties",
+        "media",
+        "technology"
       ]
     }
   },
@@ -684,6 +1449,301 @@
       "orgs_affected": null,
       "records_exfiltrated": null,
       "sectors": []
+    }
+  },
+  {
+    "actor": "Unknown criminal threat actor (unnamed by GTIG), in partnership with a prominent cybercrime actor",
+    "actor_type": "cybercriminal",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "tool-assisted",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2026-05-12",
+    "guardrail_bypass": [
+      "unknown"
+    ],
+    "id": "gtig-ai-developed-zero-day-2fa-bypass",
+    "impact": "No confirmed victims. GTIG states its counter-discovery and vendor disclosure may have prevented a planned mass exploitation event.",
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "resource-dev"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "GTIG coordinated responsible disclosure with the affected vendor before the planned mass exploitation occurred.",
+      "GTIG recommends defensive use of AI for vulnerability discovery and remediation, secure-AI practices under its Secure AI Framework, and industry collaboration."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "GTIG: criminal actor's AI-developed zero-day exploit against a web-based system administration tool",
+    "related": [
+      "promptspy-gemini-android-agent",
+      "promptflux-gemini-selfmod"
+    ],
+    "severity": "medium",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261009152603/https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access",
+        "date": "2026-05-12",
+        "publisher": "Google Threat Intelligence Group",
+        "title": "GTIG AI Threat Tracker: Adversaries Leverage AI for Vulnerability Exploitation, Augmented Operations, and Initial Access",
+        "type": "vendor-report",
+        "url": "https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access"
+      }
+    ],
+    "status": "reported",
+    "summary": "In its May 2026 AI Threat Tracker, Google Threat Intelligence Group (GTIG) reported what it calls its first identified case of a threat actor using a zero-day exploit that GTIG believes was developed with AI. The exploit targeted a popular open-source, web-based system administration tool and was held by a criminal threat actor that GTIG says was partnering with a prominent cybercrime actor to plan a mass exploitation operation. GTIG assesses with high confidence that an AI model was used in discovery and weaponization, basing that on indirect indicators in the exploit code rather than direct evidence of the tool, and states it does not believe Gemini was used. No model, actor name, victim, country or CVE is given. GTIG worked with the unnamed vendor on responsible disclosure and states its counter-discovery \"may have prevented\" the planned mass exploitation.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology"
+      ]
+    }
+  },
+  {
+    "actor": "Unknown",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "disputed",
+    "autonomy_level": "unknown",
+    "autonomy_pct": null,
+    "category": "autonomous-attack",
+    "confidence": "primary",
+    "date_disclosed": "2026-03-01",
+    "guardrail_bypass": [
+      "unknown"
+    ],
+    "id": "hackerbot-claw-github-pr-campaign",
+    "impact": "Per StepSecurity: code execution in several of at least seven targeted repositories and a write-capable GITHUB_TOKEN exposed from one. The Trivy release deletion and repository takeover of March 2026 are attributed by Trivy's maintainer to a separate attacker, not to this bot.",
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "recon",
+      "initial-access",
+      "execution",
+      "credential-access"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "StepSecurity recommends minimum workflow token permissions, maintainer authorization before workflows run on external contributions, review of elevated-privilege triggers that handle untrusted input, restricted and monitored outbound CI traffic, and owner review for AI configuration files such as CLAUDE.md.",
+      "Trivy's maintainers performed a full credential reset across repositories and distribution channels and are migrating to GitHub Apps and fine-grained tokens."
+    ],
+    "model_families": [
+      "claude"
+    ],
+    "models": [
+      "claude-opus-4-5"
+    ],
+    "name": "hackerbot-claw: self-described autonomous 'security research agent' exploiting GitHub Actions across open-source projects",
+    "related": [
+      "clinejection-cline-triage-npm-publish",
+      "nx-s1ngularity-supply-chain"
+    ],
+    "severity": "medium",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261002210148/https://www.stepsecurity.io/blog/hackerbot-claw-github-actions-exploitation",
+        "date": "2026-03-01",
+        "publisher": "StepSecurity",
+        "title": "hackerbot-claw: An AI-Powered Bot Actively Exploiting GitHub Actions - Microsoft, DataDog, and CNCF Projects Hit So Far",
+        "type": "vendor-report",
+        "url": "https://stepsecurity.io/blog/hackerbot-claw-github-actions-exploitation"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260408060335/https://github.com/aquasecurity/trivy/discussions/10462",
+        "date": "2026-03-30",
+        "publisher": "Trivy (Aqua Security)",
+        "title": "Trivy Security incident 2026-03-19 conclusion",
+        "type": "first-party-disclosure",
+        "url": "https://github.com/aquasecurity/trivy/discussions/10462"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "On 2026-03-01 StepSecurity reported a GitHub account named hackerbot-claw that describes itself as an \"autonomous security research agent powered by claude-opus-4-5\" and that opened at least 12 pull requests against at least seven open-source repositories, including Microsoft, Datadog and CNCF projects, to exploit vulnerable GitHub Actions workflows. StepSecurity reports code execution in several targets and a write-capable GITHUB_TOKEN exposed from one, with its affected-target count stated inconsistently as four, five or six of seven. Planted instructions in one repository's CLAUDE.md were detected by the reviewing Claude and not followed. A Trivy maintainer's 2026-03-30 incident conclusion states that hackerbot-claw activity against Trivy on February 28 \"appears to be an automated penetration testing bot that scans GitHub for vulnerable projects\", with a user agent and behaviour distinct from the attacker who stole Trivy's credentials and deleted its releases; this record therefore covers the GitHub-wide pull-request campaign, with Trivy as one observed target and not as a victim of the bot. No source independently verifies that an AI model drove the account, and the operator is unknown.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": 7,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology"
+      ]
+    }
+  },
+  {
+    "actor": "Unknown",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "unknown",
+    "autonomy_pct": null,
+    "category": "autonomous-attack",
+    "confidence": "primary",
+    "date_disclosed": "2026-07-01",
+    "guardrail_bypass": [
+      "unknown"
+    ],
+    "id": "jadepuffer-agentic-database-extortion",
+    "impact": "Per Sysdig: 1,342 Nacos service configuration items encrypted with an ephemeral key that was never stored or sent, so likely unrecoverable even with payment; entire database schemas dropped; ransom demanded via a Bitcoin address with no amount stated; exfiltration claimed by the agent but unverified.",
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "initial-access",
+      "execution",
+      "credential-access",
+      "privilege-escalation",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [
+        "CVE-2025-3248",
+        "CVE-2021-29441"
+      ],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Sysdig recommends patching and not internet-exposing AI-orchestration tools' code-execution endpoints, keeping provider API keys and cloud credentials out of AI-orchestration environments, hardening configuration and service-discovery platforms including default signing keys, never exposing database administrative accounts to the internet, applying egress controls, and using runtime threat detection."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "JADEPUFFER: agent-driven database extortion operation against an exposed AI-orchestration deployment",
+    "related": [
+      "promptlock-ai-ransomware-poc",
+      "gtg-5004-ai-ransomware-raas",
+      "replit-agent-database-deletion"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261008070923/https://www.sysdig.com/blog/jadepuffer-agentic-ransomware-for-automated-database-extortion",
+        "date": "2026-07-01",
+        "publisher": "Sysdig",
+        "title": "JADEPUFFER: Agentic ransomware for automated database extortion",
+        "type": "vendor-report",
+        "url": "https://www.sysdig.com/blog/jadepuffer-agentic-ransomware-for-automated-database-extortion"
+      }
+    ],
+    "status": "reported",
+    "summary": "On 2026-07-01 Sysdig described an operator it designates JADEPUFFER as the first documented case of agentic ransomware: \"an operator whose attack capability is delivered by an AI agent rather than a human-driven toolkit\", running what Sysdig calls a complete extortion operation driven end-to-end by a large language model. Initial access came through CVE-2025-3248 in an internet-exposed Langflow deployment, with a pivot via CVE-2021-29441 in a Nacos service-discovery platform. The operation encrypted 1,342 Nacos configuration items with an ephemeral key, escalated to dropping entire database schemas and left a ransom note with a Bitcoin address; no ransom amount is stated. A data-exfiltration claim appears only as the agent's own assertion and is unverified. Sysdig's evidence that an agent drove the intrusion is behavioural (self-narrating payloads, rapid diagnosis and correction of failures, structured progression) and it acknowledges no visibility into the operator's configuration. No model, attribution, victim sector or country is stated.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "TeamPCP (per StepSecurity, via command-and-control infrastructure linked to the same account's earlier PyPI attack; the June commit is not directly attributed)",
+    "actor_type": "cybercriminal",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "not-applicable",
+    "autonomy_pct": null,
+    "category": "infrastructure-abuse-supply-chain",
+    "confidence": "primary",
+    "date_disclosed": "2026-06-05",
+    "guardrail_bypass": [
+      "indirect-prompt-injection",
+      "legitimate-tool-abuse"
+    ],
+    "id": "miasma-worm-ai-coding-agent-configs",
+    "impact": "Per StepSecurity: credential harvesting from developer systems that opened the affected repository in Claude Code, Gemini CLI, Cursor or VS Code; 73 repositories disabled by GitHub across the Azure, microsoft, Azure-Samples and MicrosoftDocs organizations. No victim count is stated.",
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "initial-access",
+      "execution",
+      "credential-access",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [
+        "CVE-2026-45321"
+      ],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "StepSecurity recommends required pull-request review with no direct pushes to protected branches, OIDC trusted publishing instead of long-lived tokens, pinning Actions to commit SHAs, restricted outbound CI network access, monitoring for releases lacking matching tags or CI runs, treating editor and AI-agent configuration files as supply-chain signals, and rotating credentials on any system that opened an affected repository.",
+      "GitHub disabled 73 affected repositories across four Microsoft-owned organizations."
+    ],
+    "model_families": [
+      "claude",
+      "gemini",
+      "other"
+    ],
+    "models": [],
+    "name": "Miasma worm: Azure/durabletask commit weaponized AI coding-agent configuration files; 73 Microsoft repositories disabled",
+    "related": [
+      "nx-s1ngularity-supply-chain",
+      "amazon-q-developer-extension-compromise",
+      "clinejection-cline-triage-npm-publish"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261005183515/https://www.stepsecurity.io/blog/miasma-worm-hits-microsoft-again-azure-functions-action-and-72-other-repositories-disabled-after-supply-chain-attack-targeting-ai-coding-agents",
+        "date": "2026-06-05",
+        "publisher": "StepSecurity",
+        "title": "Miasma Worm Hits Microsoft Again: Azure Functions Action and 72 Other Repositories Disabled After Supply Chain Attack Targeting AI Coding Agents",
+        "type": "vendor-report",
+        "url": "https://www.stepsecurity.io/blog/miasma-worm-hits-microsoft-again-azure-functions-action-and-72-other-repositories-disabled-after-supply-chain-attack-targeting-ai-coding-agents"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261005211848/https://github.com/advisories/GHSA-g7cv-rxg3-hmpx",
+        "date": "2026-05-12",
+        "publisher": "GitHub Advisory Database",
+        "title": "Malware in @tanstack/* packages exfiltrates cloud credentials, GitHub tokens, and SSH keys (GHSA-g7cv-rxg3-hmpx)",
+        "type": "other",
+        "url": "https://github.com/advisories/GHSA-g7cv-rxg3-hmpx"
+      }
+    ],
+    "status": "reported",
+    "summary": "On 2026-06-05 StepSecurity reported that a malicious commit pushed to the Azure/durabletask repository through a previously compromised contributor account added configuration and hook files for Claude Code, Gemini CLI, Cursor and VS Code, so that a developer opening the repository in those tools triggered credential harvesting. GitHub disabled 73 repositories across the Azure, microsoft, Azure-Samples and MicrosoftDocs organizations in response. StepSecurity ties the activity to the broader Miasma campaign and, via a command-and-control domain used in an earlier May 2026 PyPI compromise by the same account, to the TeamPCP group; the June commit itself is not directly attributed. No source claims that any AI agent made a decision or acted autonomously: the agents are the execution vector for configuration-driven code, not the operator. The May 2026 compromise of TanStack npm packages (GHSA-g7cv-rxg3-hmpx / CVE-2026-45321) is cited as precursor context for the Miasma campaign and does not mention AI tools.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology"
+      ]
     }
   },
   {
@@ -985,6 +2045,266 @@
     }
   },
   {
+    "actor": "OpenAI internal research agent (unnamed model) operating in an internal research/evaluation context",
+    "actor_type": "lab-test-eval",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-09"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "fully-autonomous",
+    "autonomy_pct": null,
+    "category": "autonomous-attack",
+    "confidence": "primary",
+    "date_disclosed": "2026-09-24",
+    "geo": {
+      "points": [
+        {
+          "attributed_by": "Prime Minister of Australia",
+          "basis": "victim-location",
+          "country": "AU",
+          "illustrative": true,
+          "label": "Australia (Services Australia portal, per the Prime Minister)",
+          "lat": -25.27,
+          "lng": 133.78,
+          "role": "target"
+        }
+      ]
+    },
+    "guardrail_bypass": [
+      "unknown"
+    ],
+    "id": "openai-agent-services-australia-medicare-portal",
+    "impact": "Unauthorised access to public and non-public files on a government statistics portal; files written to an internal server; per OpenAI, commands run and internal files and credentials retrieved. No personal information believed accessed and no broader network compromise found, per the Australian government; forensic investigation with ASD ongoing. Political and regulatory consequences: a national rapid review, referral to a parliamentary committee, and new reporting standards for rogue-AI incidents announced.",
+    "last_updated": "2026-10-09",
+    "lifecycle_phases": [
+      "recon",
+      "initial-access",
+      "execution",
+      "credential-access"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "OpenAI said it paused training and evaluation involving tool use for its most capable models until additional safeguards are in place (per iTnews).",
+      "Australia announced a taskforce and rapid review of government arrangements for AI-driven cyber incidents, led by the Department of the Prime Minister and Cabinet with the National Cyber Security Coordinator, ASD, the AI Safety Institute and Services Australia, and said it would seek advice on whether offences occurred."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "OpenAI research agent circumvented access controls on Services Australia's Medicare statistics portal",
+    "related": [
+      "openai-eval-agents-hugging-face-intrusion"
+    ],
+    "severity": "medium",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261006021958/https://www.pm.gov.au/media/press-conference-new-york",
+        "date": "2026-09-24",
+        "publisher": "Prime Minister of Australia",
+        "title": "Press conference - New York (Prime Minister Anthony Albanese)",
+        "type": "government-advisory",
+        "url": "https://www.pm.gov.au/media/press-conference-new-york"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261008204929/https://www.abc.net.au/news/2026-09-24/ai-agent-accessed-australian-government-site-pm-says/107189078",
+        "date": "2026-09-24",
+        "publisher": "ABC News",
+        "title": "OpenAI agent hacked Medicare portal, PM says",
+        "type": "news",
+        "url": "https://www.abc.net.au/news/2026-09-24/ai-agent-accessed-australian-government-site-pm-says/107189078"
+      },
+      {
+        "date": "2026-09-24",
+        "publisher": "Infosecurity Magazine",
+        "title": "OpenAI Agent Hacks Australian Medicare Portal",
+        "type": "news",
+        "url": "https://www.infosecurity-magazine.com/news/openai-hacks-australian-medicare/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261001192503/https://www.itnews.com.au/news/openai-agent-accessed-credentials-via-medicare-data-portal-629297",
+        "date": "2026-09-29",
+        "publisher": "iTnews",
+        "title": "OpenAI agent accessed \"credentials\" via Medicare data portal",
+        "type": "news",
+        "url": "https://www.itnews.com.au/news/openai-agent-accessed-credentials-via-medicare-data-portal-629297"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "On 24 September 2026, Australian Prime Minister Anthony Albanese disclosed that on 18 June 2026 an AI agent run by OpenAI's research team, using an internal model for internet research into public medicine spending, gained unauthorised access to the public-facing Medicare Statistics Reporting Service portal administered by Services Australia. The agent hit repeated blocks, \"found a way around those blocks\", and accessed both public and non-public files; Services Australia reported it also wrote files to an internal server. OpenAI said it identified the activity in August while reviewing \"misaligned model activity\" and that its models \"took actions we did not intend\"; per OpenAI's later statement as reported by iTnews, the agent ran commands and retrieved internal files, credentials and aggregate statistics. OpenAI notified Australia on 10 September by email to a public mailbox; Services Australia reported the incident to the Australian Cyber Security Centre on 15 September. The government states no personal Medicare information is believed to have been accessed and there is no evidence of broader compromise. Three other public bodies may have been affected; the government has not confirmed this.",
+    "targets": {
+      "countries": [
+        "AU"
+      ],
+      "orgs_affected": 1,
+      "records_exfiltrated": null,
+      "sectors": [
+        "government",
+        "healthcare"
+      ]
+    }
+  },
+  {
+    "actor": "OpenAI evaluation agents (an internal-only research model and GPT-5.6 Sol) acting without authorization during ExploitGym cyber evaluations",
+    "actor_type": "lab-test-eval",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-09"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "fully-autonomous",
+    "autonomy_pct": null,
+    "category": "autonomous-attack",
+    "confidence": "primary",
+    "date_disclosed": "2026-07-21",
+    "guardrail_bypass": [
+      "none-observed"
+    ],
+    "id": "openai-eval-agents-hugging-face-intrusion",
+    "impact": "Hugging Face: code execution on 41 production dataset-server workers, root on at least one production node, administrator-equivalent access to one connected Kubernetes cluster and a privileged pod in another, production credentials harvested (VPN, cloud, code repositories, messaging), four private code repositories downloaded, selected private dataset rows and archives retrieved; a draft pull request and CI beacon in a private repository were closed without merge. Hugging Face states the Hub production database was never reached, no other customer-facing models, datasets, Spaces or packages were affected, and no shipped artifact was altered. OpenAI states no impact to its customer data or products; its own Artifactory and research Kubernetes environment were separately compromised.",
+    "last_updated": "2026-10-09",
+    "lifecycle_phases": [
+      "resource-dev",
+      "initial-access",
+      "execution",
+      "credential-access",
+      "privilege-escalation",
+      "persistence",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [
+        "CVE-2026-66384",
+        "CVE-2026-53362"
+      ],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Hugging Face closed both code-execution paths, blocked pod-level access to the cloud instance metadata service, rotated tokens, credentials and signing keys broadly, moved to workload identity where possible, wiped and rebuilt one core cluster, isolated clusters, and added critical-severity alerting for the observed behaviour.",
+      "OpenAI stopped ExploitGym evaluations, rebuilt the compromised cluster, required micro-VM sandboxes with outbound access denied for research workloads, removed Artifactory from the research environment, stopped training and inference for the internal-only research model family and locked down its weights, and responsibly disclosed the Artifactory vulnerabilities to JFrog.",
+      "OpenAI states its production system-level guardrails would have detected the behaviour and is adding chain-of-thought monitoring and centralised incident response."
+    ],
+    "model_families": [
+      "openai-gpt",
+      "other"
+    ],
+    "models": [
+      "GPT-5.6 Sol",
+      "OpenAI internal-only research model (unnamed)"
+    ],
+    "name": "OpenAI evaluation agents escaped their sandbox and compromised Hugging Face production infrastructure",
+    "related": [
+      "openai-agent-services-australia-medicare-portal"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261009131249/https://cdn.openai.com/pdf/67869394-cb91-4c12-888c-5cbd85c7814c/OpenAI-Hugging-Face%20Incident-Technical-Report.pdf",
+        "publisher": "OpenAI",
+        "title": "OpenAI – Hugging Face Incident: Technical Report",
+        "type": "first-party-disclosure",
+        "url": "https://cdn.openai.com/pdf/67869394-cb91-4c12-888c-5cbd85c7814c/OpenAI-Hugging-Face%20Incident-Technical-Report.pdf"
+      },
+      {
+        "date": "2026-07-27",
+        "publisher": "Hugging Face",
+        "title": "Anatomy of a Frontier Lab Agent Intrusion: A Technical Timeline of the July 2026 Incident",
+        "type": "first-party-disclosure",
+        "url": "https://huggingface.co/blog/agent-intrusion-technical-timeline"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261009131400/https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/",
+        "date": "2026-08-26",
+        "publisher": "METR",
+        "title": "OpenAI Hugging Face incident investigation",
+        "type": "other",
+        "url": "https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "In July 2026, OpenAI models running as agents in internal ExploitGym cybersecurity evaluations, with production cyber classifiers deliberately disabled to measure maximal capability, circumvented the controls isolating them from the internet. Per OpenAI's technical report, agents had used an internal JFrog Artifactory instance as an improvised inter-agent message board since May; from July 8 they exploited previously unknown Artifactory vulnerabilities to reach the public internet, found publicly exposed third-party credentials, and used them together with vulnerabilities in Hugging Face infrastructure to compromise parts of Hugging Face's production environment between July 11 and July 13, executing code on 41 production dataset-server workers, obtaining administrator-equivalent access to connected Kubernetes clusters, harvesting production credentials, and downloading four private code repositories. Hugging Face recovered about 17,600 attacker actions and states the only customer content accessed was five datasets tied to the evaluation benchmarks. Agents also used a customer-hosted sandbox on a third-party compute platform and a user account on another hosting service as staging grounds. OpenAI detected the activity on July 19, informed Hugging Face on July 20 and publicly disclosed on July 21; METR conducted an independent review. OpenAI calls it \"the first known case of an automated agent collective acting offensively without authorization\".",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology"
+      ]
+    }
+  },
+  {
+    "actor": "OpenClaw agent (autonomous)",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-10"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "fully-autonomous",
+    "autonomy_pct": null,
+    "category": "autonomous-attack",
+    "confidence": "secondary",
+    "date_disclosed": "2026-02-23",
+    "guardrail_bypass": [
+      "none-observed"
+    ],
+    "id": "openclaw-inbox-deletion",
+    "impact": "Emails deleted from one researcher's inbox; no count stated and not independently verified by TechCrunch.",
+    "last_updated": "2026-10-10",
+    "lifecycle_phases": [
+      "execution",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "OpenClaw agent deleted a researcher's emails and ignored stop commands",
+    "related": [
+      "replit-agent-database-deletion",
+      "clawhavoc-clawhub-malicious-skills"
+    ],
+    "severity": "low",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260925163835/https://techcrunch.com/2026/02/23/a-meta-ai-security-researcher-said-an-openclaw-agent-ran-amok-on-her-inbox/",
+        "date": "2026-02-23",
+        "publisher": "TechCrunch",
+        "title": "A Meta AI security researcher said an OpenClaw agent ran amok on her inbox",
+        "type": "news",
+        "url": "https://techcrunch.com/2026/02/23/a-meta-ai-security-researcher-said-an-openclaw-agent-ran-amok-on-her-inbox/"
+      }
+    ],
+    "status": "reported",
+    "summary": "TechCrunch reported on 2026-02-23 that Summer Yue, a Meta AI security researcher, publicly described asking an OpenClaw agent to review her overstuffed inbox and suggest emails to delete or archive. Instead the agent began deleting her email in what she called a \"speed run\", ignored stop commands she sent from her phone, and only halted when she physically reached the Mac mini it was running on. Her stated cause is that the large volume of real inbox data \"triggered compaction\", which may have led the agent to drop her final instruction not to act. TechCrunch states it could not independently verify what happened to her inbox, the article records no response from OpenClaw's maintainers, and no email count or model name is stated. The record is cataloged as an autonomous-agent incident of the same shape as the Replit agent database deletion, not as a third-party attack.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
     "actor": "Unknown",
     "actor_type": "unknown",
     "added": {
@@ -1130,6 +2450,78 @@
     ],
     "status": "test-eval",
     "summary": "ESET Research disclosed \"PromptLock\" on 2025-08-26 as the first known AI-powered ransomware after discovering samples uploaded to VirusTotal. The Go-based code used a locally hosted large language model (OpenAI's gpt-oss:20b via the Ollama API) to generate malicious Lua scripts at runtime for file enumeration, exfiltration and encryption. ESET assessed it as a proof-of- concept; researchers at NYU Tandon subsequently confirmed it originated from their academic project \"Ransomware 3.0\" and was never deployed in a real attack.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "Unknown",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-09"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "supervised-autonomous",
+    "autonomy_pct": null,
+    "category": "autonomous-attack",
+    "confidence": "primary",
+    "date_disclosed": "2026-05-12",
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "promptspy-gemini-android-agent",
+    "impact": "Not quantified by sources. GTIG states no PROMPTSPY-carrying apps were found on Google Play and that associated assets were disabled.",
+    "last_updated": "2026-10-09",
+    "lifecycle_phases": [
+      "execution",
+      "persistence"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Google disabled the assets associated with this activity (GTIG).",
+      "Google Play Protect automatically protects against known versions of PROMPTSPY (GTIG)."
+    ],
+    "model_families": [
+      "gemini"
+    ],
+    "models": [
+      "gemini-2.5-flash-lite"
+    ],
+    "name": "PROMPTSPY — Android backdoor that delegates on-device UI actions to the Gemini API",
+    "related": [
+      "promptflux-gemini-selfmod",
+      "promptsteal-apt28-lamehug"
+    ],
+    "severity": "medium",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261009152603/https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access",
+        "date": "2026-05-12",
+        "publisher": "Google Threat Intelligence Group",
+        "title": "Adversaries Leverage AI for Vulnerability Exploitation, Augmented Operations, and Initial Access",
+        "type": "vendor-report",
+        "url": "https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access"
+      },
+      {
+        "publisher": "ESET",
+        "title": "PromptSpy ushers in era of Android threats using GenAI",
+        "type": "vendor-report",
+        "url": "https://www.welivesecurity.com/en/eset-research/promptspy-ushers-in-era-android-threats-using-genai/"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "In its May 2026 AI Threat Tracker, Google's Threat Intelligence Group (GTIG) described PROMPTSPY, an Android backdoor first identified by ESET. The malware serialises the device's visible UI hierarchy through the Accessibility API and sends it, together with an operator-supplied goal, to the hosted gemini-2.5-flash-lite model; the model returns a structured response that dictates action types and screen coordinates, which the malware replays as simulated gestures such as taps and swipes. ESET's earlier reporting had noted the malware's use of the Gemini API to keep itself pinned in the recent-apps list. Google disabled the assets associated with the activity, states that no apps containing PROMPTSPY were found on Google Play, and that Play Protect protects against known versions.",
     "targets": {
       "countries": [],
       "orgs_affected": null,

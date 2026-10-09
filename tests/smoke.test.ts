@@ -6,7 +6,9 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { buildDataset } from '../src/data/adapter';
 import { loadDataset } from '../src/data/load';
 import { correctionIssueUrl } from '../src/config';
+import { datasetStatesAutonomyPct } from '../src/data/coverage';
 import { atlasUrl, attackUrl } from '../src/data/links';
+import { fmtInt, fmtPct } from '../src/util/format';
 import { applyFilters, fromQuery } from '../src/filters';
 import { incidentHref, parseRoute } from '../src/router';
 import { collectMarkers, mapView } from '../src/views/map';
@@ -74,9 +76,14 @@ describe('every id in summary.ids', () => {
       else expect(li.textContent).toContain('no archive recorded');
     });
 
-    // Null numbers render as "not stated", never 0.
-    if (inc.autonomy_pct === null) expect(root.textContent).toContain('not stated');
-    expect(root.textContent).not.toMatch(/Autonomy \(source-stated %\)\s*0%/);
+    // Null numbers render as "not stated", never 0; stated figures render as stated.
+    const text = root.textContent ?? '';
+    expect(text).toMatch(new RegExp(`Organisations affected\\s*${fmtInt(inc.targets.orgs_affected)}`));
+    expect(text).toMatch(new RegExp(`Records exfiltrated\\s*${fmtInt(inc.targets.records_exfiltrated)}`));
+    // The source-stated autonomy row appears only once some record states a value (never as 0% for null).
+    if (datasetStatesAutonomyPct(ds.incidents) || inc.autonomy_pct !== null) expect(text).toMatch(new RegExp(`Autonomy \\(source-stated %\\)\\s*${fmtPct(inc.autonomy_pct)}`));
+    else expect(text).not.toContain('Autonomy (source-stated %)');
+    expect(text).not.toMatch(/Autonomy \(source-stated %\)\s*0%/);
 
     // Related records resolve to cards.
     expect(root.querySelectorAll('.card')).toHaveLength(inc.related.length);
