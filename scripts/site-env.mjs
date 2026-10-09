@@ -10,12 +10,15 @@
 //   GitHub Actions build env         GITHUB_REPOSITORY=owner/repo: the Pages
 //                                    project site "/repo/" under owner.github.io
 //                                    (or "/" for an owner.github.io repository)
-//   Local fallback                   "/rogue-agents-dashboard/" under mlsecopshub.github.io
+//   Local fallback                   "/" at the vite preview address. A build
+//                                    with no deploy environment is a local one;
+//                                    its share links say so instead of pointing
+//                                    at a host it was not built for.
 //
 // Deterministic: the same environment always yields the same strings.
 
-export const GITHUB_PAGES_BASE = '/rogue-agents-dashboard/';
-export const GITHUB_PAGES_SITE_URL = 'https://mlsecopshub.github.io/rogue-agents-dashboard/';
+export const LOCAL_BASE = '/';
+export const LOCAL_SITE_URL = 'http://localhost:4173/';
 
 function onVercel(env) {
   return env.VERCEL === '1' || env.VERCEL === 'true';
@@ -44,7 +47,7 @@ export function resolveBasePath(env = process.env) {
   if (onVercel(env)) return '/';
   const gh = githubRepo(env);
   if (gh) return githubPagesBase(gh);
-  return GITHUB_PAGES_BASE;
+  return LOCAL_BASE;
 }
 
 /** Absolute public URL of the site root, with a trailing slash. */
@@ -57,5 +60,5 @@ export function resolveSiteUrl(env = process.env) {
   }
   const gh = githubRepo(env);
   if (gh) return `https://${gh.owner}.github.io${githubPagesBase(gh)}`;
-  return GITHUB_PAGES_SITE_URL;
+  return LOCAL_SITE_URL;
 }

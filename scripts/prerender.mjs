@@ -25,7 +25,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { geoNaturalEarth1, geoPath } from 'd3-geo';
 import { feature } from 'topojson-client';
-import { GITHUB_PAGES_SITE_URL, resolveSiteUrl } from './site-env.mjs';
+import { LOCAL_SITE_URL, resolveSiteUrl } from './site-env.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -33,7 +33,7 @@ const SNAP = path.join(ROOT, 'data', 'snapshot');
 const FONTS = path.join(ROOT, 'assets', 'fonts');
 
 export const SITE_NAME = 'Rogue Agent Watch';
-export const DEFAULT_SITE_URL = GITHUB_PAGES_SITE_URL;
+export const DEFAULT_SITE_URL = LOCAL_SITE_URL;
 export const UPSTREAM = 'https://github.com/MLSecOpsHub/agentic-attack-index';
 export const CARD_W = 1200;
 export const CARD_H = 630;
