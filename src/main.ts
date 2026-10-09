@@ -57,7 +57,13 @@ function boot(): void {
     headerSlot.appendChild(header(route));
     clear(main);
     main.dataset.view = route.view;
-    document.title = route.view === 'overview' ? 'Rogue Agent Watch' : `${TITLES[route.view]} — Rogue Agent Watch`;
+    document.title = route.view === 'overview' ? 'Rogue Agents Watch' : `${TITLES[route.view]} — Rogue Agents Watch`;
+    // The overview with no filters is the site root: show the canonical URL
+    // ("/") rather than "/#/", which the brand link and "#/" hrefs produce.
+    // Same document, no reload; crawlers ignore fragments either way.
+    if (route.view === 'overview' && !window.location.hash.includes('?') && /^#\/?$/.test(window.location.hash)) {
+      history.replaceState(null, '', `${import.meta.env.BASE_URL}${window.location.search}`);
+    }
     await VIEWS[route.view]({ ds, route, root: main });
     // Scroll to top on path change (not on filter-only query changes).
     const path = (window.location.hash || '#/').split('?')[0] ?? '';

@@ -1,6 +1,6 @@
 # CLAUDE.md — rogue-agents-dashboard
 
-Static, client-side dashboard ("Rogue Agent Watch") that renders the
+Static, client-side dashboard ("Rogue Agents Watch") that renders the
 [Agentic Attack Index](https://github.com/MLSecOpsHub/agentic-attack-index)
 dataset of AI-agent-executed cyberattacks and rogue-agent incidents. This repo
 is the **presentation layer only**. The dataset is the product; trust is the

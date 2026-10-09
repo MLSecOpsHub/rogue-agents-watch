@@ -48,8 +48,8 @@ export function techniquesView({ ds, route, root }: ViewContext): void {
       h(
         'ul',
         { class: 'inline-list' },
-        h('li', null, h('a', { class: 'btn btn-small', href: `${SITE_URL}navigator/attack-layer.json`, download: 'rogue-agent-watch-attack-layer.json' }, 'ATT&CK layer (JSON)'), ' ', externalLink('https://mitre-attack.github.io/attack-navigator/', 'ATT&CK Navigator', 'plain')),
-        h('li', null, h('a', { class: 'btn btn-small', href: `${SITE_URL}navigator/atlas-layer.json`, download: 'rogue-agent-watch-atlas-layer.json' }, 'ATLAS layer (JSON)'), ' ', externalLink('https://mitre-atlas.github.io/atlas-navigator/', 'ATLAS Navigator', 'plain')),
+        h('li', null, h('a', { class: 'btn btn-small', href: `${SITE_URL}navigator/attack-layer.json`, download: 'rogue-agents-watch-attack-layer.json' }, 'ATT&CK layer (JSON)'), ' ', externalLink('https://mitre-attack.github.io/attack-navigator/', 'ATT&CK Navigator', 'plain')),
+        h('li', null, h('a', { class: 'btn btn-small', href: `${SITE_URL}navigator/atlas-layer.json`, download: 'rogue-agents-watch-atlas-layer.json' }, 'ATLAS layer (JSON)'), ' ', externalLink('https://mitre-atlas.github.io/atlas-navigator/', 'ATLAS Navigator', 'plain')),
       ),
       h('p', { class: 'muted small' }, 'Also available: the upstream ', externalLink(`${UPSTREAM_REPO_URL}/blob/main/dist/stix/bundle.json`, 'STIX 2.1 bundle', 'plain'), ' for OpenCTI, and a ', h('a', { href: `${SITE_URL}misp/manifest.json` }, 'MISP feed'), ' (point MISP at ', h('code', null, `${SITE_URL}misp/`), ').'),
     ),
