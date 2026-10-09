@@ -38,15 +38,42 @@ export interface PrerenderRecord {
   superseded_by?: string;
   [extra: string]: unknown;
 }
+export interface TaxonomyValue {
+  id: string;
+  label: string;
+  description: string;
+}
 export interface PrerenderContext {
   incidents: PrerenderRecord[];
-  summary: { dataset_version: string; total: number; ids: string[]; by_status?: Record<string, number> };
+  summary: { dataset_version: string; total: number; ids: string[]; by_status?: Record<string, number>; [extra: string]: unknown };
   snapshot: { source_commit: string | null; fetched_at: string; source_ref?: string };
+  taxonomy: Record<string, { title: string; values: TaxonomyValue[] }>;
   labels: Record<string, Record<string, { label: string }>>;
   version: string;
   siteUrl: string;
+  rawBase: string;
+  schemaUrl: string;
+  /** The Vite-built index.html every page is assembled from (or FALLBACK_SHELL). */
+  shell: string;
   geo: { landPath: string; project: (lng: number, lat: number) => [number, number] | null };
   upstreamIncidentUrl: (id: string) => string;
+}
+export interface PageMeta {
+  title: string;
+  ogTitle?: string;
+  description: string;
+  url: string;
+  image?: string;
+  imageAlt?: string;
+  ogType?: string;
+  extraHead?: string;
+  jsonLd?: Record<string, unknown> | Array<Record<string, unknown> | null | undefined>;
+}
+export interface RoutePage {
+  path: string;
+  view: 'overview' | 'map' | 'timeline' | 'table' | 'techniques' | 'stats' | 'about';
+  nav: string;
+  title: string;
 }
 export interface ChangesJson {
   dataset_version: string;
@@ -66,10 +93,20 @@ export const ROLE_HEX: Record<string, string>;
 export function esc(s: unknown): string;
 export function wrapText(text: string, maxChars: number, maxLines: number): string[];
 export function firstSentence(text: string): string;
-export function loadContext(siteUrl?: string): PrerenderContext;
+export const FALLBACK_SHELL: string;
+export function loadContext(siteUrl?: string, opts?: { shell?: string }): PrerenderContext;
 export function cardSvg(rec: PrerenderRecord, ctx: PrerenderContext): string;
 export function siteCardSvg(ctx: PrerenderContext): string;
+export function bareShell(html: string): string;
+export function pageHtml(ctx: PrerenderContext, meta: PageMeta, body: string): string;
 export function incidentHtml(rec: PrerenderRecord, ctx: PrerenderContext): string;
+export function routeHtml(view: RoutePage['view'], ctx: PrerenderContext): string;
+export function organizationJsonLd(): Record<string, unknown>;
+export function websiteJsonLd(ctx: PrerenderContext): Record<string, unknown>;
+export function datasetJsonLd(ctx: PrerenderContext): Record<string, unknown>;
+export function routeJsonLd(ctx: PrerenderContext, route: RoutePage): Record<string, unknown>;
+export function breadcrumbJsonLd(ctx: PrerenderContext, crumbs: Array<[string, string]>): Record<string, unknown>;
+export function definedTermSetsJsonLd(ctx: PrerenderContext): Array<Record<string, unknown>>;
 export function atomFeed(records: PrerenderRecord[], ctx: PrerenderContext): string;
 export function changesJson(records: PrerenderRecord[], ctx: PrerenderContext): ChangesJson;
 export function siteOgTags(ctx: PrerenderContext): string;

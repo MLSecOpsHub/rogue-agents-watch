@@ -1,5 +1,30 @@
 import { describe, expect, it } from 'vitest';
-import { href, incidentHref, parseRoute } from '../src/router';
+import { href, incidentHref, parseRoute, routeFromPath } from '../src/router';
+
+describe('routeFromPath (prerendered pages)', () => {
+  it('maps a prerendered pathname under the base to a route path', () => {
+    expect(routeFromPath('/rogue-agents-watch/', '/rogue-agents-watch/')).toBe('');
+    expect(routeFromPath('/rogue-agents-watch/map/', '/rogue-agents-watch/')).toBe('map');
+    expect(routeFromPath('/rogue-agents-watch/incident/echoleak-m365-copilot/', '/rogue-agents-watch/')).toBe('incident/echoleak-m365-copilot');
+    expect(routeFromPath('/map/', '/')).toBe('map');
+    expect(routeFromPath('/', '/')).toBe('');
+  });
+
+  it('tolerates a missing trailing slash and an explicit index.html', () => {
+    expect(routeFromPath('/map', '/')).toBe('map');
+    expect(routeFromPath('/incident/x-y/index.html', '/')).toBe('incident/x-y');
+  });
+
+  it('returns null outside the base', () => {
+    expect(routeFromPath('/elsewhere/', '/rogue-agents-watch/')).toBeNull();
+  });
+
+  it('round-trips through parseRoute', () => {
+    expect(parseRoute(`#/${routeFromPath('/incident/gtg-1002-ai-espionage/', '/')}`)).toMatchObject({ view: 'incident', id: 'gtg-1002-ai-espionage' });
+    expect(parseRoute(`#/${routeFromPath('/techniques/', '/')}`).view).toBe('techniques');
+    expect(parseRoute(`#/${routeFromPath('/', '/')}`).view).toBe('overview');
+  });
+});
 
 describe('parseRoute', () => {
   it('maps the six top-level routes', () => {

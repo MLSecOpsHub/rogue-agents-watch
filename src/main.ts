@@ -1,7 +1,7 @@
 import './styles.css';
 import { applyStoredTheme, footer, header } from './components/layout';
 import { loadDataset } from './data/load';
-import { currentRoute, onRouteChange, type Route } from './router';
+import { currentRoute, onPathPage, onRouteChange, type Route } from './router';
 import { clear, h } from './util/dom';
 import { aboutView } from './views/about';
 import { incidentView } from './views/incident';
@@ -67,7 +67,16 @@ function boot(): void {
     }
   };
 
-  onRouteChange((r) => void render(r));
+  if (onPathPage()) {
+    // Booted on a prerendered page such as /incident/<id>/. Render it in place;
+    // any in-app navigation goes back to the root shell so URLs stay the
+    // canonical hash form (and the back button returns to this page).
+    window.addEventListener('hashchange', () => {
+      if (window.location.hash) window.location.assign(`${import.meta.env.BASE_URL}${window.location.hash}`);
+    });
+  } else {
+    onRouteChange((r) => void render(r));
+  }
   void render(currentRoute());
 }
 

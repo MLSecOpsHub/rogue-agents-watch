@@ -75,12 +75,28 @@ product. Read the non-negotiables before changing anything.
   illustrative centroid, pin = stated location. Category is never a map hue
   (it fails all-pairs colour-blind separation). Records without `geo` go in
   the field log.
-- Sharing and interop are prerendered at build time by `scripts/prerender.mjs`
-  (per-incident HTML with Open Graph tags and Article JSON-LD, PNG cards via
-  resvg with the vendored OFL fonts in `assets/fonts/`, `feed.atom`,
-  `changes.json`, `sitemap.xml`, `robots.txt`, Dataset JSON-LD in
-  `index.html`, ATT&CK and ATLAS Navigator layers, a static MISP feed with v5
-  UUIDs). Fonts are build-time only; the site still uses the system font stack.
+- Every route and every record is also a real, hash-free page, prerendered at
+  build time by `scripts/prerender.mjs` + `scripts/prerender-pages.mjs`:
+  `/`, `/map/`, `/timeline/`, `/table/`, `/techniques/`, `/stats/`, `/about/`,
+  `/incident/<id>/`. Each is the Vite-built shell with its own head (title,
+  description, canonical, hreflang, Open Graph, JSON-LD) and the view's
+  content as static HTML inside `#app`, so crawlers that do not run
+  JavaScript (AI crawlers in particular) read the content; the app then boots
+  in place (`src/router.ts` reads the path when there is no hash). Never add
+  a meta refresh or a script redirect to these pages: search engines treat
+  an instant redirect as a redirect and drop the page. Static content is
+  generated from the snapshot only, escaped, with grades shown next to their
+  upstream definitions; the hash-free URL is the canonical one.
+- The rest of the prerender output: PNG cards via resvg with the vendored OFL
+  fonts in `assets/fonts/`, `feed.atom`, `changes.json`, `sitemap.xml` (every
+  page, with card images), `robots.txt` (AI crawlers allowed by name),
+  `llms.txt` and `llms-full.txt`, one schema.org graph on the landing page
+  (`WebSite`, `Organization`, `Dataset` with `hasPart`, `ItemList`),
+  `Article` + `BreadcrumbList` per record, `DefinedTermSet` for the grading
+  vocabularies on `/about/`, ATT&CK and ATLAS Navigator layers, a static MISP
+  feed with v5 UUIDs. Fonts are build-time only; the site still uses the
+  system font stack. Every "modified" date is derived from the data, never
+  the clock.
 - Every number on the Techniques and Stats pages is a count over records.
   Coverage tables state how many records carry a field; a gap is a missing
   value upstream, never zero.
