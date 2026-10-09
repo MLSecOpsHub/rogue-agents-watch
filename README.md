@@ -116,10 +116,12 @@ One-time setup in the GitHub repository:
    **Allow GitHub Actions to create and approve pull requests** (needed by the
    weekly `sync-data` workflow).
 
-On GitHub Pages the site is served under `/rogue-agents-dashboard/`. The
-asset base path and the canonical URL (share links, Open Graph tags, feed,
-sitemap) are resolved together in `scripts/site-env.mjs`:
+The asset base path and the canonical URL (share links, Open Graph tags,
+feed, sitemap) are resolved together in `scripts/site-env.mjs`:
 
+- **GitHub Pages**: no configuration. The workflow build derives
+  `/<repo>/` and `https://<owner>.github.io/<repo>/` from
+  `GITHUB_REPOSITORY`, so renaming the repository needs no code change.
 - **Vercel**: no configuration. The build detects Vercel's environment,
   serves at `/`, and uses the production host (or the preview deployment's
   host) as the canonical URL. `vercel.json` adds the CORS header the

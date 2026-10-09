@@ -74,11 +74,13 @@ jobs:
       - run: npm run build
       - name: Serve dist and audit the landing page and the map
         run: |
+          # Same base path the build used (scripts/site-env.mjs derives it from GITHUB_REPOSITORY).
+          BASE=$(node -e 'import("./scripts/site-env.mjs").then((m) => process.stdout.write(m.resolveBasePath()))')
           npx vite preview --port 4173 --strictPort > preview.log 2>&1 &
-          for i in $(seq 1 40); do curl -sf -o /dev/null http://localhost:4173/rogue-agents-dashboard/ && break; sleep 0.5; done
+          for i in $(seq 1 40); do curl -sf -o /dev/null "http://localhost:4173${BASE}" && break; sleep 0.5; done
           for route in "/" "/map"; do
             name=$(echo "$route" | tr '/' '_')
-            npx --yes lighthouse@12 "http://localhost:4173/rogue-agents-dashboard/#${route}" \
+            npx --yes lighthouse@12 "http://localhost:4173${BASE}#${route}" \
               --chrome-flags="--headless=new --no-sandbox" --only-categories=performance,accessibility,best-practices,seo \
               --output=json --output-path="./lh${name}.json" --quiet
           done
