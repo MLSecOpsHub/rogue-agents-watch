@@ -128,14 +128,30 @@ describe('map', () => {
     const hover = attachTooltip(ds, stage);
     const m = collectMarkers(ds.incidents, false)[0]!;
     hover(m, [MAP_W - 30, 20]);
-    const tip = stage.querySelector<HTMLElement>('.tooltip')!;
+    const tip = stage.querySelector<HTMLAnchorElement>('a.tooltip')!;
     expect(tip.hidden).toBe(false);
     expect(tip.className).toBe('tooltip below edge-right');
-    expect(tip.textContent).toContain(m.inc.name);
+    // A card that links to the record: name, role + place (no basis, no "centroid"), the three grades, source count.
+    expect(tip.getAttribute('href')).toBe(`#/incident/${m.inc.id}`);
+    expect(tip.querySelector('.tip-name')?.textContent).toBe(m.inc.name);
+    expect(tip.querySelector('.tip-place')?.textContent).toMatch(/^(Origin|Target) .+/);
+    expect(tip.textContent).not.toMatch(/centroid|illustrative|, per /);
+    expect(tip.querySelectorAll('.tip-grades .badge')).toHaveLength(3);
+    expect(tip.textContent).toContain('Open record');
     hover(m, [MAP_W / 2, MAP_H / 2]);
     expect(tip.className).toBe('tooltip');
+    // Leaving the marker hides the card after a short grace period (so it can be moved onto and clicked).
     hover(null, [0, 0]);
+    expect(tip.hidden).toBe(false);
+    await new Promise((r) => setTimeout(r, 250));
     expect(tip.hidden).toBe(true);
+  });
+
+  it('names a place without repeating the basis note the upstream label carries', async () => {
+    const { placeName } = await import('../src/components/map-canvas');
+    expect(placeName({ role: 'origin', basis: 'actor-location', attributed_by: 'Anthropic', country: 'GB', lat: 0, lng: 0, label: 'United Kingdom (actor location, per Anthropic)', illustrative: true })).toBe('United Kingdom');
+    expect(placeName({ role: 'target', basis: null, attributed_by: null, country: null, lat: 0, lng: 0, label: 'Somewhere (stated by X)', illustrative: false })).toBe('Somewhere');
+    expect(placeName({ role: 'target', basis: null, attributed_by: null, country: null, lat: 0, lng: 0, label: 'Plain', illustrative: false })).toBe('Plain');
   });
 
   it('collects markers only from records with geo, preserving the illustrative flag', () => {

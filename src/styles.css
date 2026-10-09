@@ -1097,15 +1097,26 @@ svg a:focus .bar-rect {
   --tip-x: -50%;
   --tip-y: calc(-100% - 14px);
   transform: translate(var(--tip-x), var(--tip-y));
-  background: var(--fg);
-  color: var(--bg);
-  padding: 0.45rem 0.65rem;
-  border-radius: 6px;
+  display: grid;
+  gap: 0.35rem;
+  width: max-content;
+  max-width: 300px;
+  padding: 0.6rem 0.75rem 0.55rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  background: var(--bg-elev);
+  color: var(--fg);
   font-size: 0.83rem;
-  white-space: pre-line;
-  pointer-events: none;
-  max-width: 280px;
+  line-height: 1.35;
+  text-decoration: none;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.25);
   z-index: 2;
+}
+.tooltip:hover,
+.tooltip:focus-visible {
+  border-color: var(--accent);
+  outline: none;
 }
 .tooltip.below {
   --tip-y: 14px;
@@ -1115,6 +1126,48 @@ svg a:focus .bar-rect {
 }
 .tooltip.edge-right {
   --tip-x: calc(-100% + 12px);
+}
+.tip-name {
+  font-weight: 650;
+  font-size: 0.9rem;
+}
+.tip-place {
+  color: var(--fg-muted);
+}
+.tip-role {
+  display: inline-block;
+  padding: 0.05rem 0.4rem;
+  margin-right: 0.15rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-fg);
+  background: var(--accent);
+}
+.tip-role-target {
+  background: var(--fg-muted);
+  color: var(--bg);
+}
+.tip-grades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.tip-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+}
+.tip-cta {
+  color: var(--accent);
+  font-weight: 600;
+}
+.tooltip:hover .tip-cta {
+  text-decoration: underline;
 }
 .tooltip[hidden] {
   display: none;

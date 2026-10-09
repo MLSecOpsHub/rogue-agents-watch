@@ -11,7 +11,7 @@ import { fmtPct } from '../util/format';
 import { copyToClipboard, shareCaption } from '../util/share';
 import { shareUrl } from '../config';
 import { badge, gradeStrip, recordStatusBanner } from './badges';
-import { basisText } from './map-canvas';
+import { basisText, placeName } from './map-canvas';
 
 function row(dt: string, dd: HTMLElement | string): HTMLElement[] {
   return [h('dt', null, dt), h('dd', null, dd)];
@@ -20,7 +20,7 @@ function row(dt: string, dd: HTMLElement | string): HTMLElement[] {
 export function incidentDrawer(ds: Dataset, inc: Incident, onClose: () => void): HTMLElement {
   const tax = ds.taxonomy;
   const location = inc.geo
-    ? h('ul', { class: 'geo-points' }, ...inc.geo.points.map((p) => h('li', null, `${p.role} ${p.label}${p.illustrative ? ' (country-level)' : ''}`, h('span', { class: 'muted' }, ` · ${basisText(ds, p)}`))))
+    ? h('ul', { class: 'geo-points' }, ...inc.geo.points.map((p) => h('li', null, `${p.role} ${placeName(p)}`, h('span', { class: 'muted' }, ` · ${basisText(ds, p)}${p.illustrative ? ' · country-level' : ''}`))))
     : 'no stated location; listed in the field log only';
   const close = h('button', { type: 'button', class: 'btn btn-small btn-quiet drawer-close', 'aria-label': 'Close incident panel', onClick: onClose }, 'Close');
   const banner = recordStatusBanner(tax, inc, inc.superseded_by ? ds.byId.get(inc.superseded_by)?.name : undefined);

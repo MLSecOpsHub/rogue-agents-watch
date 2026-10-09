@@ -7,9 +7,12 @@ import { geoNaturalEarth1, geoPath, geoGraticule10, type GeoProjection } from 'd
 import { feature } from 'topojson-client';
 import type { Topology, GeometryCollection } from 'topojson-specification';
 import type { FeatureCollection, Geometry } from 'geojson';
+import { countryFlagLabel } from '../data/links';
 import { label } from '../data/taxonomy';
 import type { Dataset, GeoPoint, GeoRole, Incident } from '../data/types';
+import { incidentHref } from '../router';
 import { h, svgEl } from '../util/dom';
+import { badge } from './badges';
 
 export interface Marker {
   inc: Incident;
@@ -28,6 +31,16 @@ export function collectMarkers(incidents: Incident[], includeInactive: boolean):
     }
   }
   return out;
+}
+
+/**
+ * The place a point stands for, as a short name: the country from its ISO
+ * code, else the upstream label without its trailing "(basis, per X)" note.
+ * The basis and attributor are shown separately where they belong (drawer,
+ * record page), never twice.
+ */
+export function placeName(p: GeoPoint): string {
+  return p.country ? countryFlagLabel(p.country) : p.label.replace(/\s*\([^()]*\)\s*$/, '');
 }
 
 /** "sponsor attribution, per Anthropic" — the basis a point rests on, as the record states it. */
@@ -90,17 +103,50 @@ export function tooltipPlacement(xy: [number, number]): { below: boolean; edge: 
   return { below: xy[1] < MAP_H / 3, edge: xy[0] < MAP_W / 4 ? 'left' : xy[0] > (MAP_W * 3) / 4 ? 'right' : null };
 }
 
-/** A tooltip element positioned inside `stage`; returns the hover handler to pass as `onHover`. */
+/**
+ * A hover card positioned inside `stage`, linking to the record: name, the
+ * role and place, the three grades, source count. The full basis text stays
+ * in the marker's <desc> for assistive tech and on the record page. Returns
+ * the hover handler to pass as `onHover`. The card stays open for a moment
+ * after the pointer leaves the marker so it can be moved onto and clicked.
+ */
 export function attachTooltip(ds: Dataset, stage: HTMLElement): (m: Marker | null, xy: [number, number]) => void {
-  const tip = h('div', { class: 'tooltip', role: 'tooltip', hidden: true });
+  const tip = h('a', { class: 'tooltip', hidden: true, tabindex: -1 }) as HTMLAnchorElement;
   stage.appendChild(tip);
+  let hideTimer: ReturnType<typeof setTimeout> | null = null;
+  const cancelHide = () => {
+    if (hideTimer !== null) clearTimeout(hideTimer);
+    hideTimer = null;
+  };
+  const hide = () => {
+    cancelHide();
+    tip.hidden = true;
+  };
+  tip.addEventListener('mouseenter', cancelHide);
+  tip.addEventListener('mouseleave', hide);
   return (m, xy) => {
     if (!m) {
-      tip.hidden = true;
+      cancelHide();
+      hideTimer = setTimeout(hide, 180);
       return;
     }
+    cancelHide();
     const place = tooltipPlacement(xy);
-    tip.textContent = tooltipText(ds, m);
+    const tax = ds.taxonomy;
+    const n = m.inc.sources.length;
+    tip.href = incidentHref(m.inc.id);
+    tip.replaceChildren(
+      h('span', { class: 'tip-name' }, m.inc.name),
+      h('span', { class: 'tip-place' }, h('span', { class: `tip-role tip-role-${m.kind}` }, m.kind === 'target' ? 'Target' : 'Origin'), ' ', placeName(m.point)),
+      h(
+        'span',
+        { class: 'tip-grades' },
+        badge(tax, 'status', m.inc.status, { compact: true }),
+        badge(tax, 'ai_role', m.inc.ai_role, { compact: true, prefix: 'AI role' }),
+        badge(tax, 'severity', m.inc.severity, { compact: true }),
+      ),
+      h('span', { class: 'tip-meta' }, `${n} source${n === 1 ? '' : 's'}`, h('span', { class: 'tip-cta' }, 'Open record →')),
+    );
     tip.className = `tooltip${place.below ? ' below' : ''}${place.edge ? ` edge-${place.edge}` : ''}`;
     tip.hidden = false;
     tip.style.left = `${(xy[0] / MAP_W) * 100}%`;

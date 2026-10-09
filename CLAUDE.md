@@ -29,13 +29,16 @@ product. Read the non-negotiables before changing anything.
    `records_exfiltrated` render as "not stated" when null.
 9. **Geo is never fabricated.** Markers come only from a record's
    `geo.points[]` (upstream schema 0.3.0; the old `geo.target` / `geo.origin`
-   slots are gone). Every point is shown with its `role`, its `basis` (why it
-   exists, from the `geo_basis` taxonomy) and `attributed_by` (the cited
-   publisher that stated it); a state sponsor is never presented as an
-   operator location. `illustrative: true` points render as soft discs and say
-   "illustrative, country-level centroid" in tooltips; `stated-location`
-   points render as pins; records without `geo` are listed under the map,
-   never plotted.
+   slots are gone). The map hover card shows only the role and the place
+   (`placeName()`: the country from its ISO code, else the label without its
+   trailing "(basis, per X)" note) plus the grades, and links to the record.
+   The `basis` (why the point exists, from the `geo_basis` taxonomy) and
+   `attributed_by` (the cited publisher) are shown once each in the drawer,
+   on the record page, in the marker's `<desc>` for assistive tech, and in
+   the prerendered pages; never twice, and a state sponsor is never
+   presented as an operator location. `illustrative: true` points render as
+   soft discs (country-level), `stated-location` points as pins; records
+   without `geo` are listed under the map, never plotted.
 10. **Retracted and superseded records** are flagged and excluded from headline
     counts by default, with a toggle to include them. Missing `record_status`
     means `active`.
