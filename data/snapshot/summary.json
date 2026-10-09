@@ -1,87 +1,161 @@
 {
   "dataset_version": "0.3.0",
   "schema": "https://raw.githubusercontent.com/MLSecOpsHub/agentic-attack-index/main/schema/incident.schema.json",
-  "total": 16,
+  "total": 34,
   "archive_coverage": {
-    "sources": 39,
-    "archived": 39,
-    "pct": 100
+    "sources": 69,
+    "archived": 61,
+    "pct": 88
   },
   "geo_coverage": {
-    "records": 5,
-    "points": 10,
-    "illustrative": 10,
+    "records": 7,
+    "points": 12,
+    "illustrative": 12,
     "by_role": {
-      "origin": 8,
-      "target": 2
+      "origin": 9,
+      "target": 3
     },
     "by_basis": {
       "actor-location": 1,
-      "sponsor-attribution": 7,
-      "victim-location": 2
+      "sponsor-attribution": 8,
+      "victim-location": 3
     }
   },
   "by_category": {
-    "agent-hijack-prompt-injection": 4,
-    "ai-orchestrated-campaign": 3,
-    "autonomous-attack": 1,
-    "infrastructure-abuse-supply-chain": 6,
+    "agent-hijack-prompt-injection": 6,
+    "ai-orchestrated-campaign": 9,
+    "autonomous-attack": 8,
+    "infrastructure-abuse-supply-chain": 9,
     "lab-escape-eval": 2
   },
   "by_severity": {
-    "critical": 4,
-    "high": 8,
-    "low": 1,
-    "medium": 3
+    "critical": 5,
+    "high": 18,
+    "low": 2,
+    "medium": 9
   },
   "by_status": {
-    "confirmed": 10,
-    "reported": 4,
+    "confirmed": 22,
+    "reported": 10,
     "test-eval": 2
   },
   "by_actor_type": {
-    "cybercriminal": 1,
-    "nation-state": 4,
+    "cybercriminal": 6,
+    "lab-test-eval": 3,
+    "nation-state": 6,
     "researcher": 6,
-    "single-operator": 2,
-    "unknown": 3
+    "single-operator": 3,
+    "unknown": 10
   },
   "by_autonomy_level": {
-    "fully-autonomous": 2,
-    "not-applicable": 6,
-    "supervised-autonomous": 4,
-    "tool-assisted": 4
+    "fully-autonomous": 7,
+    "human-in-the-loop": 1,
+    "not-applicable": 10,
+    "supervised-autonomous": 8,
+    "tool-assisted": 5,
+    "unknown": 3
   },
   "by_ai_role": {
-    "incidental": 1,
-    "load-bearing": 10,
-    "significant": 5
+    "disputed": 1,
+    "incidental": 2,
+    "load-bearing": 18,
+    "significant": 13
   },
   "by_model_family": {
-    "claude": 5,
-    "gemini": 3,
-    "openai-gpt": 4,
-    "other": 7,
+    "claude": 14,
+    "gemini": 5,
+    "openai-gpt": 5,
+    "other": 16,
     "qwen": 1
   },
   "by_year": {
     "2024": 2,
-    "2025": 14
+    "2025": 14,
+    "2026": 18
+  },
+  "evidence_split": {
+    "basis": "status == confirmed AND ai_role == load-bearing; retracted/superseded records excluded",
+    "total": 34,
+    "confirmed_load_bearing": 11,
+    "pct": 32,
+    "by_year": {
+      "2024": {
+        "total": 2,
+        "confirmed_load_bearing": 0,
+        "pct": 0
+      },
+      "2025": {
+        "total": 14,
+        "confirmed_load_bearing": 5,
+        "pct": 36
+      },
+      "2026": {
+        "total": 18,
+        "confirmed_load_bearing": 6,
+        "pct": 33
+      }
+    },
+    "by_status_ai_role": {
+      "confirmed": {
+        "disputed": 1,
+        "incidental": 2,
+        "load-bearing": 11,
+        "significant": 8
+      },
+      "reported": {
+        "load-bearing": 5,
+        "significant": 5
+      },
+      "test-eval": {
+        "load-bearing": 2
+      }
+    },
+    "ids": [
+      "anthropic-cyber-evals-real-target-incidents",
+      "echoleak-m365-copilot",
+      "gtg-10007-agent-swarm-intrusions",
+      "gtg-1002-ai-espionage",
+      "gtg-2002-vibe-hacking-extortion",
+      "gtg-50014-agentic-mass-exfiltration",
+      "openai-agent-services-australia-medicare-portal",
+      "openai-eval-agents-hugging-face-intrusion",
+      "promptspy-gemini-android-agent",
+      "promptsteal-apt28-lamehug",
+      "replit-agent-database-deletion"
+    ]
   },
   "ids": [
     "amazon-q-developer-extension-compromise",
+    "anthropic-cyber-evals-real-target-incidents",
     "camoleak-github-copilot-chat",
+    "clawhavoc-clawhub-malicious-skills",
+    "clinejection-cline-triage-npm-publish",
+    "coral-sleet-agentic-ai-workflow",
     "dprk-it-worker-fraud-claude",
     "echoleak-m365-copilot",
     "forcedleak-salesforce-agentforce",
+    "grok-bankr-prompt-injection-wallet-drain",
+    "gtg-10007-agent-swarm-intrusions",
     "gtg-1002-ai-espionage",
+    "gtg-20006-agentic-espionage",
     "gtg-2002-vibe-hacking-extortion",
+    "gtg-50014-agentic-mass-exfiltration",
+    "gtg-50020-ai-vendor-api-key-theft",
+    "gtg-50029-hacktivist-agentic-recon",
     "gtg-5004-ai-ransomware-raas",
+    "gtig-ai-developed-zero-day-2fa-bypass",
+    "hackerbot-claw-github-pr-campaign",
+    "jadepuffer-agentic-database-extortion",
+    "miasma-worm-ai-coding-agent-configs",
     "microsoft-openai-state-actor-llm",
     "morris-ii-genai-worm",
     "nx-s1ngularity-supply-chain",
+    "openai-agent-services-australia-medicare-portal",
+    "openai-eval-agents-hugging-face-intrusion",
+    "openclaw-inbox-deletion",
     "promptflux-gemini-selfmod",
     "promptlock-ai-ransomware-poc",
+    "promptspy-gemini-android-agent",
     "promptsteal-apt28-lamehug",
     "replit-agent-database-deletion",
     "servicenow-now-assist-agent-injection"
