@@ -1333,6 +1333,14 @@ svg a:focus .bar-rect {
 .drawer-facts {
   font-size: 0.9rem;
 }
+.geo-points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.geo-points li + li {
+  margin-top: 0.2rem;
+}
 .drawer-summary {
   font-size: 0.93rem;
   margin: 0;

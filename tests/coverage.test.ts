@@ -5,7 +5,7 @@ import { rawRecord } from './fixtures';
 
 describe('coverage', () => {
   const a = normalizeIncident(rawRecord({ id: 'a-a', autonomy_pct: null, mappings: { mitre_atlas: ['AML.T0051'] }, sources: [{ title: 't', url: 'https://x.invalid/1', archive_url: 'https://web.archive.org/x', publisher: 'p', type: 'vendor-report', date: '2025-01-02' }, { title: 't2', url: 'https://x.invalid/2', publisher: 'p', type: 'news', date: '2025-01-05' }] }));
-  const b = normalizeIncident(rawRecord({ id: 'b-b', autonomy_pct: 40, geo: { origin: { lat: 1, lng: 2, label: 'X', illustrative: true } } }));
+  const b = normalizeIncident(rawRecord({ id: 'b-b', autonomy_pct: 40, geo: { points: [{ role: 'origin', basis: 'actor-location', attributed_by: 'p', country: 'XX', lat: 1, lng: 2, label: 'X', illustrative: true }] } }));
 
   it('counts records carrying each optional field, never treating null as zero', () => {
     const rows = Object.fromEntries(fieldCoverage([a, b]).map((r) => [r.key, r.have]));

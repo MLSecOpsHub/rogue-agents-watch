@@ -48,10 +48,23 @@ for (const record of incidents) {
   if (record.superseded_by && !ids.has(record.superseded_by)) {
     errors.push(`${record.id}: superseded_by "${record.superseded_by}" does not resolve`);
   }
-  // Never fabricate geo: if present it must be a proper point (schema covers
-  // shape; this guards against a target/origin block that is present but null).
-  if (record.geo && record.geo.target === null) {
-    errors.push(`${record.id}: geo.target is null (omit the key instead)`);
+  // Never fabricate geo: the schema covers shape; these mirror the upstream
+  // rules the taxonomy states so a drift upstream fails the build here.
+  if (record.geo) {
+    if (!Array.isArray(record.geo.points) || record.geo.points.length === 0) {
+      errors.push(`${record.id}: geo.points is empty (omit geo instead)`);
+    }
+    for (const p of record.geo.points ?? []) {
+      if (p.basis === 'stated-location' && p.illustrative) {
+        errors.push(`${record.id}: stated-location point "${p.label}" is flagged illustrative`);
+      }
+      if (p.basis === 'victim-location' && p.role !== 'target') {
+        errors.push(`${record.id}: victim-location point "${p.label}" is not a target`);
+      }
+      if (['sponsor-attribution', 'operator-location', 'actor-location', 'infrastructure'].includes(p.basis) && p.role !== 'origin') {
+        errors.push(`${record.id}: ${p.basis} point "${p.label}" is not an origin`);
+      }
+    }
   }
 }
 

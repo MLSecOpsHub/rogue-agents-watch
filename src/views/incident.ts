@@ -181,7 +181,7 @@ export function incidentView({ ds, route, root }: ViewContext): void {
         ['Archived copies', h('span', null, `${ev.archived} of ${ev.sources}`)],
         ['Source dates', h('span', null, ev.earliest ? (ev.earliest === ev.latest ? ev.earliest : `${ev.earliest} to ${ev.latest}`) : 'not stated')],
         ['Framework ids', h('span', null, mapCount ? `${mapCount} (ATLAS ${inc.mappings.mitre_atlas.length}, ATT&CK ${inc.mappings.mitre_attack.length}, ASI ${inc.mappings.owasp_asi.length}, LLM ${inc.mappings.owasp_llm.length}, CVE ${inc.mappings.cve.length}, AIID ${inc.mappings.aiid.length})` : 'none recorded')],
-        ['Location', h('span', null, inc.geo ? ([inc.geo.target, inc.geo.origin].filter(Boolean).every((p) => p!.illustrative) ? 'country-level only' : 'stated') : 'none')],
+        ['Location', h('span', null, inc.geo ? `${inc.geo.points.length} point${inc.geo.points.length === 1 ? '' : 's'}, ${inc.geo.points.every((p) => p.illustrative) ? 'country-level only' : 'stated'}` : 'none')],
         ['Figures stated', h('span', null, [inc.targets.orgs_affected !== null && 'organisations affected', inc.targets.records_exfiltrated !== null && 'records exfiltrated', inc.autonomy_pct !== null && 'autonomy %'].filter(Boolean).join(', ') || 'none')],
       ]),
       h('p', { class: 'muted small' }, 'Counts of what the record carries, not a score. Gaps are filled upstream with sources.'),

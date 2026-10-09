@@ -58,11 +58,41 @@ export type SourceType =
   | 'blog'
   | 'other';
 
-export interface GeoPoint {
+export type GeoRole = 'origin' | 'target';
+
+/** Why a map point exists, as a cited source states it (taxonomy geo_basis). */
+export type GeoBasis =
+  | 'sponsor-attribution'
+  | 'operator-location'
+  | 'actor-location'
+  | 'infrastructure'
+  | 'victim-location'
+  | 'stated-location';
+
+/** A map point exactly as it appears in geo.points[] (schema 0.3.0). */
+export interface RawGeoPoint {
+  role: GeoRole;
+  basis: GeoBasis;
+  /** The publisher that stated this location. */
+  attributed_by: string;
+  /** ISO 3166-1 alpha-2. */
+  country: string;
   lat: number;
   lng: number;
   label: string;
-  /** true = country/sector centroid, not a source-stated precise location. */
+  /** true = country-level centroid, not a source-stated precise location. */
+  illustrative: boolean;
+}
+
+/** Normalised point: the stated fields verbatim, null where the record omits one. */
+export interface GeoPoint {
+  role: GeoRole;
+  basis: GeoBasis | null;
+  attributed_by: string | null;
+  country: string | null;
+  lat: number;
+  lng: number;
+  label: string;
   illustrative: boolean;
 }
 
@@ -120,7 +150,8 @@ export interface RawIncident {
   superseded_by?: string;
   revisions?: Revision[];
   targets?: Targets;
-  geo?: { target?: GeoPoint; origin?: GeoPoint | null };
+  /** Omitted entirely when no cited source states a location. */
+  geo?: { points: RawGeoPoint[] };
   lifecycle_phases?: LifecyclePhase[];
   mappings?: Mappings;
   impact?: string | null;
@@ -163,8 +194,8 @@ export interface Incident {
     countries: string[];
   };
 
-  /** Only present when the dataset states coordinates. Never derived. */
-  geo: { target: GeoPoint | null; origin: GeoPoint | null } | null;
+  /** Only present when the dataset states coordinates. Never derived. Several points per role are allowed. */
+  geo: { points: GeoPoint[] } | null;
   hasGeo: boolean;
 
   mappings: {

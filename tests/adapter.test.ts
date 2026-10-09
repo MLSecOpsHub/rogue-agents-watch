@@ -65,30 +65,35 @@ describe('normalizeIncident', () => {
     expect(inc.hasGeo).toBe(false);
   });
 
-  it('keeps the illustrative flag verbatim on geo points', () => {
+  it('keeps every geo point verbatim, including its basis, attributor, country and illustrative flag', () => {
     const inc = normalizeIncident(
       rawRecord({
         geo: {
-          target: { lat: 1.5, lng: 2.5, label: 'Somewhere', illustrative: true },
-          origin: { lat: -3, lng: 4, label: 'Elsewhere', illustrative: false },
+          points: [
+            { role: 'target', basis: 'victim-location', attributed_by: 'Vendor', country: 'US', lat: 1.5, lng: 2.5, label: 'Somewhere', illustrative: true },
+            { role: 'origin', basis: 'sponsor-attribution', attributed_by: 'Vendor', country: 'KP', lat: -3, lng: 4, label: 'Elsewhere', illustrative: true },
+            { role: 'origin', basis: 'stated-location', attributed_by: 'Court filing', country: 'GB', lat: 51.5, lng: -0.1, label: 'London', illustrative: false },
+          ],
         },
       }),
     );
     expect(inc.hasGeo).toBe(true);
-    expect(inc.geo?.target).toEqual({ lat: 1.5, lng: 2.5, label: 'Somewhere', illustrative: true });
-    expect(inc.geo?.origin?.illustrative).toBe(false);
+    expect(inc.geo?.points).toHaveLength(3);
+    expect(inc.geo?.points[0]).toEqual({ role: 'target', basis: 'victim-location', attributed_by: 'Vendor', country: 'US', lat: 1.5, lng: 2.5, label: 'Somewhere', illustrative: true });
+    expect(inc.geo?.points.filter((p) => p.role === 'origin')).toHaveLength(2);
+    expect(inc.geo?.points[2]?.illustrative).toBe(false);
   });
 
-  it('treats a missing illustrative flag as not illustrative only when coordinates are stated', () => {
-    const inc = normalizeIncident(rawRecord({ geo: { origin: { lat: 10, lng: 20, label: 'X' } as never } }));
-    expect(inc.geo?.origin?.illustrative).toBe(false);
-    expect(inc.geo?.target).toBeNull();
+  it('leaves basis fields null when a point omits them, and never flags illustrative by default', () => {
+    const inc = normalizeIncident(rawRecord({ geo: { points: [{ role: 'origin', lat: 10, lng: 20, label: 'X' } as never] } }));
+    expect(inc.geo?.points[0]).toEqual({ role: 'origin', basis: null, attributed_by: null, country: null, lat: 10, lng: 20, label: 'X', illustrative: false });
   });
 
-  it('drops a geo block whose points are all missing or malformed', () => {
-    const inc = normalizeIncident(rawRecord({ geo: { origin: null } }));
+  it('drops points without coordinates or a known role, and the block when none remain', () => {
+    const inc = normalizeIncident(rawRecord({ geo: { points: [{ role: 'origin', label: 'X' }, { role: 'elsewhere', lat: 1, lng: 2, label: 'Y' }] as never } }));
     expect(inc.geo).toBeNull();
     expect(inc.hasGeo).toBe(false);
+    expect(normalizeIncident(rawRecord({ geo: { points: [] } })).geo).toBeNull();
   });
 
   it('derives the disclosure year from date_disclosed', () => {

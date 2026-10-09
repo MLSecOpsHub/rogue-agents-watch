@@ -149,6 +149,41 @@
       }
     ]
   },
+  "geo_basis": {
+    "title": "Map-point basis",
+    "values": [
+      {
+        "id": "sponsor-attribution",
+        "label": "Sponsor attribution",
+        "description": "A cited source attributes the operation to a state sponsor; the point is that state's centroid. Sponsorship says nothing about where the operators sat. Origin points only."
+      },
+      {
+        "id": "operator-location",
+        "label": "Operator location",
+        "description": "A cited source states where the operators were located or based. Origin points only."
+      },
+      {
+        "id": "actor-location",
+        "label": "Actor location",
+        "description": "A cited source states an individual or criminal actor's country without claiming state sponsorship. Origin points only."
+      },
+      {
+        "id": "infrastructure",
+        "label": "Infrastructure",
+        "description": "A cited source states where attack infrastructure was hosted. Use sparingly; hosting says little about who or where the actor is. Origin points only."
+      },
+      {
+        "id": "victim-location",
+        "label": "Victim location",
+        "description": "A cited source states the country or region of the target. Target points only."
+      },
+      {
+        "id": "stated-location",
+        "label": "Stated precise location",
+        "description": "A cited source names a precise place (city, facility) for either role. Never a centroid: illustrative must be false, and a victim site is named only if a first-party or public disclosure already named it."
+      }
+    ]
+  },
   "guardrail_bypass": {
     "title": "Guardrail bypass",
     "values": [

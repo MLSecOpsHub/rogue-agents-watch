@@ -112,9 +112,7 @@ function miniMap(geo, markers, opacity = 0.55) {
 export function cardSvg(rec, ctx) {
   const role = rec.ai_role ?? 'unknown';
   const roleHex = ROLE_HEX[role] ?? ROLE_HEX.unknown;
-  const geoPoints = [];
-  if (rec.geo?.target) geoPoints.push({ ...rec.geo.target, color: roleHex });
-  if (rec.geo?.origin) geoPoints.push({ ...rec.geo.origin, color: roleHex });
+  const geoPoints = (rec.geo?.points ?? []).map((p) => ({ ...p, color: roleHex }));
   const big = rec.name.length > 70;
   const lines = wrapText(rec.name, big ? 34 : 27, 3);
   const fs = big ? 50 : 60;
@@ -169,12 +167,11 @@ export function siteCardSvg(ctx) {
   const points = [];
   for (const r of ctx.incidents) {
     const hex = ROLE_HEX[r.ai_role ?? 'unknown'] ?? ROLE_HEX.unknown;
-    if (r.geo?.target) points.push({ ...r.geo.target, color: hex });
-    if (r.geo?.origin) points.push({ ...r.geo.origin, color: hex });
+    for (const p of r.geo?.points ?? []) points.push({ ...p, color: hex });
   }
   const s = ctx.summary;
   const confirmed = s.by_status?.confirmed ?? 0;
-  const withGeo = ctx.incidents.filter((r) => r.geo && (r.geo.target || r.geo.origin)).length;
+  const withGeo = ctx.incidents.filter((r) => r.geo?.points?.length).length;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${CARD_W}" height="${CARD_H}" viewBox="0 0 ${CARD_W} ${CARD_H}">
 <defs><radialGradient id="g" cx="0.78" cy="0.4" r="0.7"><stop offset="0" stop-color="${C.surface}"/><stop offset="0.6" stop-color="${C.ground}"/></radialGradient></defs>
 <rect width="${CARD_W}" height="${CARD_H}" fill="url(#g)"/>
