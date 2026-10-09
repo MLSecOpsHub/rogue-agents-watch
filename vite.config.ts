@@ -1,13 +1,20 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
+import { resolveBasePath, resolveSiteUrl } from './scripts/site-env.mjs';
+
+// The canonical URL src/config.ts reads via import.meta.env.VITE_SITE_URL.
+// Resolved here so a Vercel build (served at "/") and a GitHub Pages build
+// (served under /<repo>/) each get matching base path and share links
+// without per-host configuration; an explicit VITE_SITE_URL still wins.
+process.env.VITE_SITE_URL ??= resolveSiteUrl();
 
 // Deterministic build: Vite's asset hashes are content-derived, and nothing
 // here injects a build timestamp. The only date in the output is the one
 // already recorded in data/snapshot/SNAPSHOT.json.
 export default defineConfig({
-  // GitHub Pages serves project sites under /<repo>/. Override with
-  // VITE_BASE_PATH (e.g. "/" for a custom domain).
-  base: process.env.VITE_BASE_PATH ?? '/rogue-agents-dashboard/',
+  // GitHub Pages serves project sites under /<repo>/; Vercel and custom
+  // domains serve at "/". See scripts/site-env.mjs; VITE_BASE_PATH overrides.
+  base: resolveBasePath(),
   build: {
     target: 'es2022',
     sourcemap: false,

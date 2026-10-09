@@ -17,13 +17,15 @@
 // fonts, resvg with system fonts disabled. The same snapshot yields identical
 // bytes, which CI checks by building twice.
 //
-// Usage: node scripts/prerender.mjs   (VITE_SITE_URL overrides the canonical URL)
+// Usage: node scripts/prerender.mjs   (canonical URL from scripts/site-env.mjs;
+// VITE_SITE_URL overrides, Vercel builds resolve to their own host)
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { geoNaturalEarth1, geoPath } from 'd3-geo';
 import { feature } from 'topojson-client';
+import { GITHUB_PAGES_SITE_URL, resolveSiteUrl } from './site-env.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
@@ -31,7 +33,7 @@ const SNAP = path.join(ROOT, 'data', 'snapshot');
 const FONTS = path.join(ROOT, 'assets', 'fonts');
 
 export const SITE_NAME = 'Rogue Agent Watch';
-export const DEFAULT_SITE_URL = 'https://mlsecopshub.github.io/rogue-agents-dashboard/';
+export const DEFAULT_SITE_URL = GITHUB_PAGES_SITE_URL;
 export const UPSTREAM = 'https://github.com/MLSecOpsHub/agentic-attack-index';
 export const CARD_W = 1200;
 export const CARD_H = 630;
@@ -494,7 +496,7 @@ export function mispFeed(records, ctx) {
   return { manifest, events, hashes: hashes.sort().join('\n') + '\n' };
 }
 
-export function loadContext(siteUrl = process.env.VITE_SITE_URL ?? DEFAULT_SITE_URL) {
+export function loadContext(siteUrl = resolveSiteUrl()) {
   const read = (p) => JSON.parse(readFileSync(p, 'utf8'));
   const incidents = read(path.join(SNAP, 'incidents.json'));
   const summary = read(path.join(SNAP, 'summary.json'));
