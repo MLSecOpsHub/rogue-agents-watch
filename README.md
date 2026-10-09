@@ -1,6 +1,6 @@
 # rogue-agents-dashboard
 
-**Rogue Agent Watch**: a static, client-side dashboard for the
+**Rogue Agents Watch**: a static, client-side dashboard for the
 [Agentic Attack Index](https://github.com/MLSecOpsHub/agentic-attack-index),
 MLSecOpsHub's source-linked dataset of real-world cyberattacks executed or
 orchestrated by AI agents, and of rogue-agent incidents (an agent wiping a

@@ -1,4 +1,4 @@
-/* Rogue Agent Watch — theme tokens. DARK BY DEFAULT: the bare :root is the dark
+/* Rogue Agents Watch — theme tokens. DARK BY DEFAULT: the bare :root is the dark
    set, so an un-stamped document renders dark whatever the OS prefers. The
    header toggle stamps data-theme="light" (remembered in localStorage) for the
    light set. All text/background pairs meet WCAG AA (>= 4.5:1 for body text,

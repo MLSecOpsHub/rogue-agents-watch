@@ -1,7 +1,7 @@
 {
   "name": "rogue-agents-dashboard",
   "version": "0.1.0",
-  "description": "Static dashboard for Rogue Agent Watch: renders the agentic-attack-index dataset (AI-agent-executed and rogue-agent cyber incidents). Presentation layer only; never edits incident data.",
+  "description": "Static dashboard for Rogue Agents Watch: renders the agentic-attack-index dataset (AI-agent-executed and rogue-agent cyber incidents). Presentation layer only; never edits incident data.",
   "type": "module",
   "private": true,
   "license": "MIT",

@@ -22,7 +22,7 @@ export function overviewView({ ds, route, root }: ViewContext): void {
     h(
       'section',
       { class: 'hero-head' },
-      h('h1', null, 'Rogue Agent Watch'),
+      h('h1', null, 'Rogue Agents Watch'),
       h('p', { class: 'lede' }, 'A public, source-linked tracker of cyberattacks executed or orchestrated by AI agents, graded for evidence and for how much the AI actually did, rendered from the ', externalLink(UPSTREAM_REPO_URL, 'Agentic Attack Index', 'plain'), '.'),
     ),
   );

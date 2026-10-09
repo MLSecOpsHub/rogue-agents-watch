@@ -611,7 +611,7 @@ export function mispFeed(records, ctx) {
       return a;
     };
     const attributes = [
-      attr('link', 'External analysis', `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, 'Rogue Agent Watch record'),
+      attr('link', 'External analysis', `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, `${SITE_NAME} record`),
       attr('link', 'External analysis', ctx.upstreamIncidentUrl(r.id), 'Agentic Attack Index record (JSON)'),
       attr('text', 'Other', r.summary, 'Summary (defensive framing, lifecycle level)'),
       attr('text', 'Attribution', r.actor, `Actor as stated by sources (${r.actor_type})`),

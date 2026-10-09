@@ -72,7 +72,7 @@ export function tableView({ ds, route, root }: ViewContext): void {
     main.appendChild(h('div', { class: 'table-scroll' }, buildTable(list)));
   };
 
-  const fileName = (ext: string) => `rogue-agent-watch-v${ds.summary.dataset_version}-filtered.${ext}`;
+  const fileName = (ext: string) => `rogue-agents-watch-v${ds.summary.dataset_version}-filtered.${ext}`;
 
   const buildTable = (list: Incident[]) => {
     const thead = h(

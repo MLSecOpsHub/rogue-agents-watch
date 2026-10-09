@@ -15,7 +15,7 @@ export function incidentView({ ds, route, root }: ViewContext): void {
   if (route.view !== 'incident') return;
   const inc = ds.byId.get(route.id);
   if (!inc) {
-    document.title = `Record not found — Rogue Agent Watch`;
+    document.title = `Record not found — Rogue Agents Watch`;
     root.appendChild(
       h(
         'section',
@@ -27,7 +27,7 @@ export function incidentView({ ds, route, root }: ViewContext): void {
     );
     return;
   }
-  document.title = `${inc.name} — Rogue Agent Watch`;
+  document.title = `${inc.name} — Rogue Agents Watch`;
   const tax = ds.taxonomy;
 
   const banner = recordStatusBanner(tax, inc, inc.superseded_by ? ds.byId.get(inc.superseded_by)?.name : undefined);

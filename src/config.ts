@@ -54,7 +54,7 @@ export function newIncidentIssueUrl(): string {
 }
 
 export const SITE = {
-  name: 'Rogue Agent Watch',
+  name: 'Rogue Agents Watch',
   url: SITE_URL,
   tagline: 'Real-world cyberattacks executed or orchestrated by AI agents, and rogue-agent incidents',
   publisher: 'MLSecOpsHub',

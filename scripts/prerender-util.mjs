@@ -1,7 +1,7 @@
 // Helpers shared by the prerender generators. Everything here is pure and
 // deterministic; every string that reaches HTML goes through esc().
 
-export const SITE_NAME = 'Rogue Agent Watch';
+export const SITE_NAME = 'Rogue Agents Watch';
 export const UPSTREAM = 'https://github.com/MLSecOpsHub/agentic-attack-index';
 export const PUBLISHER = { name: 'MLSecOpsHub', url: 'https://mlsecopshub.com', github: 'https://github.com/MLSecOpsHub' };
 export const LICENSE_URL = 'https://creativecommons.org/licenses/by-sa/4.0/';
