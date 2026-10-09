@@ -78,24 +78,47 @@ jobs:
           BASE=$(node -e 'import("./scripts/site-env.mjs").then((m) => process.stdout.write(m.resolveBasePath()))')
           npx vite preview --port 4173 --strictPort > preview.log 2>&1 &
           for i in $(seq 1 40); do curl -sf -o /dev/null "http://localhost:4173${BASE}" && break; sleep 0.5; done
+          # A single performance sample on a shared runner swings by about ±8
+          # points on identical output (observed 83–99 on the landing page while
+          # the map held 98–99). Three runs per route, gated on the median per
+          # category, is what Lighthouse CI does by default for the same reason.
+          mkdir -p lighthouse
           for route in "/" "/map"; do
             name=$(echo "$route" | tr '/' '_')
-            npx --yes lighthouse@12 "http://localhost:4173${BASE}#${route}" \
-              --chrome-flags="--headless=new --no-sandbox" --only-categories=performance,accessibility,best-practices,seo \
-              --output=json --output-path="./lh${name}.json" --quiet
+            for n in 1 2 3; do
+              npx --yes lighthouse@12 "http://localhost:4173${BASE}#${route}" \
+                --chrome-flags="--headless=new --no-sandbox" --only-categories=performance,accessibility,best-practices,seo \
+                --output=json --output-path="./lighthouse/lh${name}-${n}.json" --quiet
+            done
           done
           node -e '
             const fs = require("fs");
             const min = { performance: 0.9, accessibility: 0.95, "best-practices": 0.9, seo: 0.9 };
+            const median = (xs) => { const s = [...xs].sort((a, b) => a - b); return s[Math.floor(s.length / 2)]; };
+            const byRoute = new Map();
+            for (const f of fs.readdirSync("lighthouse").filter((x) => /^lh.*-\d+\.json$/.test(x))) {
+              const route = f.replace(/-\d+\.json$/, "");
+              const cats = JSON.parse(fs.readFileSync(`lighthouse/${f}`, "utf8")).categories;
+              const scores = byRoute.get(route) ?? {};
+              for (const k of Object.keys(min)) (scores[k] ??= []).push(cats[k]?.score ?? 0);
+              byRoute.set(route, scores);
+            }
             let bad = 0;
-            for (const f of fs.readdirSync(".").filter((x) => /^lh.*\.json$/.test(x))) {
-              const cats = JSON.parse(fs.readFileSync(f, "utf8")).categories;
+            for (const [route, scores] of [...byRoute.entries()].sort()) {
               for (const [k, m] of Object.entries(min)) {
-                const score = cats[k]?.score ?? 0;
-                const ok = score >= m;
-                console.log(`${ok ? "OK  " : "FAIL"} ${f} ${k} ${(score * 100).toFixed(0)} (min ${m * 100})`);
+                const runs = scores[k].map((s) => (s * 100).toFixed(0));
+                const med = median(scores[k]);
+                const ok = med >= m;
+                console.log(`${ok ? "OK  " : "FAIL"} ${route} ${k} median ${(med * 100).toFixed(0)} of [${runs.join(", ")}] (min ${m * 100})`);
                 if (!ok) bad++;
               }
             }
             process.exit(bad ? 1 : 0);
           '
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: lighthouse/*.json
+          retention-days: 14
