@@ -1,12 +1,27 @@
-import type { Dataset, GeoPoint, Incident, RawIncident, Snapshot, Summary, Taxonomy } from './types';
+import type { Dataset, GeoPoint, Incident, RawGeoPoint, RawIncident, Snapshot, Summary, Taxonomy } from './types';
 
 function arr<T>(v: T[] | undefined | null): T[] {
   return Array.isArray(v) ? v : [];
 }
 
-function point(p: GeoPoint | null | undefined): GeoPoint | null {
+function str(v: unknown): string | null {
+  return typeof v === 'string' && v !== '' ? v : null;
+}
+
+/** A point is kept only with numeric coordinates and a known role; its basis fields are copied verbatim or left null. */
+function point(p: RawGeoPoint | null | undefined): GeoPoint | null {
   if (!p || typeof p.lat !== 'number' || typeof p.lng !== 'number') return null;
-  return { lat: p.lat, lng: p.lng, label: p.label, illustrative: p.illustrative === true };
+  if (p.role !== 'origin' && p.role !== 'target') return null;
+  return {
+    role: p.role,
+    basis: str(p.basis) as GeoPoint['basis'],
+    attributed_by: str(p.attributed_by),
+    country: str(p.country),
+    lat: p.lat,
+    lng: p.lng,
+    label: p.label,
+    illustrative: p.illustrative === true,
+  };
 }
 
 /**
@@ -18,9 +33,8 @@ function point(p: GeoPoint | null | undefined): GeoPoint | null {
  */
 export function normalizeIncident(raw: RawIncident): Incident {
   const recordStatus = raw.record_status ?? 'active';
-  const target = point(raw.geo?.target);
-  const origin = point(raw.geo?.origin);
-  const geo = target || origin ? { target, origin } : null;
+  const points = arr(raw.geo?.points).map(point).filter((p): p is GeoPoint => p !== null);
+  const geo = points.length ? { points } : null;
   return {
     id: raw.id,
     name: raw.name,

@@ -31,6 +31,7 @@ const TAXONOMY_FILES = [
   'autonomy-level',
   'category',
   'confidence',
+  'geo-basis',
   'guardrail-bypass',
   'lifecycle-phase',
   'model-family',

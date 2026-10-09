@@ -8,24 +8,32 @@ import { feature } from 'topojson-client';
 import type { Topology, GeometryCollection } from 'topojson-specification';
 import type { FeatureCollection, Geometry } from 'geojson';
 import { label } from '../data/taxonomy';
-import type { Dataset, GeoPoint, Incident } from '../data/types';
+import type { Dataset, GeoPoint, GeoRole, Incident } from '../data/types';
 import { h, svgEl } from '../util/dom';
 
 export interface Marker {
   inc: Incident;
-  kind: 'target' | 'origin';
+  kind: GeoRole;
   point: GeoPoint;
 }
 
+/** One marker per stated point, targets first so origins draw on top of them. */
 export function collectMarkers(incidents: Incident[], includeInactive: boolean): Marker[] {
   const out: Marker[] = [];
   for (const inc of incidents) {
     if (!inc.geo) continue;
     if (!includeInactive && !inc.isActiveRecord) continue;
-    if (inc.geo.target) out.push({ inc, kind: 'target', point: inc.geo.target });
-    if (inc.geo.origin) out.push({ inc, kind: 'origin', point: inc.geo.origin });
+    for (const kind of ['target', 'origin'] as const) {
+      for (const point of inc.geo.points) if (point.role === kind) out.push({ inc, kind, point });
+    }
   }
   return out;
+}
+
+/** "sponsor attribution, per Anthropic" — the basis a point rests on, as the record states it. */
+export function basisText(ds: Dataset, p: GeoPoint): string {
+  const basis = p.basis ? label(ds.taxonomy, 'geo_basis', p.basis).toLowerCase() : 'basis not stated';
+  return p.attributed_by ? `${basis}, per ${p.attributed_by}` : basis;
 }
 
 export const MAP_W = 960;
@@ -70,7 +78,7 @@ export function tooltipText(ds: Dataset, m: Marker): string {
   const kind = m.kind === 'target' ? 'Target' : 'Origin';
   const how = m.point.illustrative ? 'illustrative, country-level centroid' : 'stated location';
   const n = m.inc.sources.length;
-  return `${m.inc.name}\n${kind}: ${m.point.label} (${how})\n${label(ds.taxonomy, 'status', m.inc.status)} · AI ${label(ds.taxonomy, 'ai_role', m.inc.ai_role).toLowerCase()} · ${label(ds.taxonomy, 'severity', m.inc.severity).toLowerCase()} · ${n} source${n === 1 ? '' : 's'}`;
+  return `${m.inc.name}\n${kind}: ${m.point.label} (${how})\n${basisText(ds, m.point)}\n${label(ds.taxonomy, 'status', m.inc.status)} · AI ${label(ds.taxonomy, 'ai_role', m.inc.ai_role).toLowerCase()} · ${label(ds.taxonomy, 'severity', m.inc.severity).toLowerCase()} · ${n} source${n === 1 ? '' : 's'}`;
 }
 
 /** A tooltip element positioned inside `stage`; returns the hover handler to pass as `onHover`. */
@@ -114,15 +122,22 @@ export function createMapCanvas(ds: Dataset, opts: CanvasOptions = {}): MapCanva
   svg.appendChild(gMarkers);
 
   const arcs: Array<{ inc: Incident; el: SVGPathElement }> = [];
+  // One arc per stated origin-target pair; a record with several origins fans out.
   for (const inc of incidents) {
-    if (inc.geo?.origin && inc.geo.target) {
-      const line = { type: 'LineString' as const, coordinates: [[inc.geo.origin.lng, inc.geo.origin.lat], [inc.geo.target.lng, inc.geo.target.lat]] };
-      const el = svgEl('path', { d: path(line) ?? '', class: `map-arc${inc.geo.origin.illustrative || inc.geo.target.illustrative ? ' illustrative' : ''}` });
-      const title = svgEl('title');
-      title.textContent = `${inc.name}: origin to target${inc.geo.origin.illustrative || inc.geo.target.illustrative ? ', country-level' : ''}`;
-      el.appendChild(title);
-      gArcs.appendChild(el);
-      arcs.push({ inc, el });
+    if (!inc.geo) continue;
+    const origins = inc.geo.points.filter((p) => p.role === 'origin');
+    const targets = inc.geo.points.filter((p) => p.role === 'target');
+    for (const o of origins) {
+      for (const t of targets) {
+        const line = { type: 'LineString' as const, coordinates: [[o.lng, o.lat], [t.lng, t.lat]] };
+        const countryLevel = o.illustrative || t.illustrative;
+        const el = svgEl('path', { d: path(line) ?? '', class: `map-arc${countryLevel ? ' illustrative' : ''}` });
+        const title = svgEl('title');
+        title.textContent = `${inc.name}: ${o.label} to ${t.label}${countryLevel ? ', country-level' : ''}`;
+        el.appendChild(title);
+        gArcs.appendChild(el);
+        arcs.push({ inc, el });
+      }
     }
   }
 

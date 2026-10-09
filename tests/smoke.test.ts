@@ -115,9 +115,12 @@ describe('map', () => {
     const markers = collectMarkers(ds.incidents, false);
     const expected = ds.incidents.filter((i) => i.isActiveRecord && i.hasGeo);
     expect(new Set(markers.map((m) => m.inc.id))).toEqual(new Set(expected.map((i) => i.id)));
-    const expectedCount = expected.reduce((n, i) => n + (i.geo?.target ? 1 : 0) + (i.geo?.origin ? 1 : 0), 0);
+    const expectedCount = expected.reduce((n, i) => n + (i.geo?.points.length ?? 0), 0);
     expect(markers).toHaveLength(expectedCount);
-    for (const m of markers) expect(m.point.illustrative).toBe(m.inc.geo?.[m.kind]?.illustrative);
+    for (const m of markers) {
+      expect(m.kind).toBe(m.point.role);
+      expect(m.inc.geo?.points).toContain(m.point);
+    }
   });
 
   it('renders exactly the geo records, styles illustrative points distinctly, and logs the rest', async () => {

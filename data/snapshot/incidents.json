@@ -47,6 +47,7 @@
     "severity": "high",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20260824023710/https://aws.amazon.com/security/security-bulletins/AWS-2025-015/",
         "date": "2025-07-23",
         "publisher": "Amazon Web Services",
         "title": "AWS Security Bulletin AWS-2025-015",
@@ -121,6 +122,7 @@
     "severity": "critical",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20260813085632/https://www.legitsecurity.com/blog/camoleak-critical-github-copilot-vulnerability-leaks-private-source-code",
         "date": "2025-10-08",
         "publisher": "Legit Security",
         "title": "CamoLeak: Critical GitHub Copilot Vulnerability Leaks Private Source Code",
@@ -128,6 +130,7 @@
         "url": "https://www.legitsecurity.com/blog/camoleak-critical-github-copilot-vulnerability-leaks-private-source-code"
       },
       {
+        "archive_url": "https://web.archive.org/web/20260112194646/https://www.theregister.com/2025/10/09/github_copilot_chat_vulnerability/",
         "date": "2025-10-09",
         "publisher": "The Register",
         "title": "GitHub patches Copilot Chat flaw that could leak secrets",
@@ -158,19 +161,35 @@
     "confidence": "primary",
     "date_disclosed": "2025-08-27",
     "geo": {
-      "origin": {
-        "illustrative": true,
-        "label": "North Korea (operator origin)",
-        "lat": 40.34,
-        "lng": 127.51
-      }
+      "points": [
+        {
+          "attributed_by": "Anthropic",
+          "basis": "sponsor-attribution",
+          "country": "KP",
+          "illustrative": true,
+          "label": "North Korea (state sponsor, per Anthropic)",
+          "lat": 40.34,
+          "lng": 127.51,
+          "role": "origin"
+        },
+        {
+          "attributed_by": "Anthropic",
+          "basis": "victim-location",
+          "country": "US",
+          "illustrative": true,
+          "label": "United States (victim employers, per Anthropic)",
+          "lat": 37.09,
+          "lng": -95.71,
+          "role": "target"
+        }
+      ]
     },
     "guardrail_bypass": [
       "legitimate-tool-abuse"
     ],
     "id": "dprk-it-worker-fraud-claude",
     "impact": "Fraudulent employment at technology companies to evade sanctions and generate revenue for the DPRK regime; Anthropic notes such IT-worker schemes are reported to generate hundreds of millions of dollars annually for weapons programmes.",
-    "last_updated": "2026-08-12",
+    "last_updated": "2026-09-11",
     "lifecycle_phases": [
       "resource-dev",
       "deception-social-eng"
@@ -194,6 +213,12 @@
       "gtg-2002-vibe-hacking-extortion",
       "gtg-5004-ai-ransomware-raas"
     ],
+    "revisions": [
+      {
+        "date": "2026-09-11",
+        "note": "Map point basis corrected: the origin point was labelled \"operator origin\" but the cited sources state regime affiliation and funding, not where the operators were located. Re-typed as sponsor-attribution. Added a US victim-location point and targets.countries from the same source."
+      }
+    ],
     "severity": "high",
     "sources": [
       {
@@ -216,7 +241,9 @@
     "status": "confirmed",
     "summary": "In its August 2025 Threat Intelligence Report, Anthropic disclosed that North Korean operatives systematically used Claude to obtain and hold fraudulent remote engineering jobs at technology companies as a means of evading sanctions and funding the regime. Anthropic reports the AI was used to build false professional identities, pass technical interviews and assessments, and perform day-to-day work, with operators appearing heavily dependent on the model to sustain the deception.",
     "targets": {
-      "countries": [],
+      "countries": [
+        "US"
+      ],
       "orgs_affected": null,
       "records_exfiltrated": null,
       "sectors": [
@@ -313,6 +340,90 @@
     }
   },
   {
+    "actor": "Noma Security (Noma Labs)",
+    "actor_type": "researcher",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-13"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "not-applicable",
+    "autonomy_pct": null,
+    "category": "agent-hijack-prompt-injection",
+    "confidence": "primary",
+    "date_disclosed": "2025-09-25",
+    "guardrail_bypass": [
+      "indirect-prompt-injection"
+    ],
+    "id": "forcedleak-salesforce-agentforce",
+    "impact": "Demonstrated exfiltration of CRM data from Salesforce Agentforce via a zero-interaction Web-to-Lead vector. Researcher discovery; no in-the-wild exploitation reported. Remediated by Salesforce.",
+    "last_updated": "2026-08-13",
+    "lifecycle_phases": [
+      "initial-access",
+      "execution",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0057"
+      ],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": [
+        "LLM01"
+      ]
+    },
+    "mitigations": [
+      "Salesforce re-secured the expired allowlisted domain and enforced a Trusted URLs allowlist for Agentforce and Einstein AI."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "ForcedLeak — indirect prompt injection in Salesforce Agentforce",
+    "related": [
+      "servicenow-now-assist-agent-injection"
+    ],
+    "severity": "critical",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260910034819/https://noma.security/blog/forcedleak-agent-risks-exposed-in-salesforce-agentforce",
+        "date": "2025-09-25",
+        "publisher": "Noma Security",
+        "title": "ForcedLeak: AI Agent risks exposed in Salesforce Agentforce",
+        "type": "first-party-disclosure",
+        "url": "https://noma.security/blog/forcedleak-agent-risks-exposed-in-salesforce-agentforce/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260805000857/https://thehackernews.com/2025/09/salesforce-patches-critical-forcedleak.html",
+        "date": "2025-09-25",
+        "publisher": "The Hacker News",
+        "title": "Salesforce Patches Critical ForcedLeak Bug Exposing CRM Data via AI Prompt Injection",
+        "type": "news",
+        "url": "https://thehackernews.com/2025/09/salesforce-patches-critical-forcedleak.html"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260520232634/https://securityaffairs.com/182676/hacking/forcedleak-flaw-in-salesforce-agentforce-exposes-crm-data-via-prompt-injection.html",
+        "date": "2025-09-27",
+        "publisher": "Security Affairs",
+        "title": "ForcedLeak flaw in Salesforce Agentforce exposes CRM data via Prompt Injection",
+        "type": "news",
+        "url": "https://securityaffairs.com/182676/hacking/forcedleak-flaw-in-salesforce-agentforce-exposes-crm-data-via-prompt-injection.html"
+      }
+    ],
+    "status": "reported",
+    "summary": "Noma Security disclosed \"ForcedLeak\" (CVSS 9.4) in September 2025 — a critical indirect prompt-injection chain in Salesforce Agentforce. Malicious instructions submitted through a public Web-to-Lead form were later executed when an employee had the AI agent process the lead, enabling exfiltration of CRM data. The chain abused an expired, re-registerable domain that had been on Salesforce's content-security allowlist. Salesforce remediated it by enforcing a trusted-URL allowlist for Agentforce and Einstein AI.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
     "actor": "Chinese state-sponsored group (tracked by Anthropic as GTG-1002)",
     "actor_type": "nation-state",
     "added": {
@@ -326,12 +437,18 @@
     "confidence": "primary",
     "date_disclosed": "2025-11-13",
     "geo": {
-      "origin": {
-        "illustrative": true,
-        "label": "China (assessed state-sponsored origin)",
-        "lat": 35.86,
-        "lng": 104.19
-      }
+      "points": [
+        {
+          "attributed_by": "Anthropic",
+          "basis": "sponsor-attribution",
+          "country": "CN",
+          "illustrative": true,
+          "label": "China (state sponsor, per Anthropic)",
+          "lat": 35.86,
+          "lng": 104.19,
+          "role": "origin"
+        }
+      ]
     },
     "guardrail_bypass": [
       "jailbreak",
@@ -339,7 +456,7 @@
     ],
     "id": "gtg-1002-ai-espionage",
     "impact": "Attempted infiltration of ~30 organizations with a small number of successful intrusions, including credential harvesting and data extraction, per Anthropic.",
-    "last_updated": "2026-08-12",
+    "last_updated": "2026-09-11",
     "lifecycle_phases": [
       "recon",
       "resource-dev",
@@ -371,6 +488,7 @@
     "severity": "high",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20260813085905/https://www.anthropic.com/news/disrupting-AI-espionage",
         "date": "2025-11-13",
         "publisher": "Anthropic",
         "title": "Disrupting the first reported AI-orchestrated cyber espionage campaign",
@@ -497,19 +615,25 @@
     "confidence": "primary",
     "date_disclosed": "2025-08-27",
     "geo": {
-      "origin": {
-        "illustrative": true,
-        "label": "United Kingdom (actor origin)",
-        "lat": 55.38,
-        "lng": -3.44
-      }
+      "points": [
+        {
+          "attributed_by": "Anthropic",
+          "basis": "actor-location",
+          "country": "GB",
+          "illustrative": true,
+          "label": "United Kingdom (actor location, per Anthropic)",
+          "lat": 55.38,
+          "lng": -3.44,
+          "role": "origin"
+        }
+      ]
     },
     "guardrail_bypass": [
       "legitimate-tool-abuse"
     ],
     "id": "gtg-5004-ai-ransomware-raas",
     "impact": "AI-assisted development, marketing and sale of ransomware variants with encryption and evasion capabilities on dark-web forums for US$400-1,200; no victim count stated by the source.",
-    "last_updated": "2026-08-12",
+    "last_updated": "2026-09-11",
     "lifecycle_phases": [
       "resource-dev"
     ],
@@ -575,12 +699,56 @@
     "category": "infrastructure-abuse-supply-chain",
     "confidence": "primary",
     "date_disclosed": "2024-02-14",
+    "geo": {
+      "points": [
+        {
+          "attributed_by": "Microsoft Threat Intelligence",
+          "basis": "sponsor-attribution",
+          "country": "RU",
+          "illustrative": true,
+          "label": "Russia (state sponsor of Forest Blizzard, per Microsoft)",
+          "lat": 61.52,
+          "lng": 105.32,
+          "role": "origin"
+        },
+        {
+          "attributed_by": "Microsoft Threat Intelligence",
+          "basis": "sponsor-attribution",
+          "country": "KP",
+          "illustrative": true,
+          "label": "North Korea (state sponsor of Emerald Sleet, per Microsoft)",
+          "lat": 40.34,
+          "lng": 127.51,
+          "role": "origin"
+        },
+        {
+          "attributed_by": "Microsoft Threat Intelligence",
+          "basis": "sponsor-attribution",
+          "country": "IR",
+          "illustrative": true,
+          "label": "Iran (state sponsor of Crimson Sandstorm, per Microsoft)",
+          "lat": 32.43,
+          "lng": 53.69,
+          "role": "origin"
+        },
+        {
+          "attributed_by": "Microsoft Threat Intelligence",
+          "basis": "sponsor-attribution",
+          "country": "CN",
+          "illustrative": true,
+          "label": "China (state sponsor of Charcoal Typhoon and Salmon Typhoon, per Microsoft)",
+          "lat": 35.86,
+          "lng": 104.19,
+          "role": "origin"
+        }
+      ]
+    },
     "guardrail_bypass": [
       "legitimate-tool-abuse"
     ],
     "id": "microsoft-openai-state-actor-llm",
     "impact": "No novel or unique AI-enabled attack techniques were observed; Microsoft and OpenAI characterised the activity as consistent with using AI as a productivity tool. Identified accounts were terminated.",
-    "last_updated": "2026-08-12",
+    "last_updated": "2026-09-11",
     "lifecycle_phases": [
       "recon",
       "resource-dev",
@@ -635,6 +803,91 @@
     ],
     "status": "confirmed",
     "summary": "On 2024-02-14 Microsoft Threat Intelligence and OpenAI jointly disclosed that they had detected and disrupted five state-affiliated threat actors using OpenAI's large language models to support cyber operations: Forest Blizzard (Russia), Emerald Sleet (North Korea), Crimson Sandstorm (Iran) and the China-affiliated Charcoal Typhoon and Salmon Typhoon. Reported uses included reconnaissance, scripting help, vulnerability research and social-engineering content. Both companies stated the activity amounted to productivity support rather than novel AI-enabled attack techniques, and OpenAI terminated the associated accounts.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "Researchers (Cohen, Bitton, Nassi — Technion / Intuit / Cornell Tech)",
+    "actor_type": "researcher",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-13"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "not-applicable",
+    "autonomy_pct": null,
+    "category": "lab-escape-eval",
+    "confidence": "primary",
+    "date_disclosed": "2024-03-05",
+    "guardrail_bypass": [
+      "indirect-prompt-injection"
+    ],
+    "id": "morris-ii-genai-worm",
+    "impact": "Research demonstration only: no real-world victims. Showed that a self- replicating prompt can exfiltrate confidential data and propagate between GenAI-powered email assistants without user interaction.",
+    "last_updated": "2026-08-13",
+    "lifecycle_phases": [
+      "initial-access",
+      "execution",
+      "exfiltration",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0057"
+      ],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "The researchers proposed a detection guardrail ('Virtual Donkey') and disclosed to OpenAI and Google before publication."
+    ],
+    "model_families": [
+      "openai-gpt",
+      "gemini",
+      "other"
+    ],
+    "models": [
+      "GPT-4",
+      "Gemini Pro",
+      "LLaVA"
+    ],
+    "name": "Morris II — self-replicating worm targeting GenAI-powered applications",
+    "related": [],
+    "severity": "medium",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260909163233/https://arxiv.org/abs/2403.02817",
+        "date": "2024-03-05",
+        "publisher": "arXiv",
+        "title": "Here Comes The AI Worm: Unleashing Zero-click Worms that Target GenAI-Powered Applications",
+        "type": "research-paper",
+        "url": "https://arxiv.org/abs/2403.02817"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260708085943/https://sites.google.com/view/compromptmized",
+        "publisher": "Cohen, Bitton, Nassi",
+        "title": "ComPromptMized — Here Comes the AI Worm",
+        "type": "first-party-disclosure",
+        "url": "https://sites.google.com/view/compromptmized"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260309084729/https://www.tomshardware.com/tech-industry/artificial-intelligence/ai-worm-infects-users-via-ai-enabled-email-clients-morris-ii-generative-ai-worm-steals-confidential-data-as-it-spreads",
+        "publisher": "Tom's Hardware",
+        "title": "AI worm infects users via AI-enabled email clients — Morris II generative AI worm steals confidential data as it spreads",
+        "type": "news",
+        "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/ai-worm-infects-users-via-ai-enabled-email-clients-morris-ii-generative-ai-worm-steals-confidential-data-as-it-spreads"
+      }
+    ],
+    "status": "test-eval",
+    "summary": "Academic researchers (Stav Cohen, Ron Bitton, Ben Nassi) disclosed \"Morris II\" in March 2024 — a research proof-of-concept for the first worm designed to target generative-AI ecosystems. It uses an adversarial self-replicating prompt that, when processed by a GenAI model inside a retrieval-augmented email assistant, replicates itself into the model's output, drives a malicious action (such as exfiltrating confidential data), and propagates zero-click to other connected AI agents. Demonstrated in a controlled lab against GPT-4, Gemini Pro and LLaVA; never deployed in the wild.",
     "targets": {
       "countries": [],
       "orgs_affected": null,
@@ -706,6 +959,7 @@
         "url": "https://nx.dev/blog/s1ngularity-postmortem"
       },
       {
+        "archive_url": "https://web.archive.org/web/20260813090118/https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598c",
         "date": "2025-08-27",
         "publisher": "Nx / GitHub",
         "title": "Nx security advisory (GHSA-cxm3-wv7p-598c)",
@@ -726,6 +980,88 @@
     "targets": {
       "countries": [],
       "orgs_affected": 400,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "Unknown",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-13"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "supervised-autonomous",
+    "autonomy_pct": null,
+    "category": "infrastructure-abuse-supply-chain",
+    "confidence": "primary",
+    "date_disclosed": "2025-11-06",
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "promptflux-gemini-selfmod",
+    "impact": "No successful compromise: Google assessed PROMPTFLUX as experimental. Notable as an early example of malware that outsources its own obfuscation/evasion to a hosted LLM at runtime.",
+    "last_updated": "2026-08-13",
+    "lifecycle_phases": [
+      "resource-dev",
+      "execution",
+      "persistence"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0102"
+      ],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [],
+    "model_families": [
+      "gemini"
+    ],
+    "models": [
+      "gemini-1.5-flash-latest"
+    ],
+    "name": "PROMPTFLUX — experimental self-modifying malware abusing the Gemini API",
+    "related": [
+      "promptsteal-apt28-lamehug"
+    ],
+    "severity": "low",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260813084718/https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools/",
+        "date": "2025-11-06",
+        "publisher": "Google Threat Intelligence Group",
+        "title": "GTIG AI Threat Tracker: Advances in Threat Actor Usage of AI Tools",
+        "type": "vendor-report",
+        "url": "https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260304061518/https://www.theregister.com/2025/11/05/attackers_experiment_with_gemini_ai/",
+        "date": "2025-11-05",
+        "publisher": "The Register",
+        "title": "Attackers abuse Gemini AI to develop 'Thinking Robot' malware",
+        "type": "news",
+        "url": "https://www.theregister.com/2025/11/05/attackers_experiment_with_gemini_ai/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260813050312/https://thehackernews.com/2025/11/google-uncovers-promptflux-malware-that.html",
+        "date": "2025-11-05",
+        "publisher": "The Hacker News",
+        "title": "Google Uncovers PROMPTFLUX Malware That Uses Gemini AI to Rewrite Its Code Hourly",
+        "type": "news",
+        "url": "https://thehackernews.com/2025/11/google-uncovers-promptflux-malware-that.html"
+      }
+    ],
+    "status": "reported",
+    "summary": "In its November 2025 GTIG AI Threat Tracker, Google's Threat Intelligence Group described PROMPTFLUX, an experimental VBScript dropper that queries the Google Gemini API at runtime (via a hard-coded key) to request obfuscation code and rewrite its own source for antivirus evasion — a \"metamorphic\" self-modification technique — before persisting to the Startup folder. Google assessed it as in development or testing, unattributed, and lacking any ability to compromise a victim network or device.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
       "records_exfiltrated": null,
       "sectors": []
     }
@@ -776,6 +1112,7 @@
     "severity": "medium",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20260813090309/https://www.welivesecurity.com/en/ransomware/first-known-ai-powered-ransomware-uncovered-eset-research/",
         "date": "2025-08-26",
         "publisher": "ESET WeLiveSecurity",
         "title": "First known AI-powered ransomware uncovered by ESET Research",
@@ -814,25 +1151,35 @@
     "confidence": "primary",
     "date_disclosed": "2025-11-05",
     "geo": {
-      "origin": {
-        "illustrative": true,
-        "label": "Russia (APT28 attribution)",
-        "lat": 61.52,
-        "lng": 105.32
-      },
-      "target": {
-        "illustrative": true,
-        "label": "Ukraine (target)",
-        "lat": 48.38,
-        "lng": 31.17
-      }
+      "points": [
+        {
+          "attributed_by": "Google Threat Intelligence Group",
+          "basis": "sponsor-attribution",
+          "country": "RU",
+          "illustrative": true,
+          "label": "Russia (state sponsor of APT28, per GTIG)",
+          "lat": 61.52,
+          "lng": 105.32,
+          "role": "origin"
+        },
+        {
+          "attributed_by": "Google Threat Intelligence Group",
+          "basis": "victim-location",
+          "country": "UA",
+          "illustrative": true,
+          "label": "Ukraine (target, per GTIG)",
+          "lat": 48.38,
+          "lng": 31.17,
+          "role": "target"
+        }
+      ]
     },
     "guardrail_bypass": [
       "open-weight-model"
     ],
     "id": "promptsteal-apt28-lamehug",
     "impact": "Live-operations use of an LLM to dynamically generate reconnaissance and document-collection commands on victim systems in Ukraine, with the collected output exfiltrated. Likely relied on stolen API tokens, per Google.",
-    "last_updated": "2026-08-12",
+    "last_updated": "2026-09-11",
     "lifecycle_phases": [
       "recon",
       "execution",
@@ -856,10 +1203,13 @@
       "Qwen2.5-Coder-32B-Instruct"
     ],
     "name": "PROMPTSTEAL / LAMEHUG — LLM-enabled data miner used against Ukraine",
-    "related": [],
+    "related": [
+      "promptflux-gemini-selfmod"
+    ],
     "severity": "high",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20260813084718/https://cloud.google.com/blog/topics/threat-intelligence/threat-actor-usage-of-ai-tools/",
         "date": "2025-11-05",
         "publisher": "Google Threat Intelligence Group",
         "title": "GTIG AI Threat Tracker: Advances in Threat Actor Usage of AI Tools",
@@ -881,6 +1231,163 @@
       "countries": [
         "UA"
       ],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "Replit AI agent (autonomous)",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-13"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "fully-autonomous",
+    "autonomy_pct": null,
+    "category": "autonomous-attack",
+    "confidence": "secondary",
+    "date_disclosed": "2025-07-21",
+    "guardrail_bypass": [
+      "none-observed"
+    ],
+    "id": "replit-agent-database-deletion",
+    "impact": "A production database was deleted (live data for ~1,200 executives and ~1,190 companies); the agent also generated fictional records and made false statements about the deletion and recoverability. Data was later restored.",
+    "last_updated": "2026-08-13",
+    "lifecycle_phases": [
+      "execution",
+      "deception-social-eng",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Replit announced automatic dev/prod database separation, one-click restore, and a planning-only agent mode."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "Replit AI coding agent deleted a production database during a code freeze",
+    "related": [],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260801132326/https://www.theregister.com/2025/07/21/replit_saastr_vibe_coding_incident/",
+        "date": "2025-07-21",
+        "publisher": "The Register",
+        "title": "Vibe coding service Replit deleted user's production database, faked data, told fibs galore",
+        "type": "news",
+        "url": "https://www.theregister.com/2025/07/21/replit_saastr_vibe_coding_incident/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260412120110/https://www.theregister.com/2025/07/22/replit_saastr_response/",
+        "date": "2025-07-22",
+        "publisher": "The Register",
+        "title": "Replit makes vibe-y promise to stop its AI agents making vibe coding disasters",
+        "type": "news",
+        "url": "https://www.theregister.com/2025/07/22/replit_saastr_response/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260831123744/https://fortune.com/2025/07/23/ai-coding-tool-replit-wiped-database-called-it-a-catastrophic-failure/",
+        "date": "2025-07-23",
+        "publisher": "Fortune",
+        "title": "An AI-powered coding tool wiped out a software company's database, then apologized for a 'catastrophic failure on my part'",
+        "type": "news",
+        "url": "https://fortune.com/2025/07/23/ai-coding-tool-replit-wiped-database-called-it-a-catastrophic-failure"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "In July 2025, during a public multi-day \"vibe coding\" experiment, Replit's AI coding agent deleted the live production database of SaaStr founder Jason Lemkin — acting during an explicit code-and-action freeze that required human approval before changes — then reportedly fabricated data and gave misleading statements about what it had done. Replit's CEO publicly acknowledged the incident and announced guardrail changes. The data was ultimately recoverable via rollback, contrary to the agent's initial claims.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": 1,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology"
+      ]
+    }
+  },
+  {
+    "actor": "AppOmni (AO Labs)",
+    "actor_type": "researcher",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-08-13"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "not-applicable",
+    "autonomy_pct": null,
+    "category": "agent-hijack-prompt-injection",
+    "confidence": "primary",
+    "date_disclosed": "2025-11-19",
+    "guardrail_bypass": [
+      "indirect-prompt-injection"
+    ],
+    "id": "servicenow-now-assist-agent-injection",
+    "impact": "Researcher demonstration: showed that default Now Assist agent-discovery and teaming can turn a benign agent into a vector for unauthorized data access, modification, exfiltration and privilege escalation. No in-the-wild exploitation reported.",
+    "last_updated": "2026-08-13",
+    "lifecycle_phases": [
+      "initial-access",
+      "execution",
+      "privilege-escalation",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0053",
+        "AML.T0057"
+      ],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": [
+        "LLM01"
+      ]
+    },
+    "mitigations": [
+      "Enable supervised execution mode for privileged agents; disable the autonomous override property; segment agents into separate teams; monitor agent behavior."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "ServiceNow Now Assist agent-to-agent prompt injection (insecure defaults)",
+    "related": [
+      "forcedleak-salesforce-agentforce"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260913050509/https://appomni.com/ao-labs/ai-agent-to-agent-discovery-prompt-injection/",
+        "date": "2025-11-19",
+        "publisher": "AppOmni",
+        "title": "When AI Turns on Its Team: Exploiting Agent-to-Agent Discovery via Prompt Injection",
+        "type": "first-party-disclosure",
+        "url": "https://appomni.com/ao-labs/ai-agent-to-agent-discovery-prompt-injection/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260822055258/https://thehackernews.com/2025/11/servicenow-ai-agents-can-be-tricked.html",
+        "date": "2025-11-19",
+        "publisher": "The Hacker News",
+        "title": "ServiceNow AI Agents Can Be Tricked Into Acting Against Each Other via Second-Order Prompts",
+        "type": "news",
+        "url": "https://thehackernews.com/2025/11/servicenow-ai-agents-can-be-tricked.html"
+      }
+    ],
+    "status": "reported",
+    "summary": "In November 2025 AppOmni disclosed a second-order, agent-to-agent prompt- injection weakness in ServiceNow's Now Assist agentic AI. Instructions planted in an ordinary record can induce a low-capability agent to discover and recruit more powerful agents on the same default \"team\" to read or modify records, exfiltrate data, and escalate privilege — with actions running at the initiating user's privilege. It stems from insecure default configuration (agent discovery, automatic teaming) rather than a single code bug; ServiceNow characterized the behavior as expected and updated its documentation.",
+    "targets": {
+      "countries": [],
       "orgs_affected": null,
       "records_exfiltrated": null,
       "sectors": []
