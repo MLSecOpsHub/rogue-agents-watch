@@ -37,7 +37,7 @@ function countRows(ctx, key, counts) {
 }
 
 function table(headers, rows) {
-  return `<table class="table">\n<thead><tr>${headers.map((h) => `<th scope="col">${esc(h)}</th>`).join('')}</tr></thead>\n<tbody>\n${rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('\n')}\n</tbody>\n</table>`;
+  return `<div class="table-scroll"><table class="table">\n<thead><tr>${headers.map((h) => `<th scope="col">${esc(h)}</th>`).join('')}</tr></thead>\n<tbody>\n${rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('\n')}\n</tbody>\n</table></div>`;
 }
 
 /** One record as a list item with its grades: the unit every list page is built from. */
@@ -48,16 +48,27 @@ export function recordItem(ctx, r) {
 
 // ---- chrome ------------------------------------------------------------------
 
+// The chrome mirrors src/components/layout.ts (same classes, same order) so the
+// page a person sees before the app boots looks like the app, and the swap on
+// boot is quiet. Links are the hash-free page URLs; the app rewrites them.
+
 export function navHtml(ctx, current) {
-  return `<nav class="nav" aria-label="Primary">${ROUTE_PAGES.map((p) => `<a href="${esc(u(ctx, p.path))}"${p.view === current ? ' aria-current="page"' : ''}>${esc(p.nav)}</a>`).join('\n')}</nav>`;
+  const cur = current === 'incident' ? 'table' : current;
+  return `<nav class="nav" aria-label="Primary">${ROUTE_PAGES.map((p) => `<a href="${esc(u(ctx, p.path))}" class="nav-link${p.view === cur ? ' current' : ''}"${p.view === cur ? ' aria-current="page"' : ''}>${esc(p.nav)}</a>`).join('')}</nav>`;
+}
+
+export function headerHtml(ctx, current) {
+  return `<header class="site-header"><a class="skip-link" href="#main">Skip to content</a><div class="brand"><a href="${esc(u(ctx))}" class="brand-link"><span class="brand-mark" aria-hidden="true">◉</span><span class="brand-name">${esc(SITE_NAME)}</span></a><span class="brand-by">by <a class="plain" href="${PUBLISHER.url}">${esc(PUBLISHER.name)}</a></span></div>${navHtml(ctx, current)}</header>`;
 }
 
 export function footerHtml(ctx) {
-  return `<footer class="site-footer"><p>Data: <a href="${UPSTREAM}">Agentic Attack Index</a> (${esc(PUBLISHER.name)}), dataset v${esc(ctx.version)}, <a href="${LICENSE_URL}">CC BY-SA 4.0</a>. Snapshot ${esc(ctx.snapshot?.source_commit?.slice(0, 8) ?? '')} fetched ${esc(ctx.snapshot?.fetched_at ?? '')}. Static site, no analytics, no trackers. <a href="${esc(u(ctx, 'feed.atom'))}">Atom feed</a> · <a href="${esc(u(ctx, 'llms.txt'))}">llms.txt</a>.</p></footer>`;
+  const cov = ctx.summary.archive_coverage;
+  const commit = ctx.snapshot?.source_commit ?? '';
+  return `<footer class="site-footer"><div class="trust"><span class="trust-item">Dataset <strong>v${esc(ctx.version)}</strong></span><span class="trust-item"><strong>${ctx.summary.total}</strong> records</span>${cov ? `<span class="trust-item">Archive coverage <strong>${esc(cov.pct)}%</strong> (${esc(cov.archived)}/${esc(cov.sources)} sources)</span>` : ''}<span class="trust-item">Snapshot ${commit ? `<a class="plain mono" href="${esc(`${UPSTREAM}/commit/${commit}`)}">${esc(commit.slice(0, 7))}</a>` : esc(ctx.snapshot?.source_ref ?? '')} fetched ${esc(ctx.snapshot?.fetched_at ?? '')}</span></div><p class="attribution">Data: <a class="plain" href="${UPSTREAM}">Agentic Attack Index</a> (${esc(PUBLISHER.name)}), licensed <a class="plain" href="${LICENSE_URL}">CC BY-SA 4.0</a>. This dashboard adds no facts; corrections go <a class="plain" href="${UPSTREAM}/issues/new?template=data-correction.yml">upstream</a>. <a class="plain" href="${esc(u(ctx, 'feed.atom'))}">Atom feed</a> · <a class="plain" href="${esc(u(ctx, 'llms.txt'))}">llms.txt</a>. No analytics, no cookies, no trackers.</p></footer>`;
 }
 
 function page(ctx, { view, title, body }) {
-  return `<header class="site-header"><p><a href="${esc(u(ctx))}"><strong>${esc(SITE_NAME)}</strong></a> — source-linked, graded records of AI-agent cyberattacks and rogue-agent incidents</p>\n${navHtml(ctx, view)}</header>\n<main id="main" class="main" data-view="${esc(view)}">\n<h1>${esc(title)}</h1>\n${body}\n</main>\n${footerHtml(ctx)}`;
+  return `${headerHtml(ctx, view)}\n<main id="main" class="main prerender" data-view="${esc(view)}" tabindex="-1">\n${title ? `<h1>${esc(title)}</h1>\n` : ''}${body}\n</main>\n${footerHtml(ctx)}`;
 }
 
 // ---- route pages --------------------------------------------------------------
@@ -331,7 +342,7 @@ ${(r.revisions ?? []).length ? `<h2>Revisions</h2>\n${list(r.revisions.map((v) =
 <pre class="cite">${esc(citation)}</pre>
 <p><a href="${esc(ctx.upstreamIncidentUrl(r.id))}">Record JSON</a> · <a href="${esc(`${UPSTREAM}/blob/${ctx.snapshot?.source_ref ?? 'main'}/data/incidents/${encodeURIComponent(r.id)}.yml`)}">Source YAML</a> · <a href="${esc(correctionIssueUrl(r.id))}">Report a correction</a></p>
 </article>`;
-  return page(ctx, { view: 'incident', title: '', body }).replace('<h1></h1>\n', '');
+  return page(ctx, { view: 'incident', title: '', body });
 }
 
 // ---- llms.txt -----------------------------------------------------------------

@@ -1837,3 +1837,58 @@ body.embed .embed-foot {
 .panel-evidence dd {
   font-variant-numeric: tabular-nums;
 }
+
+/* ---- prerendered pages ------------------------------------------------------
+   The static HTML scripts/prerender-pages.mjs writes into #app: what a person
+   sees between first paint and the app booting (and what a crawler without
+   JavaScript reads). It reuses the app's header, footer, .def, .sources and
+   .table rules; these only space the plain article content so the pre-boot
+   page reads as finished rather than unstyled. */
+.prerender {
+  max-width: 100ch;
+}
+.prerender h1 {
+  margin: 0.25rem 0 0.75rem;
+}
+.prerender h2 {
+  margin: 2rem 0 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--border);
+}
+.prerender h3 {
+  margin: 1.25rem 0 0.35rem;
+  font-size: 1.05rem;
+}
+.prerender ol,
+.prerender ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.4rem;
+}
+.prerender li {
+  margin: 0.45rem 0;
+  line-height: 1.5;
+}
+.prerender li .muted {
+  display: block;
+  font-size: 0.9rem;
+}
+.prerender article > p:first-of-type + h1 {
+  margin-top: 0.25rem;
+}
+.prerender .def {
+  margin: 0.5rem 0 0;
+}
+.prerender .table-scroll {
+  margin-top: 0.75rem;
+}
+.prerender .table td,
+.prerender .table th {
+  padding: 0.45rem 0.6rem;
+  vertical-align: top;
+}
+.prerender .crumbs {
+  margin-bottom: 0.5rem;
+}
+.prerender .cite {
+  margin: 0.5rem 0;
+}
