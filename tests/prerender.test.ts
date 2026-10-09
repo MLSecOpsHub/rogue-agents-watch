@@ -3,9 +3,10 @@
 // card, page, or feed fails here first.
 import { describe, expect, it } from 'vitest';
 import summary from '../data/snapshot/summary.json';
-import { atomFeed, cardSvg, changesJson, firstSentence, incidentHtml, loadContext, siteCardSvg, siteOgTags, wrapText } from '../scripts/prerender.mjs';
+import { atomFeed, cardSvg, changesJson, FALLBACK_SHELL, firstSentence, incidentHtml, loadContext, siteCardSvg, siteOgTags, wrapText } from '../scripts/prerender.mjs';
 
-const ctx = loadContext('https://example.test/site/');
+// The fallback shell keeps the suite independent of whatever a previous build left in dist/.
+const ctx = loadContext('https://example.test/site/', { shell: FALLBACK_SHELL });
 const byId = new Map(ctx.incidents.map((r) => [r.id, r]));
 
 describe('prerender generators', () => {
@@ -19,10 +20,55 @@ describe('prerender generators', () => {
     const html = incidentHtml(rec, ctx);
     expect(html).toContain(`<meta property="og:image" content="https://example.test/site/og/${id}.png">`);
     expect(html).toContain(`<meta property="og:url" content="https://example.test/site/incident/${id}/">`);
-    expect(html).toContain(`url=https://example.test/site/#/incident/${id}`);
+    expect(html).toContain(`<link rel="canonical" href="https://example.test/site/incident/${id}/">`);
+    expect(html).toContain('hreflang="x-default"');
     expect(html).toContain('summary_large_image');
     expect(html).toMatch(/og:description" content="[^"]*(Confirmed|Reported|Test)/);
+    // A real page, not a redirect: search engines drop instant-refresh pages.
+    expect(html).not.toContain('http-equiv="refresh"');
+    expect(html).not.toContain('location.replace');
     expect(html).not.toContain('<script src=');
+    // The record is in the static HTML for crawlers that do not run JavaScript.
+    expect(html).toContain(`<h1>${rec.name.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')}</h1>`);
+    for (const s of rec.sources) expect(html).toContain(`href="${s.url.replace(/&/g, '&amp;')}"`);
+    expect(html).toContain('Report a correction');
+    expect(html).toContain('"@type":"Article"');
+    expect(html).toContain('"@type":"BreadcrumbList"');
+  });
+
+  it('route pages carry static content for every record, grade definitions, and no redirect', async () => {
+    const { routeHtml, bareShell, pageHtml } = await import('../scripts/prerender.mjs');
+    const overview = routeHtml('overview', ctx);
+    for (const id of summary.ids) expect(overview).toContain(`href="https://example.test/site/incident/${id}/"`);
+    expect(overview).toContain('<link rel="canonical" href="https://example.test/site/">');
+    expect(overview).toContain('"@type":"Dataset"');
+    expect(overview).toContain('"@type":"ItemList"');
+    const about = routeHtml('about', ctx);
+    expect(about).toContain('"@type":"DefinedTermSet"');
+    for (const v of ctx.taxonomy['status']!.values) expect(about).toContain(v.label);
+    const map = routeHtml('map', ctx);
+    expect(map).toContain('never plotted');
+    for (const view of ['timeline', 'table', 'techniques', 'stats'] as const) {
+      const html = routeHtml(view, ctx);
+      expect(html).toContain(`<link rel="canonical" href="https://example.test/site/${view}/">`);
+      expect(html).not.toContain('http-equiv="refresh"');
+      expect(html).toContain('"@type":"BreadcrumbList"');
+    }
+    // Re-prerendering an already prerendered page yields the same bytes.
+    const once = pageHtml(ctx, { title: 'T', description: 'D', url: 'https://example.test/site/x/' }, '<p>x</p>');
+    expect(pageHtml({ ...ctx, shell: once }, { title: 'T', description: 'D', url: 'https://example.test/site/x/' }, '<p>x</p>')).toBe(once);
+    expect(bareShell(once)).toBe(bareShell(ctx.shell));
+  });
+
+  it('llms.txt indexes every record and the pages; llms-full.txt carries every source', async () => {
+    const { llmsTxt, llmsFullTxt } = await import('../scripts/prerender-pages.mjs');
+    const idx = llmsTxt(ctx);
+    for (const id of summary.ids) expect(idx).toContain(`(https://example.test/site/incident/${id}/)`);
+    expect(idx).toContain('llms-full.txt');
+    const full = llmsFullTxt(ctx);
+    for (const r of ctx.incidents) for (const s of r.sources) expect(full).toContain(s.url);
+    expect(full).not.toContain('undefined');
+    expect(idx).not.toContain('undefined');
   });
 
   it('escapes dataset text in every generated surface', () => {
@@ -75,25 +121,32 @@ describe('prerender generators', () => {
 describe('discoverability and interop generators', () => {
   it('site Dataset JSON-LD and per-incident Article JSON-LD are valid schema.org objects with absolute URLs', async () => {
     const { siteJsonLd, incidentJsonLd } = await import('../scripts/prerender.mjs');
-    const ld = siteJsonLd(ctx);
-    expect(ld['@type']).toBe('Dataset');
+    const graph = siteJsonLd(ctx)['@graph'] as Array<Record<string, unknown>>;
+    const ld = graph.find((n) => n['@type'] === 'Dataset')!;
     expect(ld['url']).toBe('https://example.test/site/');
     expect(ld['license']).toContain('creativecommons.org/licenses/by-sa/4.0');
     expect(Array.isArray(ld['distribution'])).toBe(true);
+    expect((ld['hasPart'] as unknown[]).length).toBe(summary.total);
+    expect(graph.map((n) => n['@type'])).toEqual(['Organization', 'WebSite', 'Dataset', 'CollectionPage']);
     const art = incidentJsonLd(byId.get(summary.ids[0]!)!, ctx);
     expect(art['@type']).toBe('Article');
     expect(art['url']).toBe(`https://example.test/site/incident/${summary.ids[0]}/`);
     expect(art['image']).toBe(`https://example.test/site/og/${summary.ids[0]}.png`);
+    expect((art['citation'] as unknown[]).length).toBe(byId.get(summary.ids[0]!)!.sources.length);
   });
 
-  it('sitemap lists the landing page and one URL per record; robots allows crawling and points at it', async () => {
+  it('sitemap lists every route page and one URL per record; robots allows crawling, names the AI crawlers, and points at it', async () => {
     const { sitemapXml, robotsTxt } = await import('../scripts/prerender.mjs');
+    const { ROUTE_PAGES } = await import('../scripts/prerender-pages.mjs');
     const sm = sitemapXml(ctx);
-    expect((sm.match(/<url>/g) ?? []).length).toBe(summary.total + 1);
+    expect((sm.match(/<url>/g) ?? []).length).toBe(summary.total + ROUTE_PAGES.length);
     for (const id of summary.ids) expect(sm).toContain(`<loc>https://example.test/site/incident/${id}/</loc>`);
+    for (const p of ROUTE_PAGES) expect(sm).toContain(`<loc>https://example.test/site/${p.path}</loc>`);
     expect(sm).not.toContain('embed.html');
     const rb = robotsTxt(ctx);
-    expect(rb).toContain('Allow: /');
+    expect(rb).toContain('User-agent: *\nAllow: /');
+    expect(rb).toContain('User-agent: GPTBot\nAllow: /');
+    expect(rb).toContain('User-agent: ClaudeBot\nAllow: /');
     expect(rb).toContain('Sitemap: https://example.test/site/sitemap.xml');
   });
 

@@ -35,10 +35,18 @@ flagged and excluded from headline counts by default, with a toggle.
 
 Built at build time from the snapshot, no server involved:
 
-- `incident/<id>/` — a prerendered page per record with Open Graph and Twitter
-  tags and a 1200×630 card (`og/<id>.png`), so links unfurl with the grades,
-  then redirect to `#/incident/<id>`. Every record page and the map drawer have
-  "Copy share link" and "Copy caption".
+- `incident/<id>/` — a real page per record: the full record (grades with
+  their upstream definitions, summary, facts as stated, mappings, map points,
+  every source) in static HTML, Open Graph and Twitter tags, a 1200×630 card
+  (`og/<id>.png`), `Article` and `BreadcrumbList` JSON-LD, and the app booting
+  in place (no redirect, so search engines index the page itself). Every
+  record page and the map drawer have "Copy share link" and "Copy caption".
+- `map/`, `timeline/`, `table/`, `techniques/`, `stats/`, `about/` — the same
+  for every view: a hash-free canonical URL whose static HTML carries the
+  view's content for crawlers that do not run JavaScript, then the live view.
+  `about/` also carries the grading vocabularies as `DefinedTermSet` JSON-LD.
+- `llms.txt` and `llms-full.txt` — an index of the site and the full text of
+  every record in Markdown, for AI assistants and agents.
 - `embed.html#/map` — the map and field log alone, for iframes. Filters and
   replay position travel in the hash: `embed.html#/map?ai_role=load-bearing&t=2025-08`.
 - `feed.atom` — Atom feed of records, newest additions first.
@@ -50,9 +58,11 @@ Built at build time from the snapshot, no server involved:
   `hashes.csv`). In MISP add a feed with the URL `…/misp/` (the directory).
   Tags carry the grades and technique ids; attributes carry the record links,
   summary, actor as stated, source URLs, and CVEs.
-- `sitemap.xml`, `robots.txt`, schema.org `Dataset` JSON-LD on the landing
-  page and `Article` JSON-LD on each record page, for search engines and
-  Google Dataset Search.
+- `sitemap.xml` (every page, with the card images), `robots.txt` (crawling
+  allowed, the AI crawlers named explicitly), and on the landing page one
+  schema.org graph: `WebSite`, `Organization`, `Dataset` (with every record as
+  `hasPart`) and the ordered `ItemList`, for search engines, AI answer engines
+  and Google Dataset Search.
 - The upstream `dist/stix/bundle.json` (STIX 2.1) imports into OpenCTI.
 
 Design and product research notes are kept outside the repository.

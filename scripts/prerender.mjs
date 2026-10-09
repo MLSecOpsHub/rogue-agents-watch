@@ -26,57 +26,21 @@ import { fileURLToPath } from 'node:url';
 import { geoNaturalEarth1, geoPath } from 'd3-geo';
 import { feature } from 'topojson-client';
 import { GITHUB_PAGES_SITE_URL, resolveSiteUrl } from './site-env.mjs';
+import { incidentBody, llmsFullTxt, llmsTxt, ROUTE_BODIES, ROUTE_PAGES, routeDescription } from './prerender-pages.mjs';
+import { byDisclosedDesc, byIdAsc, CARD_H, CARD_W, datasetModified, esc, firstSentence, gradeLine, LICENSE_URL, PUBLISHER, SITE_NAME, tax, UPSTREAM, wrapText } from './prerender-util.mjs';
+
+export { CARD_H, CARD_W, esc, firstSentence, SITE_NAME, UPSTREAM, wrapText };
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
 const SNAP = path.join(ROOT, 'data', 'snapshot');
 const FONTS = path.join(ROOT, 'assets', 'fonts');
 
-export const SITE_NAME = 'Rogue Agent Watch';
 export const DEFAULT_SITE_URL = GITHUB_PAGES_SITE_URL;
-export const UPSTREAM = 'https://github.com/MLSecOpsHub/agentic-attack-index';
-export const CARD_W = 1200;
-export const CARD_H = 630;
 
 // Card palette: the dark map theme, fixed (a share image has no viewer theme).
 const C = { ground: '#0b1117', surface: '#16232f', ink: '#e8eef4', ink2: '#b9c4ce', muted: '#93a1af', hair: '#223040', land: '#1f2d3a', coast: '#2f4256', badge: '#17222d', badgeEdge: '#2d3d4f' };
 export const ROLE_HEX = { 'load-bearing': '#ffb070', significant: '#e07a2f', incidental: '#a8511f', disputed: '#6f7d8a', unknown: '#6f7d8a' };
-
-export function esc(s) {
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
-
-/** Greedy word wrap by character budget; the last allowed line gets an ellipsis if text remains. */
-export function wrapText(text, maxChars, maxLines) {
-  const words = String(text).split(/\s+/).filter(Boolean);
-  const lines = [];
-  let cur = '';
-  for (const w of words) {
-    const next = cur ? `${cur} ${w}` : w;
-    if (next.length <= maxChars) cur = next;
-    else {
-      if (cur) lines.push(cur);
-      cur = w.length > maxChars ? `${w.slice(0, maxChars - 1)}…` : w;
-      if (lines.length === maxLines) break;
-    }
-  }
-  if (cur && lines.length < maxLines) lines.push(cur);
-  if (lines.length > maxLines || (lines.length === maxLines && words.join(' ').length > lines.join(' ').length)) {
-    const last = lines[maxLines - 1] ?? '';
-    lines.length = maxLines;
-    lines[maxLines - 1] = `${last.replace(/…$/, '').slice(0, Math.max(0, maxChars - 1)).trimEnd()}…`;
-  }
-  return lines;
-}
-
-export function firstSentence(text) {
-  const m = /^(.+?[.!?])(\s|$)/.exec(String(text).trim());
-  return (m ? m[1] : String(text).trim()).slice(0, 220);
-}
-
-function tax(ctx, key, id) {
-  return ctx.labels?.[key]?.[id]?.label ?? id;
-}
 
 function badgeSvg(x, y, text, opts = {}) {
   const w = Math.round(text.length * 11.4 + 30);
@@ -189,48 +153,100 @@ ${miniMap(ctx.geo, points, 0.6)}
 </svg>`;
 }
 
-/** Per-incident HTML: Open Graph tags for crawlers, redirect for people. */
-export function incidentHtml(rec, ctx) {
-  const url = `${ctx.siteUrl}incident/${encodeURIComponent(rec.id)}/`;
-  const app = `${ctx.siteUrl}#/incident/${encodeURIComponent(rec.id)}`;
-  const image = `${ctx.siteUrl}og/${encodeURIComponent(rec.id)}.png`;
-  const grades = `${tax(ctx, 'status', rec.status)} · ${tax(ctx, 'confidence', rec.confidence)} sourcing · AI ${tax(ctx, 'ai_role', rec.ai_role ?? 'unknown').toLowerCase()} · ${tax(ctx, 'severity', rec.severity)} severity`;
-  const desc = `${grades}. ${firstSentence(rec.summary)}`;
-  const title = `${rec.name} — ${SITE_NAME}`;
-  return `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="referrer" content="no-referrer">
-<title>${esc(title)}</title>
-<meta name="description" content="${esc(desc)}">
-<link rel="canonical" href="${esc(url)}">
-<link rel="alternate" type="application/json" href="${esc(ctx.upstreamIncidentUrl(rec.id))}">
-<meta property="og:type" content="article">
+// ---- pages ---------------------------------------------------------------------
+//
+// Every page is the Vite-built shell with its own head and a filled #app, so a
+// crawler (JavaScript or not) sees the content at a stable, hash-free URL and a
+// person gets the live app at the same URL. No meta refresh, no redirect: an
+// instant refresh makes search engines treat the page as a redirect and drop it.
+
+const HEAD_OPEN = '<!-- prerender:head -->';
+const HEAD_CLOSE = '<!-- /prerender:head -->';
+
+/** A shell with no page-specific head or body, whether given the raw Vite output or an already prerendered page. */
+export function bareShell(html) {
+  return html
+    .replace(new RegExp(`\\s*${HEAD_OPEN}[\\s\\S]*?${HEAD_CLOSE}`), '')
+    .replace(/\s*<title>[\s\S]*?<\/title>/, '')
+    .replace(/\s*<meta name="description"[^>]*>/, '')
+    .replace(/\s*<\/head>/, '\n</head>')
+    .replace(/<div id="app">[\s\S]*?<\/div>(\s*<\/body>)/, '<div id="app"></div>$1');
+}
+
+// JSON inside <script> is not HTML, so "<" is encoded as \u003c (valid JSON) to keep dataset text from ever forming a tag.
+const jsonLdTag = (obj) => `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, '\\u003c')}</script>`;
+
+/**
+ * Assemble one page. `meta`: { title, description, url, image, imageAlt, ogType, jsonLd, extraHead }.
+ * Head order matters little, but canonical, hreflang and description precede the social tags for readability.
+ */
+export function pageHtml(ctx, meta, body) {
+  const image = meta.image ?? `${ctx.siteUrl}og/site.png`;
+  const head = `${HEAD_OPEN}
+<title>${esc(meta.title)}</title>
+<meta name="description" content="${esc(meta.description)}">
+<link rel="canonical" href="${esc(meta.url)}">
+<link rel="alternate" hreflang="en" href="${esc(meta.url)}">
+<link rel="alternate" hreflang="x-default" href="${esc(meta.url)}">
+<link rel="alternate" type="application/atom+xml" title="${esc(SITE_NAME)} — new and revised records" href="${esc(ctx.siteUrl)}feed.atom">
+<meta name="theme-color" content="#0b1117">
+${meta.extraHead ?? ''}<meta property="og:type" content="${esc(meta.ogType ?? 'website')}">
 <meta property="og:site_name" content="${esc(SITE_NAME)}">
-<meta property="og:title" content="${esc(rec.name)}">
-<meta property="og:description" content="${esc(desc)}">
-<meta property="og:url" content="${esc(url)}">
+<meta property="og:locale" content="en_US">
+<meta property="og:title" content="${esc(meta.ogTitle ?? meta.title)}">
+<meta property="og:description" content="${esc(meta.description)}">
+<meta property="og:url" content="${esc(meta.url)}">
 <meta property="og:image" content="${esc(image)}">
 <meta property="og:image:width" content="${CARD_W}">
 <meta property="og:image:height" content="${CARD_H}">
-<meta property="og:image:alt" content="${esc(`${rec.name}: ${grades}`)}">
+<meta property="og:image:alt" content="${esc(meta.imageAlt ?? meta.title)}">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="${esc(rec.name)}">
-<meta name="twitter:description" content="${esc(desc)}">
+<meta name="twitter:title" content="${esc(meta.ogTitle ?? meta.title)}">
+<meta name="twitter:description" content="${esc(meta.description)}">
 <meta name="twitter:image" content="${esc(image)}">
-<meta http-equiv="refresh" content="0; url=${esc(app)}">
-<script>location.replace(${JSON.stringify(app)});</script>
-</head>
-<body style="font-family:system-ui,sans-serif;padding:1.5rem;max-width:60ch">
-<p>Opening <a href="${esc(app)}">${esc(rec.name)}</a> on ${esc(SITE_NAME)}.</p>
-<p>${esc(grades)}.</p>
-<p>${esc(rec.summary)}</p>
-<p>Data: <a href="${UPSTREAM}">Agentic Attack Index</a> (MLSecOpsHub), dataset v${esc(ctx.version)}, CC BY-SA 4.0.</p>
-</body>
-</html>
-`;
+${(Array.isArray(meta.jsonLd) ? meta.jsonLd : [meta.jsonLd]).filter(Boolean).map(jsonLdTag).join('\n')}
+${HEAD_CLOSE}`;
+  return bareShell(ctx.shell)
+    .replace('</head>', `${head}\n</head>`)
+    .replace('<div id="app"></div>', `<div id="app">\n${body}\n</div>`);
+}
+
+/** Per-incident page: the full record in static HTML, Open Graph card, Article JSON-LD, and the app boots in place. */
+export function incidentHtml(rec, ctx) {
+  const url = `${ctx.siteUrl}incident/${encodeURIComponent(rec.id)}/`;
+  const grades = gradeLine(ctx, rec);
+  const added = rec.added?.date ?? rec.date_disclosed;
+  return pageHtml(
+    ctx,
+    {
+      title: `${rec.name} — ${SITE_NAME}`,
+      ogTitle: rec.name,
+      description: `${grades}. ${firstSentence(rec.summary)}`,
+      url,
+      image: `${ctx.siteUrl}og/${encodeURIComponent(rec.id)}.png`,
+      imageAlt: `${rec.name}: ${grades}`,
+      ogType: 'article',
+      extraHead: `<link rel="alternate" type="application/json" href="${esc(ctx.upstreamIncidentUrl(rec.id))}">
+<meta property="article:published_time" content="${esc(added)}">
+<meta property="article:modified_time" content="${esc(rec.last_updated ?? added)}">
+<meta property="article:section" content="${esc(tax(ctx, 'category', rec.category))}">
+${[`status:${rec.status}`, `ai_role:${rec.ai_role ?? 'unknown'}`, rec.category].map((t) => `<meta property="article:tag" content="${esc(t)}">`).join('\n')}
+`,
+      jsonLd: [incidentJsonLd(rec, ctx), breadcrumbJsonLd(ctx, [[SITE_NAME, ctx.siteUrl], ['Records', `${ctx.siteUrl}timeline/`], [rec.name, url]])],
+    },
+    incidentBody(ctx, rec),
+  );
+}
+
+/** One of the route pages (overview, map, timeline, table, techniques, stats, about). */
+export function routeHtml(view, ctx) {
+  const route = ROUTE_PAGES.find((p) => p.view === view);
+  if (!route) throw new Error(`unknown route page ${view}`);
+  const url = `${ctx.siteUrl}${route.path}`;
+  const title = view === 'overview' ? SITE_NAME : `${route.title} — ${SITE_NAME}`;
+  const jsonLd = view === 'overview' ? [siteJsonLd(ctx)] : [routeJsonLd(ctx, route), breadcrumbJsonLd(ctx, [[SITE_NAME, ctx.siteUrl], [route.title, url]])];
+  if (view === 'about') jsonLd.push(...definedTermSetsJsonLd(ctx));
+  return pageHtml(ctx, { title, ogTitle: view === 'overview' ? SITE_NAME : `${route.title} · ${SITE_NAME}`, description: routeDescription(ctx, view), url, jsonLd }, ROUTE_BODIES[view](ctx));
 }
 
 const byAddedDesc = (a, b) => {
@@ -330,68 +346,181 @@ export function siteOgTags(ctx) {
 
 // ---- discoverability -------------------------------------------------------
 
-export function siteJsonLd(ctx) {
-  const dates = ctx.incidents.map((r) => r.date_disclosed).sort();
-  const modified = ctx.incidents.map((r) => r.last_updated ?? r.added?.date ?? r.date_disclosed).sort().at(-1) ?? ctx.snapshot?.fetched_at ?? null;
-  const dist = (url, fmt) => ({ '@type': 'DataDownload', encodingFormat: fmt, contentUrl: url });
-  const raw = `https://raw.githubusercontent.com/MLSecOpsHub/agentic-attack-index/${ctx.snapshot?.source_ref ?? 'main'}/dist/`;
+// Stable @ids so every page's JSON-LD refers to the same WebSite, Organization and Dataset nodes.
+const ids = (ctx) => ({ site: `${ctx.siteUrl}#website`, org: `${PUBLISHER.url}/#organization`, dataset: `${ctx.siteUrl}#dataset` });
+
+export function organizationJsonLd() {
+  return { '@type': 'Organization', '@id': `${PUBLISHER.url}/#organization`, name: PUBLISHER.name, url: PUBLISHER.url, sameAs: [PUBLISHER.github] };
+}
+
+export function websiteJsonLd(ctx) {
+  const { site, org } = ids(ctx);
   return {
-    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': site,
+    name: SITE_NAME,
+    url: ctx.siteUrl,
+    description: routeDescription(ctx, 'overview'),
+    inLanguage: 'en',
+    publisher: { '@id': org },
+    license: LICENSE_URL,
+  };
+}
+
+export function datasetJsonLd(ctx) {
+  const { org, dataset } = ids(ctx);
+  const dates = ctx.incidents.map((r) => r.date_disclosed).sort();
+  const modified = datasetModified(ctx.incidents, ctx.snapshot?.fetched_at ?? null);
+  const dist = (url, fmt) => ({ '@type': 'DataDownload', encodingFormat: fmt, contentUrl: url });
+  const raw = ctx.rawBase;
+  return {
     '@type': 'Dataset',
+    '@id': dataset,
     name: 'Agentic Attack Index',
     alternateName: SITE_NAME,
-    description: `Curated, source-linked, graded records of real-world cyberattacks executed or orchestrated by AI agents, and rogue-agent incidents. ${ctx.summary.total} records, dataset v${ctx.version}. Each record carries status, confidence, AI-role and severity grades, MITRE ATLAS mappings, and every source with an archive copy where available.`,
+    description: `Curated, source-linked, graded records of real-world cyberattacks executed or orchestrated by AI agents, and rogue-agent incidents. ${ctx.summary.total} records, dataset v${ctx.version}. Each record carries verification status, sourcing confidence, AI-role and severity grades, MITRE ATLAS and ATT&CK mappings, and every source with an archive copy where available.`,
     url: ctx.siteUrl,
     sameAs: [UPSTREAM],
     identifier: `agentic-attack-index v${ctx.version}`,
     version: ctx.version,
-    license: 'https://creativecommons.org/licenses/by-sa/4.0/',
+    license: LICENSE_URL,
     isAccessibleForFree: true,
-    creator: { '@type': 'Organization', name: 'MLSecOpsHub', url: 'https://mlsecopshub.com' },
-    publisher: { '@type': 'Organization', name: 'MLSecOpsHub', url: 'https://mlsecopshub.com' },
-    keywords: ['AI security', 'agentic AI', 'cyberattack', 'incident tracker', 'MITRE ATLAS', 'prompt injection', 'rogue agents', 'threat intelligence'],
+    inLanguage: 'en',
+    creator: { '@id': org },
+    publisher: { '@id': org },
+    keywords: ['AI security', 'agentic AI', 'AI agents', 'cyberattack', 'incident database', 'MITRE ATLAS', 'MITRE ATT&CK', 'OWASP agentic top 10', 'prompt injection', 'rogue agents', 'threat intelligence', 'LLM security'],
     temporalCoverage: dates.length ? `${dates[0]}/${dates.at(-1)}` : undefined,
     dateModified: modified ?? undefined,
-    distribution: [dist(`${raw}incidents.json`, 'application/json'), dist(`${raw}incidents.csv`, 'text/csv'), dist(`${raw}incidents.ndjson`, 'application/x-ndjson'), dist(`${raw}stix/bundle.json`, 'application/stix+json'), dist(`${ctx.siteUrl}feed.atom`, 'application/atom+xml'), dist(`${ctx.siteUrl}misp/manifest.json`, 'application/json')],
+    conformsTo: ctx.schemaUrl,
+    distribution: [dist(`${raw}incidents.json`, 'application/json'), dist(`${raw}incidents.csv`, 'text/csv'), dist(`${raw}incidents.ndjson`, 'application/x-ndjson'), dist(`${raw}stix/bundle.json`, 'application/stix+json'), dist(`${ctx.siteUrl}feed.atom`, 'application/atom+xml'), dist(`${ctx.siteUrl}misp/manifest.json`, 'application/json'), dist(`${ctx.siteUrl}llms-full.txt`, 'text/plain')],
     includedInDataCatalog: { '@type': 'DataCatalog', name: SITE_NAME, url: ctx.siteUrl },
+    hasPart: ctx.incidents.slice().sort(byDisclosedDesc).map((r) => ({ '@type': 'Article', '@id': `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, headline: r.name, datePublished: r.date_disclosed })),
   };
 }
 
+/** The landing page: one graph with the site, the publisher, the dataset and the ordered list of records. */
+export function siteJsonLd(ctx) {
+  const { site, dataset } = ids(ctx);
+  const sorted = ctx.incidents.slice().sort(byDisclosedDesc);
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      organizationJsonLd(),
+      websiteJsonLd(ctx),
+      datasetJsonLd(ctx),
+      {
+        '@type': 'CollectionPage',
+        '@id': ctx.siteUrl,
+        url: ctx.siteUrl,
+        name: SITE_NAME,
+        description: routeDescription(ctx, 'overview'),
+        isPartOf: { '@id': site },
+        about: { '@id': dataset },
+        inLanguage: 'en',
+        mainEntity: {
+          '@type': 'ItemList',
+          itemListOrder: 'https://schema.org/ItemListOrderDescending',
+          numberOfItems: sorted.length,
+          itemListElement: sorted.map((r, i) => ({ '@type': 'ListItem', position: i + 1, url: `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, name: r.name })),
+        },
+      },
+    ],
+  };
+}
+
+export function routeJsonLd(ctx, route) {
+  const { site, dataset } = ids(ctx);
+  const url = `${ctx.siteUrl}${route.path}`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': route.view === 'about' ? 'AboutPage' : 'CollectionPage',
+    '@id': url,
+    url,
+    name: `${route.title} — ${SITE_NAME}`,
+    description: routeDescription(ctx, route.view),
+    isPartOf: { '@id': site },
+    about: { '@id': dataset },
+    inLanguage: 'en',
+    license: LICENSE_URL,
+  };
+}
+
+export function breadcrumbJsonLd(ctx, crumbs) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: crumbs.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 1, name, item })),
+  };
+}
+
+/** The grading vocabularies as DefinedTermSets, definitions verbatim from the upstream taxonomy. */
+export function definedTermSetsJsonLd(ctx) {
+  const { dataset } = ids(ctx);
+  const keys = ['status', 'confidence', 'ai_role', 'severity', 'record_status', 'category', 'autonomy_level', 'guardrail_bypass', 'geo_basis'];
+  return keys
+    .filter((k) => ctx.taxonomy?.[k])
+    .map((k) => {
+      const setId = `${ctx.siteUrl}about/#${k}`;
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'DefinedTermSet',
+        '@id': setId,
+        name: `${ctx.taxonomy[k].title} (Agentic Attack Index)`,
+        url: setId,
+        isPartOf: { '@id': dataset },
+        hasDefinedTerm: (ctx.taxonomy[k].values ?? []).map((v) => ({ '@type': 'DefinedTerm', '@id': `${setId}-${v.id}`, termCode: v.id, name: v.label, description: v.description, inDefinedTermSet: { '@id': setId } })),
+      };
+    });
+}
+
 export function incidentJsonLd(rec, ctx) {
+  const { site, dataset } = ids(ctx);
   const url = `${ctx.siteUrl}incident/${encodeURIComponent(rec.id)}/`;
   const added = rec.added?.date ?? rec.date_disclosed;
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
+    '@id': url,
     headline: rec.name,
-    description: firstSentence(rec.summary),
+    description: `${gradeLine(ctx, rec)}. ${firstSentence(rec.summary)}`,
+    abstract: rec.summary,
     url,
     mainEntityOfPage: url,
     datePublished: added,
     dateModified: rec.last_updated ?? added,
-    author: { '@type': 'Organization', name: 'MLSecOpsHub', url: 'https://mlsecopshub.com' },
-    publisher: { '@type': 'Organization', name: 'MLSecOpsHub', url: 'https://mlsecopshub.com' },
+    author: organizationJsonLd(),
+    publisher: organizationJsonLd(),
     image: `${ctx.siteUrl}og/${encodeURIComponent(rec.id)}.png`,
-    isPartOf: { '@type': 'Dataset', name: 'Agentic Attack Index', url: ctx.siteUrl },
-    license: 'https://creativecommons.org/licenses/by-sa/4.0/',
-    keywords: [rec.category, `status:${rec.status}`, `ai_role:${rec.ai_role ?? 'unknown'}`, ...(rec.model_families ?? [])],
-    citation: (rec.sources ?? []).map((s) => s.url),
+    isPartOf: [{ '@id': site }, { '@id': dataset }],
+    about: { '@id': dataset },
+    articleSection: tax(ctx, 'category', rec.category),
+    inLanguage: 'en',
+    license: LICENSE_URL,
+    keywords: [rec.category, `status:${rec.status}`, `confidence:${rec.confidence}`, `ai_role:${rec.ai_role ?? 'unknown'}`, `severity:${rec.severity}`, ...(rec.model_families ?? []), ...(rec.mappings?.mitre_atlas ?? []), ...(rec.mappings?.mitre_attack ?? []), ...(rec.mappings?.cve ?? [])],
+    citation: (rec.sources ?? []).map((s) => ({ '@type': 'CreativeWork', name: s.title, url: s.url, publisher: { '@type': 'Organization', name: s.publisher }, ...(s.date ? { datePublished: s.date } : {}), ...(s.archive_url ? { archivedAt: s.archive_url } : {}) })),
     identifier: rec.id,
   };
 }
 
 export function sitemapXml(ctx) {
-  const rows = [{ loc: ctx.siteUrl, lastmod: ctx.snapshot?.fetched_at ?? null, priority: '1.0' }];
-  for (const r of ctx.incidents.slice().sort((a, b) => a.id.localeCompare(b.id))) rows.push({ loc: `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, lastmod: r.last_updated ?? r.added?.date ?? r.date_disclosed, priority: '0.8' });
+  const modified = datasetModified(ctx.incidents, ctx.snapshot?.fetched_at ?? null);
+  const rows = ROUTE_PAGES.map((p) => ({ loc: `${ctx.siteUrl}${p.path}`, lastmod: p.view === 'about' ? (ctx.snapshot?.fetched_at ?? modified) : modified, priority: p.view === 'overview' ? '1.0' : '0.7', image: p.view === 'overview' ? `${ctx.siteUrl}og/site.png` : null }));
+  for (const r of ctx.incidents.slice().sort(byIdAsc)) rows.push({ loc: `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, lastmod: r.last_updated ?? r.added?.date ?? r.date_disclosed, priority: '0.8', image: `${ctx.siteUrl}og/${encodeURIComponent(r.id)}.png` });
   return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${rows.map((u) => `  <url><loc>${esc(u.loc)}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}<priority>${u.priority}</priority></url>`).join('\n')}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${rows.map((u) => `  <url><loc>${esc(u.loc)}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}<priority>${u.priority}</priority>${u.image ? `<image:image><image:loc>${esc(u.image)}</image:loc></image:image>` : ''}</url>`).join('\n')}
 </urlset>
 `;
 }
 
+// Crawlers that fetch pages for AI answers and training. The data is CC BY-SA and
+// the site exists to be cited, so each is allowed explicitly rather than left to
+// the wildcard; the embed page is a map-only iframe and never a useful result.
+const AI_CRAWLERS = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'anthropic-ai', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'CCBot', 'Bytespider', 'cohere-ai', 'meta-externalagent', 'Amazonbot', 'DuckAssistBot', 'YouBot', 'MistralAI-User'];
+
 export function robotsTxt(ctx) {
-  return `User-agent: *\nAllow: /\nDisallow: /embed.html\n\nSitemap: ${ctx.siteUrl}sitemap.xml\n`;
+  const group = (ua) => `User-agent: ${ua}\nAllow: /\nDisallow: /embed.html\n`;
+  return `${group('*')}\n${AI_CRAWLERS.map(group).join('\n')}\nSitemap: ${ctx.siteUrl}sitemap.xml\n\n# Machine-readable index of this site for AI assistants: ${ctx.siteUrl}llms.txt\n`;
 }
 
 // ---- Navigator layers -------------------------------------------------------
@@ -496,7 +625,22 @@ export function mispFeed(records, ctx) {
   return { manifest, events, hashes: hashes.sort().join('\n') + '\n' };
 }
 
-export function loadContext(siteUrl = resolveSiteUrl()) {
+/** Minimal shell used when dist/index.html is absent (tests); the real build supplies the Vite output. */
+export const FALLBACK_SHELL = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <title>${SITE_NAME}</title>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
+`;
+
+export function loadContext(siteUrl = resolveSiteUrl(), { shell } = {}) {
   const read = (p) => JSON.parse(readFileSync(p, 'utf8'));
   const incidents = read(path.join(SNAP, 'incidents.json'));
   const summary = read(path.join(SNAP, 'summary.json'));
@@ -506,15 +650,22 @@ export function loadContext(siteUrl = resolveSiteUrl()) {
   const labels = {};
   for (const [k, v] of Object.entries(taxonomy)) labels[k] = Object.fromEntries((v.values ?? []).map((x) => [x.id, { label: x.label }]));
   const url = siteUrl.endsWith('/') ? siteUrl : `${siteUrl}/`;
+  const ref = snapshot.source_ref ?? 'main';
+  const rawBase = `https://raw.githubusercontent.com/MLSecOpsHub/agentic-attack-index/${ref}/dist/`;
+  const indexPath = path.join(DIST, 'index.html');
   return {
     incidents,
     summary,
     snapshot,
+    taxonomy,
     labels,
     version: summary.dataset_version,
     siteUrl: url,
+    rawBase,
+    schemaUrl: `https://raw.githubusercontent.com/MLSecOpsHub/agentic-attack-index/${ref}/schema/incident.schema.json`,
+    shell: shell ?? (existsSync(indexPath) ? readFileSync(indexPath, 'utf8') : FALLBACK_SHELL),
     geo: buildGeo(topo),
-    upstreamIncidentUrl: (id) => `https://raw.githubusercontent.com/MLSecOpsHub/agentic-attack-index/${snapshot.source_ref ?? 'main'}/dist/incidents/${encodeURIComponent(id)}.json`,
+    upstreamIncidentUrl: (id) => `${rawBase}incidents/${encodeURIComponent(id)}.json`,
   };
 }
 
@@ -539,13 +690,20 @@ async function main() {
   for (const r of ctx.incidents) if (!ids.has(r.id)) throw new Error(`incident ${r.id} missing from summary.ids`);
   mkdirSync(path.join(DIST, 'og'), { recursive: true });
   let n = 0;
-  for (const rec of ctx.incidents.slice().sort((a, b) => a.id.localeCompare(b.id))) {
+  for (const rec of ctx.incidents.slice().sort(byIdAsc)) {
     const dir = path.join(DIST, 'incident', rec.id);
     mkdirSync(dir, { recursive: true });
-    writeFileSync(path.join(dir, 'index.html'), incidentHtml(rec, ctx).replace('</head>', `<script type="application/ld+json">${JSON.stringify(incidentJsonLd(rec, ctx)).replace(/<\//g, '<\\/')}</script>\n</head>`));
+    writeFileSync(path.join(dir, 'index.html'), incidentHtml(rec, ctx));
     writeFileSync(path.join(DIST, 'og', `${rec.id}.png`), await renderPng(cardSvg(rec, ctx)));
     n++;
   }
+  for (const p of ROUTE_PAGES) {
+    const dir = p.path ? path.join(DIST, p.path) : DIST;
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(path.join(dir, 'index.html'), routeHtml(p.view, ctx));
+  }
+  writeFileSync(path.join(DIST, 'llms.txt'), llmsTxt(ctx));
+  writeFileSync(path.join(DIST, 'llms-full.txt'), llmsFullTxt(ctx));
   writeFileSync(path.join(DIST, 'og', 'site.png'), await renderPng(siteCardSvg(ctx)));
   writeFileSync(path.join(DIST, 'feed.atom'), atomFeed(ctx.incidents, ctx));
   writeFileSync(path.join(DIST, 'changes.json'), JSON.stringify(changesJson(ctx.incidents, ctx), null, 2) + '\n');
@@ -559,13 +717,7 @@ async function main() {
   writeFileSync(path.join(DIST, 'misp', 'manifest.json'), JSON.stringify(feed.manifest, null, 2) + '\n');
   for (const [uuid, ev] of Object.entries(feed.events)) writeFileSync(path.join(DIST, 'misp', `${uuid}.json`), JSON.stringify(ev, null, 2) + '\n');
   writeFileSync(path.join(DIST, 'misp', 'hashes.csv'), feed.hashes);
-  const indexPath = path.join(DIST, 'index.html');
-  const html = readFileSync(indexPath, 'utf8');
-  if (!html.includes('property="og:title"')) {
-    const ld = `<script type="application/ld+json">${JSON.stringify(siteJsonLd(ctx)).replace(/<\//g, '<\\/')}</script>\n`;
-    writeFileSync(indexPath, html.replace('</head>', `    ${siteOgTags(ctx)}    ${ld}  </head>`));
-  }
-  console.log(`prerender: ${n} incident pages + cards, site card, feed.atom, changes.json, sitemap, robots, 2 Navigator layers, MISP feed (${Object.keys(feed.events).length} events) → ${path.relative(ROOT, DIST)} (site ${ctx.siteUrl})`);
+  console.log(`prerender: ${n} incident pages + cards, ${ROUTE_PAGES.length} route pages, site card, llms.txt, feed.atom, changes.json, sitemap, robots, 2 Navigator layers, MISP feed (${Object.keys(feed.events).length} events) → ${path.relative(ROOT, DIST)} (site ${ctx.siteUrl})`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
