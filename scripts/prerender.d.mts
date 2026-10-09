@@ -7,7 +7,12 @@ export interface PrerenderSource {
   archive_url?: string;
   publisher?: string;
 }
+/** One geo.points[] entry (upstream schema 0.3.0). */
 export interface PrerenderPoint {
+  role: 'origin' | 'target';
+  basis?: string;
+  attributed_by?: string;
+  country?: string | null;
   lat: number;
   lng: number;
   label: string;
@@ -25,7 +30,7 @@ export interface PrerenderRecord {
   severity: string;
   category: string;
   sources: PrerenderSource[];
-  geo?: { target?: PrerenderPoint; origin?: PrerenderPoint } | null;
+  geo?: { points: PrerenderPoint[] } | null;
   added?: { date: string; by: string };
   last_updated?: string;
   revisions?: Array<{ date: string; note: string }>;

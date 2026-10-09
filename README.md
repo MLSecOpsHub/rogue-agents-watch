@@ -19,12 +19,12 @@ live upstream.
 | Route | View |
 |---|---|
 | `#/` | Overview: one hero figure bound to a live map teaser with replay, the verification-status / AI-role honesty split, latest disclosures and what changed, then category, model family, autonomy level, and year |
-| `#/map` | World map of records that carry stated coordinates, replayed by disclosure date, with a field log of every record beside it; colour is AI role, ring is evidence, size is severity, a soft disc marks a country-level centroid; click opens the record in a drawer; "what changed" strip below |
+| `#/map` | World map of records that carry stated coordinates, replayed by disclosure date, with a field log of every record beside it; colour is AI role, ring is evidence, size is severity, a soft disc marks a country-level centroid and a pin a stated location; every point carries the basis it rests on and the publisher that stated it (upstream `geo.points[]`), shown in the tooltip and the drawer; click opens the record in a drawer; "what changed" strip below |
 | `#/timeline` | Records by disclosure date, lane per category, outline by status, filterable |
-| `#/table` | Sortable, filterable by every enum field, full-text search, CSV/JSON download of the filtered view |
-| `#/incident/<id>` | Every field, grade badges with upstream definitions, lifecycle strip, mappings linked to MITRE ATLAS / ATT&CK / OWASP / NVD / AIID, every source with archive link, related records, record-status banner, citation box, "report a correction" |
+| `#/table` | Sortable, filterable by every enum field, full-text search, CSV/JSON download of the filtered view (the CSV carries the upstream `geo_points` column: `role:basis:country` per map point) |
+| `#/incident/<id>` | Every field, grade badges with upstream definitions, lifecycle strip, map points with their basis and the publisher that stated them, mappings linked to MITRE ATLAS / ATT&CK / OWASP / NVD / AIID, every source with archive link, related records, record-status banner, citation box, "report a correction" |
 | `#/techniques` | The technique lens: MITRE ATLAS and ATT&CK ids with the records behind each, OWASP and CVE tables, Navigator layer downloads, model family × guardrail bypass and × AI role crosstabs, sourcing per family, lifecycle × category |
-| `#/stats` | All rollups from the upstream `summary.json`, plus a dataset-gaps table (field coverage) |
+| `#/stats` | All rollups from the upstream `summary.json`, plus a dataset-gaps table (field coverage), archive coverage, and map coverage (`geo_coverage`: points by role and by basis) |
 | `#/about` | What counts as an incident, the grading scales, the illustrative-geo rule, corrections, licences |
 
 Every card, row, and page shows `status`, `confidence`, and `ai_role`. Nulls
@@ -80,6 +80,14 @@ rogue-agents-dashboard   data/snapshot/{incidents,summary,incident.schema,taxono
 - `SNAPSHOT.json` records the upstream ref, commit, dataset version, and fetch
   date; the footer shows the dataset version and archive coverage as a trust
   signal.
+- The data contract is upstream schema 0.3.0: map points live in
+  `geo.points[]`, each with `role`, `basis` (`taxonomy/geo-basis.yml`),
+  `attributed_by`, `country`, `lat`, `lng`, `label`, and `illustrative`; the
+  old `geo.target` / `geo.origin` slots are gone. `scripts/validate-data.mjs`
+  mirrors the upstream point rules (basis allowed for the role, `attributed_by`
+  is a cited publisher, centroids are illustrative) and checks
+  `summary.geo_coverage` against the records, so a contract change fails the
+  sync instead of rendering a wrong point.
 - A scheduled workflow (`sync-data.yml`) refreshes the snapshot weekly and
   opens (or updates) a single PR on `chore/sync-data` when it changed. If the
   new snapshot fails validation it opens one tracked issue instead.

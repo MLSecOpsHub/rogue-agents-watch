@@ -44,6 +44,7 @@ export function summaryFor(raw: RawIncident[]): Summary {
     schema: '',
     total: raw.length,
     archive_coverage: { sources: 0, archived: 0, pct: 0 },
+    geo_coverage: geoCoverageOfRaw(raw),
     by_category: {},
     by_severity: {},
     by_status: {},
@@ -53,5 +54,22 @@ export function summaryFor(raw: RawIncident[]): Summary {
     by_model_family: {},
     by_year: {},
     ids: raw.map((r) => r.id),
+  };
+}
+
+/** Mirrors the upstream build's geo_coverage over raw records: counts only. */
+function geoCoverageOfRaw(raw: RawIncident[]): Summary['geo_coverage'] {
+  const points = raw.flatMap((r) => r.geo?.points ?? []);
+  const tally = (keys: string[]): Record<string, number> => {
+    const out: Record<string, number> = {};
+    for (const k of keys) out[k] = (out[k] ?? 0) + 1;
+    return out;
+  };
+  return {
+    records: raw.filter((r) => (r.geo?.points ?? []).length > 0).length,
+    points: points.length,
+    illustrative: points.filter((p) => p.illustrative).length,
+    by_role: tally(points.map((p) => p.role)),
+    by_basis: tally(points.map((p) => p.basis)),
   };
 }

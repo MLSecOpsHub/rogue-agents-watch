@@ -20,6 +20,25 @@ describe('toCsv', () => {
     expect(cells[cols.indexOf('actor')]).toBe('Unknown');
   });
 
+  it('mirrors the upstream geo_points column: role:basis:country per point, "-" for a region centroid, empty without geo', () => {
+    const withGeo = normalizeIncident(
+      rawRecord({
+        actor_type: 'nation-state',
+        geo: {
+          points: [
+            { role: 'origin', basis: 'sponsor-attribution', attributed_by: 'Example', country: 'KP', lat: 40, lng: 127, label: 'Synthetic origin (centroid)', illustrative: true },
+            { role: 'target', basis: 'victim-location', attributed_by: 'Example', country: null, lat: 50, lng: 10, label: 'Synthetic region (centroid)', illustrative: true },
+          ],
+        },
+      }),
+    );
+    const [head, row, row2] = toCsv([withGeo, normalizeIncident(rawRecord({ id: 'test-record-beta' }))]).split('\r\n');
+    const cols = head!.split(',');
+    expect(cols).toContain('geo_points');
+    expect(parseRow(row!)[cols.indexOf('geo_points')]).toBe('origin:sponsor-attribution:KP; target:victim-location:-');
+    expect(parseRow(row2!)[cols.indexOf('geo_points')]).toBe('');
+  });
+
   it('keeps a stated zero', () => {
     const inc = normalizeIncident(rawRecord({ autonomy_pct: 0 }));
     const [head, row] = toCsv([inc]).split('\r\n');

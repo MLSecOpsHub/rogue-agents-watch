@@ -1,7 +1,7 @@
 // Field completeness across the dataset. Counts only; never a score. Used by
 // the Stats "dataset gaps" panel, the evidence panel, and to decide whether a
 // row that is null in every record is worth showing.
-import type { Incident } from './types';
+import type { GeoCoverage, Incident } from './types';
 
 export interface CoverageRow {
   key: string;
@@ -30,6 +30,27 @@ export function fieldCoverage(incidents: Incident[]): CoverageRow[] {
     row('mitigations', 'Mitigations described', (i) => i.mitigations.length > 0),
     row('archived', 'Every source archived', (i) => i.sources.length > 0 && i.sources.every((s) => Boolean(s.archive_url))),
   ];
+}
+
+/**
+ * Mirrors upstream summary.json `geo_coverage` over a set of records: counts of
+ * map points by role and basis, never positions. Used when the headline set is
+ * recomputed client-side (retracted/superseded records hidden).
+ */
+export function geoCoverageOf(incidents: Incident[]): GeoCoverage {
+  const points = incidents.flatMap((i) => i.geo?.points ?? []);
+  const tally = (keys: string[]): Record<string, number> => {
+    const out: Record<string, number> = {};
+    for (const k of keys) out[k] = (out[k] ?? 0) + 1;
+    return out;
+  };
+  return {
+    records: incidents.filter((i) => i.hasGeo).length,
+    points: points.length,
+    illustrative: points.filter((p) => p.illustrative).length,
+    by_role: tally(points.map((p) => p.role)),
+    by_basis: tally(points.map((p) => p.basis ?? 'not-stated')),
+  };
 }
 
 /** True when at least one record states a source-given autonomy percentage. */

@@ -3,7 +3,7 @@ import { correctionIssueUrl, shareUrl, UPSTREAM_REPO_URL, upstreamUrls } from '.
 import { aiidUrl, atlasUrl, attackUrl, countryFlagLabel, cveUrl, owaspAsiUrl, owaspLlmUrl } from '../data/links';
 import { datasetStatesAutonomyPct, evidenceSummary } from '../data/coverage';
 import { describe, label, values } from '../data/taxonomy';
-import type { Dataset, Incident } from '../data/types';
+import type { Dataset, GeoPoint, Incident } from '../data/types';
 import { href, incidentHref } from '../router';
 import { externalLink, h } from '../util/dom';
 import { fmtDate, fmtInt, fmtPct } from '../util/format';
@@ -101,6 +101,15 @@ export function incidentView({ ds, route, root }: ViewContext): void {
         ['Countries (ISO 3166-1)', inc.targets.countries.length ? h('span', null, inc.targets.countries.map((c) => `${countryFlagLabel(c)} (${c})`).join(', ')) : muted('Not stated.')],
       ]),
       h('p', { class: 'muted small' }, '"Not stated" means the sources gave no figure. It never means zero.'),
+    ),
+  );
+
+  mainCol.appendChild(
+    section(
+      'Location (map points)',
+      inc.geo ? h('ul', { class: 'geo-points geo-points-detail' }, ...inc.geo.points.map((p) => geoPointItem(ds, inc, p))) : muted("No cited source states a location. The record is listed in the map's field log and never plotted."),
+      h('p', { class: 'muted small' }, "Points come only from the record's geo block; nothing is geocoded from country lists or actor names. Each point states the basis it rests on and the cited publisher that stated it; a state sponsor is never an operator location. Country-level centroids are illustrative and render as soft discs on the map, stated locations as pins."),
+      inc.geo ? h('p', null, h('a', { class: 'btn btn-small btn-quiet', href: href('map', { open: inc.id }) }, 'Show on map')) : null,
     ),
   );
 
@@ -273,6 +282,27 @@ function gradeWithDef(ds: Dataset, key: string, value: string): HTMLElement {
 function linkList(ids: string[], toUrl: (id: string) => string): HTMLElement {
   if (!ids.length) return muted('None recorded.');
   return h('ul', { class: 'inline-list' }, ...ids.map((id) => h('li', null, externalLink(toUrl(id), id, 'mono ext'))));
+}
+
+/** One geo.points[] entry: role, label, country, basis (taxonomy label + definition), attributing publisher linked to its source, and centroid/pin. */
+function geoPointItem(ds: Dataset, inc: Incident, p: GeoPoint): HTMLElement {
+  const tax = ds.taxonomy;
+  const source = p.attributed_by ? inc.sources.find((s) => s.publisher === p.attributed_by) : undefined;
+  const country = p.country ? `${countryFlagLabel(p.country)} (${p.country})` : 'region centroid, no single country';
+  return h(
+    'li',
+    { class: `geo-point geo-point-${p.role}` },
+    h('div', null, h('strong', null, p.role === 'origin' ? 'Origin' : 'Target'), ': ', p.label, ' · ', h('span', { class: 'muted' }, country)),
+    h('div', { class: 'small' }, p.basis ? badge(tax, 'geo_basis', p.basis, { compact: true, prefix: 'Basis' }) : h('span', { class: 'muted' }, 'Basis not stated'), ' ', h('span', { class: 'muted' }, p.basis ? describe(tax, 'geo_basis', p.basis) : '')),
+    h(
+      'div',
+      { class: 'small' },
+      'Stated by ',
+      source ? externalLink(source.url, p.attributed_by ?? source.publisher, 'plain') : h('span', null, p.attributed_by ?? 'not stated'),
+      ' · ',
+      p.illustrative ? 'illustrative, country-level centroid' : 'stated location (pin)',
+    ),
+  );
 }
 
 function lifecycleStrip(ds: Dataset, inc: Incident): HTMLElement {

@@ -75,8 +75,8 @@ export interface RawGeoPoint {
   basis: GeoBasis;
   /** The publisher that stated this location. */
   attributed_by: string;
-  /** ISO 3166-1 alpha-2. */
-  country: string;
+  /** ISO 3166-1 alpha-2, or null only for a non-country region centroid (illustrative: true). */
+  country: string | null;
   lat: number;
   lng: number;
   label: string;
@@ -218,11 +218,24 @@ export interface Incident {
   isActiveRecord: boolean;
 }
 
+/** summary.json geo_coverage (schema 0.3.0): counts of map points, never positions. */
+export interface GeoCoverage {
+  /** Records carrying at least one point. */
+  records: number;
+  points: number;
+  /** Points that are country/region centroids rather than stated places. */
+  illustrative: number;
+  by_role: Record<string, number>;
+  by_basis: Record<string, number>;
+}
+
 export interface Summary {
   dataset_version: string;
   schema: string;
   total: number;
   archive_coverage: { sources: number; archived: number; pct: number };
+  /** How many records carry map points and on which basis (upstream counts). */
+  geo_coverage: GeoCoverage;
   by_category: Record<string, number>;
   by_severity: Record<string, number>;
   by_status: Record<string, number>;

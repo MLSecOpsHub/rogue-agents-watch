@@ -1,4 +1,5 @@
 import { countBy, headlineRecords } from '../data/adapter';
+import { geoCoverageOf } from '../data/coverage';
 import { describe, label, values } from '../data/taxonomy';
 import type { Dataset, Incident, Summary } from '../data/types';
 import type { BarDatum } from '../components/charts';
@@ -17,6 +18,7 @@ export function rollups(ds: Dataset, includeInactive: boolean): { summary: Summa
   const summary: Summary = {
     ...ds.summary,
     total: active.length,
+    geo_coverage: geoCoverageOf(active),
     by_category: countBy(active, (i) => i.category),
     by_severity: countBy(active, (i) => i.severity),
     by_status: countBy(active, (i) => i.status),
