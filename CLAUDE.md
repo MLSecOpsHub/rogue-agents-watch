@@ -65,9 +65,13 @@ product. Read the non-negotiables before changing anything.
   `localStorage`; responsive to 400 px, keyboard-navigable, WCAG AA.
 - Bundle budget: core JS+CSS under 500 KB gzipped, map geometry chunk excluded
   (`npm run size`).
-- Deployed to GitHub Pages by `.github/workflows/pages.yml` (Source = GitHub
-  Actions). Served under `/rogue-agents-dashboard/`; override with
-  `VITE_BASE_PATH`, and `VITE_SITE_URL` for share links and Open Graph tags.
+- Base path and canonical URL come from `scripts/site-env.mjs`, which reads
+  the build environment: Vercel serves at `/`; GitHub Pages
+  (`.github/workflows/pages.yml`, Source = GitHub Actions) serves under
+  `/<repo>/` derived from `GITHUB_REPOSITORY`; a local build serves at `/`
+  with `http://localhost:4173/` as its canonical URL. `VITE_BASE_PATH` and
+  `VITE_SITE_URL` override everything (custom domain). Never hard-code a
+  host or path elsewhere.
 - The landing page keeps exactly one hero figure, bound to the map teaser's
   replay, with the status / AI-role split in the first viewport.
 - Map encoding is fixed: hue = `ai_role`

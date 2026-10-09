@@ -40,7 +40,7 @@ will not be merged.
 ```sh
 nvm use            # Node 20.19 (see .nvmrc)
 npm ci
-npm run dev        # http://localhost:5173/rogue-agents-dashboard/
+npm run dev        # http://localhost:5173/
 npm test           # typecheck + lint + snapshot validation + unit tests (no network)
 npm run build      # validates the snapshot, then builds dist/
 npm run preview    # serves dist/

@@ -25,7 +25,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { geoNaturalEarth1, geoPath } from 'd3-geo';
 import { feature } from 'topojson-client';
-import { GITHUB_PAGES_SITE_URL, resolveSiteUrl } from './site-env.mjs';
+import { LOCAL_SITE_URL, resolveSiteUrl } from './site-env.mjs';
 import { incidentBody, llmsFullTxt, llmsTxt, ROUTE_BODIES, ROUTE_PAGES, routeDescription } from './prerender-pages.mjs';
 import { byDisclosedDesc, byIdAsc, CARD_H, CARD_W, datasetModified, esc, firstSentence, gradeLine, LICENSE_URL, PUBLISHER, SITE_NAME, tax, UPSTREAM, wrapText } from './prerender-util.mjs';
 
@@ -36,7 +36,7 @@ const DIST = path.join(ROOT, 'dist');
 const SNAP = path.join(ROOT, 'data', 'snapshot');
 const FONTS = path.join(ROOT, 'assets', 'fonts');
 
-export const DEFAULT_SITE_URL = GITHUB_PAGES_SITE_URL;
+export const DEFAULT_SITE_URL = LOCAL_SITE_URL;
 
 // Card palette: the dark map theme, fixed (a share image has no viewer theme).
 const C = { ground: '#0b1117', surface: '#16232f', ink: '#e8eef4', ink2: '#b9c4ce', muted: '#93a1af', hair: '#223040', land: '#1f2d3a', coast: '#2f4256', badge: '#17222d', badgeEdge: '#2d3d4f' };

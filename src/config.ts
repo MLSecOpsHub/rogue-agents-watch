@@ -37,10 +37,11 @@ export function correctionIssueUrl(id: string): string {
 
 /**
  * Canonical public URL of the deployed site, with a trailing slash. Used for
- * share links and Open Graph tags; override at build time with VITE_SITE_URL
- * (e.g. for a custom domain). Keep in step with `base` in vite.config.ts.
+ * share links and Open Graph tags. vite.config.ts sets VITE_SITE_URL from
+ * scripts/site-env.mjs (Vercel, GitHub Pages, or an explicit override); the
+ * fallback here is the local preview address and only applies outside Vite.
  */
-export const SITE_URL: string = (import.meta.env.VITE_SITE_URL as string | undefined) ?? 'https://mlsecopshub.github.io/rogue-agents-dashboard/';
+export const SITE_URL: string = (import.meta.env.VITE_SITE_URL as string | undefined) ?? 'http://localhost:4173/';
 
 /** Share link: the prerendered per-incident page that unfurls with a card and redirects to the hash route. */
 export function shareUrl(id: string): string {

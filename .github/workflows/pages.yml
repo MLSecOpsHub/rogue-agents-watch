@@ -5,8 +5,9 @@ name: pages
 # One-time setup: Settings → Pages → Build and deployment → Source = "GitHub
 # Actions". Until that is set, the deploy step fails and nothing is published.
 #
-# The site is served under /<repo>/ (vite.config.ts `base`). For a custom
-# domain set VITE_BASE_PATH=/ in this workflow's build step.
+# The site is served under /<repo>/; scripts/site-env.mjs derives that from
+# GITHUB_REPOSITORY, so a rename needs no change here. For a custom domain set
+# VITE_BASE_PATH=/ and VITE_SITE_URL in this workflow's build step.
 on:
   push:
     branches: [main]

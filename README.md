@@ -107,7 +107,7 @@ rogue-agents-dashboard   data/snapshot/{incidents,summary,incident.schema,taxono
 ```sh
 nvm use            # Node 20.19
 npm ci
-npm run dev        # http://localhost:5173/rogue-agents-dashboard/
+npm run dev        # http://localhost:5173/
 npm test           # typecheck + lint + snapshot validation + unit tests incl. axe-core checks (hermetic)
 npm run build      # validates, then builds dist/ (reproducible)
 npm run preview    # serves dist/
@@ -137,6 +137,10 @@ One-time setup in the GitHub repository:
 The asset base path and the canonical URL (share links, Open Graph tags,
 feed, sitemap) are resolved together in `scripts/site-env.mjs`:
 
+- **Local** (`npm run dev`, a plain `npm run build`): served at `/`, and the
+  canonical URL is the preview address `http://localhost:4173/`. A build with
+  no deploy environment is a local one, so its share links say so rather
+  than pointing at a host it was not built for.
 - **GitHub Pages**: no configuration. The workflow build derives
   `/<repo>/` and `https://<owner>.github.io/<repo>/` from
   `GITHUB_REPOSITORY`, so renaming the repository needs no code change.
