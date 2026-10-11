@@ -1,6 +1,6 @@
 // "What changed" strip: latest additions and revisions, derived only from the
 // snapshot (added.date, revisions[]) so the same snapshot renders the same strip.
-import { UPSTREAM_REPO_URL } from '../config';
+import { SITE, UPSTREAM_REPO_URL } from '../config';
 import { label } from '../data/taxonomy';
 import type { Dataset, Incident } from '../data/types';
 import { incidentHref } from '../router';
@@ -54,7 +54,7 @@ export function whatChanged(ds: Dataset): HTMLElement {
       inactive.length
         ? h('ul', { class: 'changes-list' }, ...inactive.map((i) => h('li', null, h('a', { href: incidentHref(i.id) }, i.name), ' ', h('span', { class: 'muted' }, label(ds.taxonomy, 'record_status', i.record_status).toLowerCase()))))
         : h('p', { class: 'muted small' }, 'All records active. Retracted or superseded records would be listed here.'),
-      h('p', { class: 'muted small' }, 'Snapshot ', ds.snapshot.source_commit ? externalLink(`${UPSTREAM_REPO_URL}/commit/${ds.snapshot.source_commit}`, ds.snapshot.source_commit.slice(0, 7), 'plain mono') : ds.snapshot.source_ref, ` fetched ${ds.snapshot.fetched_at}. `, externalLink(`${UPSTREAM_REPO_URL}/pulls`, 'Weekly sync PRs', 'plain'), '.'),
+      h('p', { class: 'muted small' }, 'Snapshot ', ds.snapshot.source_commit ? externalLink(`${UPSTREAM_REPO_URL}/commit/${ds.snapshot.source_commit}`, ds.snapshot.source_commit.slice(0, 7), 'plain mono') : ds.snapshot.source_ref, ` fetched ${ds.snapshot.fetched_at}. `, externalLink(`${SITE.repoUrl}/pulls?q=label%3Adata-sync`, 'Sync PRs', 'plain'), ' (daily).'),
     ),
   );
 }

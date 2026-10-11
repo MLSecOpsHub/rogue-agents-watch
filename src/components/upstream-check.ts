@@ -14,7 +14,7 @@ export async function checkForNewerDataset(ds: Dataset, out: HTMLElement): Promi
     const same = live.dataset_version === ds.summary.dataset_version && live.total === ds.summary.total;
     out.textContent = same
       ? `Up to date (upstream v${live.dataset_version}, ${live.total} records).`
-      : `Newer data upstream: v${live.dataset_version} with ${live.total} records (this site shows v${ds.summary.dataset_version}, ${ds.summary.total}). A sync PR is opened weekly.`;
+      : `Newer data upstream: v${live.dataset_version} with ${live.total} records (this site shows v${ds.summary.dataset_version}, ${ds.summary.total}). The daily sync proposes it as a pull request; it reaches this site once that is merged and deployed.`;
   } catch (err) {
     out.textContent = `Could not reach upstream (${err instanceof Error ? err.message : 'error'}).`;
   }

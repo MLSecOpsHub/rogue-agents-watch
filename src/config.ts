@@ -59,7 +59,7 @@ export const SITE = {
   tagline: 'Real-world cyberattacks executed or orchestrated by AI agents, and rogue-agent incidents',
   publisher: 'MLSecOpsHub',
   publisherUrl: 'https://mlsecopshub.com',
-  repoUrl: 'https://github.com/MLSecOpsHub/rogue-agents-dashboard',
+  repoUrl: 'https://github.com/MLSecOpsHub/rogue-agents-watch',
   dataLicense: 'CC BY-SA 4.0',
   dataLicenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
   codeLicense: 'MIT',
