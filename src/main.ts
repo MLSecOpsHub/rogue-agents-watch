@@ -4,6 +4,7 @@ import { loadDataset } from './data/load';
 import { currentRoute, onPathPage, onRouteChange, type Route } from './router';
 import { clear, h } from './util/dom';
 import { aboutView } from './views/about';
+import { actorsView } from './views/actors';
 import { incidentView } from './views/incident';
 import { mapView } from './views/map';
 import { notFoundView } from './views/not-found';
@@ -19,6 +20,7 @@ const VIEWS: Record<Route['view'], View> = {
   map: mapView,
   timeline: timelineView,
   table: tableView,
+  actors: actorsView,
   techniques: techniquesView,
   stats: statsView,
   about: aboutView,
@@ -31,6 +33,7 @@ const TITLES: Record<Route['view'], string> = {
   map: 'Map',
   timeline: 'Timeline',
   table: 'Table',
+  actors: 'Actors',
   techniques: 'Techniques',
   stats: 'Stats',
   about: 'About',

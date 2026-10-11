@@ -134,7 +134,7 @@ src/components/            badges (grade strip, cards), charts (d3 bars),
                            upstream-check (the one optional fetch)
 src/util/share.ts          Share URL, caption, clipboard helper
 src/embed.ts, embed.html   Second Vite entry: map-only iframe embed
-src/views/                 overview, map, timeline, table, techniques, stats,
+src/views/                 overview, map, timeline, table, actors, techniques, stats,
                            incident, about, not-found, shared rollups
 src/components/matrix.ts   Crosstab table (counts, totals, filtered-table links)
 src/data/coverage.ts       Field coverage, evidence summary (counts, no scores)

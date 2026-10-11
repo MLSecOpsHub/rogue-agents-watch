@@ -71,7 +71,7 @@ export interface PageMeta {
 }
 export interface RoutePage {
   path: string;
-  view: 'overview' | 'map' | 'timeline' | 'table' | 'techniques' | 'stats' | 'about';
+  view: 'overview' | 'map' | 'timeline' | 'table' | 'actors' | 'techniques' | 'stats' | 'about';
   nav: string;
   title: string;
 }
@@ -101,6 +101,7 @@ export function bareShell(html: string): string;
 export function pageHtml(ctx: PrerenderContext, meta: PageMeta, body: string): string;
 export function incidentHtml(rec: PrerenderRecord, ctx: PrerenderContext): string;
 export function routeHtml(view: RoutePage['view'], ctx: PrerenderContext): string;
+export function actorHtml(group: import('./prerender-util.d.mts').PrerenderActorGroup, ctx: PrerenderContext): string;
 export function organizationJsonLd(): Record<string, unknown>;
 export function websiteJsonLd(ctx: PrerenderContext): Record<string, unknown>;
 export function datasetJsonLd(ctx: PrerenderContext): Record<string, unknown>;

@@ -22,6 +22,7 @@ describe('coverage', () => {
   });
 
   it('summarises evidence as counts and a date span', () => {
-    expect(evidenceSummary(a)).toEqual({ sources: 2, firstParty: 1, archived: 1, earliest: '2025-01-02', latest: '2025-01-05' });
+    // Two sources from the same publisher: one publisher, so no independent corroboration.
+    expect(evidenceSummary(a)).toEqual({ sources: 2, firstParty: 1, publishers: 1, archived: 1, earliest: '2025-01-02', latest: '2025-01-05' });
   });
 });

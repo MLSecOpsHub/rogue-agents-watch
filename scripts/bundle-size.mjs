@@ -29,8 +29,11 @@ try {
   process.exit(1);
 }
 
-const rel = (f) => path.relative(DIST, f);
-const isPrerender = (f) => /^(incident\/|og\/|navigator\/|misp\/|feed\.atom$|changes\.json$|sitemap\.xml$|robots\.txt$)/.test(rel(f).split(path.sep).join('/'));
+const rel = (f) => path.relative(DIST, f).split(path.sep).join('/');
+// Core = what every visit loads: the shell, the embed shell, and the hashed
+// assets. Everything else (route and record pages, actor pages, cards, feeds,
+// layers, MISP, llms.txt) is prerendered output fetched one page at a time.
+const isPrerender = (f) => !/^(index\.html|embed\.html|assets\/)/.test(rel(f));
 const prerender = files.filter(isPrerender);
 const rows = files
   .filter((f) => !isPrerender(f))
@@ -52,7 +55,7 @@ for (const r of rows) console.log(`  ${kb(r.gzip)} gz  ${kb(r.raw)} raw  ${r.fil
 console.log(`  core (JS+CSS+HTML, excl. geometry): ${kb(coreGzip)} gz  — budget ${MAX_KB} KB`);
 console.log(`  map geometry chunk:                  ${kb(geoGzip)} gz`);
 const preBytes = prerender.reduce((n, f) => n + statSync(f).size, 0);
-console.log(`  prerendered share pages/cards/feed:  ${prerender.length} files, ${kb(preBytes)} raw (not in the budget; fetched only when a link is unfurled)`);
+console.log(`  prerendered pages/cards/feeds:       ${prerender.length} files, ${kb(preBytes)} raw (not in the budget; each fetched only when visited or unfurled)`);
 
 if (coreGzip > MAX_KB * 1024) {
   console.error(`bundle-size: FAIL — core bundle ${(coreGzip / 1024).toFixed(1)} KB gz exceeds ${MAX_KB} KB`);

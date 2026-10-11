@@ -3,8 +3,10 @@ import { excludedInactiveNote, filterPanel, resultSummary } from '../components/
 import { label } from '../data/taxonomy';
 import type { Incident } from '../data/types';
 import { applyFilters, fromQuery, sortIncidents, toQuery, type FilterState, type SortKey } from '../filters';
+import { SITE_URL } from '../config';
 import { incidentHref, replaceQuery } from '../router';
 import { downloadText, toCsv } from '../util/csv';
+import { atlasLayer, attackLayer } from '../util/navigator';
 import { clear, h } from '../util/dom';
 import type { ViewContext } from './types';
 
@@ -64,6 +66,8 @@ export function tableView({ ds, route, root }: ViewContext): void {
         { class: 'downloads' },
         h('button', { type: 'button', class: 'btn', onClick: () => downloadText(fileName('csv'), toCsv(list), 'text/csv;charset=utf-8') }, `Download CSV (${list.length})`),
         h('button', { type: 'button', class: 'btn', onClick: () => downloadText(fileName('json'), JSON.stringify(list.map(stripDerived), null, 2), 'application/json') }, `Download JSON (${list.length})`),
+        h('button', { type: 'button', class: 'btn btn-quiet', title: 'MITRE ATT&CK Navigator layer (format 4.5) built from the records shown', onClick: () => downloadText(fileName('attack-layer.json'), JSON.stringify(attackLayer(list, layerOpts(list)), null, 2), 'application/json') }, 'ATT&CK layer'),
+        h('button', { type: 'button', class: 'btn btn-quiet', title: 'MITRE ATLAS Navigator layer (format 4.3) built from the records shown', onClick: () => downloadText(fileName('atlas-layer.json'), JSON.stringify(atlasLayer(list, layerOpts(list)), null, 2), 'application/json') }, 'ATLAS layer'),
       ),
     );
     main.appendChild(bar);
@@ -73,6 +77,7 @@ export function tableView({ ds, route, root }: ViewContext): void {
   };
 
   const fileName = (ext: string) => `rogue-agents-watch-v${ds.summary.dataset_version}-filtered.${ext}`;
+  const layerOpts = (list: Incident[]) => ({ version: ds.summary.dataset_version, siteUrl: SITE_URL, suffix: list.length === ds.incidents.length ? '' : `, filtered: ${list.length} of ${ds.incidents.length} records` });
 
   const buildTable = (list: Incident[]) => {
     const thead = h(

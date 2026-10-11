@@ -43,6 +43,13 @@ describe('parseRoute', () => {
     expect(parseRoute('/table').view).toBe('table');
   });
 
+  it('parses the actors list and a per-actor slug', () => {
+    expect(parseRoute('#/actors')).toMatchObject({ view: 'actors', slug: null });
+    expect(parseRoute('#/actors/gtg-1002')).toMatchObject({ view: 'actors', slug: 'gtg-1002' });
+    expect(parseRoute('#/actors/Not-A-Slug').view).toBe('not-found');
+    expect(parseRoute('#/actors/a/b').view).toBe('not-found');
+  });
+
   it('parses incident routes and carries the upstream id unchanged', () => {
     const r = parseRoute('#/incident/gtg-1002-ai-espionage');
     expect(r).toMatchObject({ view: 'incident', id: 'gtg-1002-ai-espionage' });

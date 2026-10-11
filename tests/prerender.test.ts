@@ -60,6 +60,21 @@ describe('prerender generators', () => {
     expect(bareShell(once)).toBe(bareShell(ctx.shell));
   });
 
+  it('actor pages carry every record behind the verbatim actor string, the publishers, and CollectionPage JSON-LD', async () => {
+    const { actorHtml, routeHtml } = await import('../scripts/prerender.mjs');
+    const { actorGroups } = await import('../scripts/prerender-util.mjs');
+    const groups = actorGroups(ctx.incidents);
+    const listPage = routeHtml('actors', ctx);
+    for (const g of groups) {
+      expect(listPage).toContain(`href="https://example.test/site/actors/${g.slug}/"`);
+      const html = actorHtml(g, ctx);
+      expect(html).toContain(`<link rel="canonical" href="https://example.test/site/actors/${g.slug}/">`);
+      expect(html).toContain('"@type":"CollectionPage"');
+      for (const r of g.incidents) expect(html).toContain(`href="https://example.test/site/incident/${r.id}/"`);
+      expect(html).not.toContain('http-equiv="refresh"');
+    }
+  });
+
   it('llms.txt indexes every record and the pages; llms-full.txt carries every source', async () => {
     const { llmsTxt, llmsFullTxt } = await import('../scripts/prerender-pages.mjs');
     const idx = llmsTxt(ctx);
@@ -138,8 +153,11 @@ describe('discoverability and interop generators', () => {
   it('sitemap lists every route page and one URL per record; robots allows crawling, names the AI crawlers, and points at it', async () => {
     const { sitemapXml, robotsTxt } = await import('../scripts/prerender.mjs');
     const { ROUTE_PAGES } = await import('../scripts/prerender-pages.mjs');
+    const { actorGroups } = await import('../scripts/prerender-util.mjs');
+    const actors = actorGroups(ctx.incidents);
     const sm = sitemapXml(ctx);
-    expect((sm.match(/<url>/g) ?? []).length).toBe(summary.total + ROUTE_PAGES.length);
+    expect((sm.match(/<url>/g) ?? []).length).toBe(summary.total + ROUTE_PAGES.length + actors.length);
+    for (const g of actors) expect(sm).toContain(`<loc>https://example.test/site/actors/${g.slug}/</loc>`);
     for (const id of summary.ids) expect(sm).toContain(`<loc>https://example.test/site/incident/${id}/</loc>`);
     for (const p of ROUTE_PAGES) expect(sm).toContain(`<loc>https://example.test/site/${p.path}</loc>`);
     expect(sm).not.toContain('embed.html');

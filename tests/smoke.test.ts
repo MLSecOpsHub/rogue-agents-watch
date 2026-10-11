@@ -430,3 +430,57 @@ describe('inactive records', () => {
     expect(table.querySelector('tr.row-inactive .badge-record_status')?.textContent).toMatch(/retracted/i);
   });
 });
+
+describe('actors', () => {
+  it('groups records by the verbatim actor string, with slugs that match the static pages', async () => {
+    const { actorGroups, actorSlug } = await import('../src/data/actors');
+    const util = await import('../scripts/prerender-util.mjs');
+    const groups = actorGroups(ds.incidents);
+    expect(groups.reduce((n, g) => n + g.incidents.length, 0)).toBe(ds.incidents.length);
+    expect(new Set(groups.map((g) => g.actor)).size).toBe(groups.length);
+    expect(new Set(groups.map((g) => g.slug)).size).toBe(groups.length);
+    for (const g of groups) expect(g.incidents.every((i) => i.actor === g.actor)).toBe(true);
+    // "Unknown" stays a group of its own; nothing is merged or inferred.
+    if (ds.incidents.some((i) => i.actor === 'Unknown')) expect(groups.find((g) => g.actor === 'Unknown')).toBeDefined();
+    // The static pages compute the same slugs from the raw records.
+    const raw = util.actorGroups(JSON.parse(JSON.stringify(ds.incidents)));
+    expect(raw.map((g) => [g.actor, g.slug])).toEqual(groups.map((g) => [g.actor, g.slug]));
+    expect(actorSlug('GTG-1002')).toBe('gtg-1002');
+    expect(actorSlug('  Émile & Co.  ')).toBe('emile-co');
+    expect(actorSlug('???')).toBe('unnamed');
+  });
+
+  it('renders the list and every actor page with records, grades and the publishers behind the attribution', async () => {
+    const { actorGroups } = await import('../src/data/actors');
+    const { actorsView } = await import('../src/views/actors');
+    const list = document.createElement('main');
+    actorsView({ ds, route: parseRoute('#/actors'), root: list });
+    const groups = actorGroups(ds.incidents.filter((i) => i.isActiveRecord));
+    expect(list.querySelectorAll('tbody tr')).toHaveLength(groups.length);
+    for (const g of groups) {
+      const root = document.createElement('main');
+      actorsView({ ds, route: parseRoute(`#/actors/${g.slug}`), root });
+      expect(root.querySelector('h1')?.textContent).toBe(g.actor);
+      expect(root.querySelectorAll('.card')).toHaveLength(g.incidents.length);
+      for (const inc of g.incidents) expect(root.textContent).toContain(inc.name);
+      for (const s of g.incidents.flatMap((i) => i.sources)) expect(root.textContent).toContain(s.publisher);
+      expect(root.querySelectorAll('.badge-status').length).toBeGreaterThanOrEqual(g.incidents.length);
+    }
+    const missing = document.createElement('main');
+    actorsView({ ds, route: parseRoute('#/actors/no-such-actor'), root: missing });
+    expect(missing.textContent).toContain('Actor not found');
+  });
+
+  it('exports Navigator layers from any record list in the same shape as the static layers', async () => {
+    const { attackLayer, atlasLayer } = await import('../src/util/navigator');
+    const { attackLayer: staticAttack, atlasLayer: staticAtlas, loadContext, FALLBACK_SHELL } = await import('../scripts/prerender.mjs');
+    const ctx = loadContext('https://example.test/site/', { shell: FALLBACK_SHELL });
+    const o = { version: ds.summary.dataset_version, siteUrl: 'https://example.test/site/' };
+    expect(JSON.stringify(attackLayer(ds.incidents, o))).toBe(JSON.stringify(staticAttack(ctx)));
+    expect(JSON.stringify(atlasLayer(ds.incidents, o))).toBe(JSON.stringify(staticAtlas(ctx)));
+    const subset = ds.incidents.filter((i) => i.mappings.mitre_atlas.length).slice(0, 3);
+    const layer = atlasLayer(subset, { ...o, suffix: ', filtered: 3 of 34 records' }) as { name: string; techniques: Array<{ score: number }> };
+    expect(layer.name).toContain('filtered');
+    expect(layer.techniques.every((t) => t.score <= 3)).toBe(true);
+  });
+});

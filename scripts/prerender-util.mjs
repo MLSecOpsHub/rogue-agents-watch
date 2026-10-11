@@ -82,6 +82,38 @@ export const owaspAsiUrl = () => 'https://genai.owasp.org/resource/owasp-top-10-
 export const cveUrl = (id) => `https://nvd.nist.gov/vuln/detail/${encodeURIComponent(id)}`;
 export const aiidUrl = (n) => `https://incidentdatabase.ai/cite/${n}/`;
 
+// Actor grouping, mirroring src/data/actors.ts (tests pin the slugs together).
+export const SLUG_MAX = 60;
+
+export function actorSlug(actor) {
+  let s = String(actor)
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  if (s.length > SLUG_MAX) {
+    const cut = s.lastIndexOf('-', SLUG_MAX);
+    s = s.slice(0, cut > SLUG_MAX / 2 ? cut : SLUG_MAX).replace(/-+$/g, '');
+  }
+  return s || 'unnamed';
+}
+
+export function actorGroups(records) {
+  const map = new Map();
+  for (const r of records) map.set(r.actor, [...(map.get(r.actor) ?? []), r]);
+  const groups = [...map.entries()]
+    .map(([actor, incs]) => ({ actor, slug: actorSlug(actor), incidents: incs.slice().sort(byDisclosedDesc), actorTypes: [...new Set(incs.map((i) => i.actor_type))].sort() }))
+    .sort((a, b) => a.actor.localeCompare(b.actor));
+  const seen = new Map();
+  for (const g of groups) {
+    const n = (seen.get(g.slug) ?? 0) + 1;
+    seen.set(g.slug, n);
+    if (n > 1) g.slug = `${g.slug}-${n}`;
+  }
+  return groups.sort((a, b) => b.incidents.length - a.incidents.length || a.actor.localeCompare(b.actor));
+}
+
 export function correctionIssueUrl(id) {
   const params = new URLSearchParams({ template: 'data-correction.yml', title: `[correction] ${id}`, 'incident-id': id });
   return `${UPSTREAM}/issues/new?${params.toString()}`;

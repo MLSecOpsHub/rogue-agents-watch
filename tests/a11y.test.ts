@@ -9,6 +9,7 @@ import { footer, header } from '../src/components/layout';
 import { loadDataset } from '../src/data/load';
 import { parseRoute } from '../src/router';
 import { aboutView } from '../src/views/about';
+import { actorsView } from '../src/views/actors';
 import { incidentView } from '../src/views/incident';
 import { mapView } from '../src/views/map';
 import { overviewView } from '../src/views/overview';
@@ -28,6 +29,8 @@ const ROUTES: Array<[string, View]> = [
   ['#/techniques', techniquesView],
   ['#/stats', statsView],
   ['#/about', aboutView],
+  ['#/actors', actorsView],
+  ['#/actors/unknown', actorsView],
   [`#/incident/${summary.ids[0]}`, incidentView],
   [`#/map?open=${summary.ids[4]}`, mapView],
 ];

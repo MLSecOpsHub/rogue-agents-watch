@@ -1958,3 +1958,12 @@ body.embed .embed-foot {
 .prerender .cite {
   margin: 0.5rem 0;
 }
+
+/* ---- actors -------------------------------------------------------------- */
+.actors-table td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.actors-table td:first-child {
+  font-weight: 600;
+}

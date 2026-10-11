@@ -14,7 +14,7 @@ name: sync-data
 # pull requests" so the built-in token can open the PR.
 on:
   schedule:
-    - cron: '23 5 * * 1' # Mondays 05:23 UTC
+    - cron: '23 5 * * *' # daily 05:23 UTC; a changed upstream snapshot is a PR the same day
   workflow_dispatch:
     inputs:
       ref:

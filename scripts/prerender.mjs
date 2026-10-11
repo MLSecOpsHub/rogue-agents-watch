@@ -26,8 +26,8 @@ import { fileURLToPath } from 'node:url';
 import { geoNaturalEarth1, geoPath } from 'd3-geo';
 import { feature } from 'topojson-client';
 import { LOCAL_SITE_URL, resolveSiteUrl } from './site-env.mjs';
-import { incidentBody, llmsFullTxt, llmsTxt, ROUTE_BODIES, ROUTE_PAGES, routeDescription } from './prerender-pages.mjs';
-import { byDisclosedDesc, byIdAsc, CARD_H, CARD_W, datasetModified, esc, firstSentence, gradeLine, LICENSE_URL, PUBLISHER, SITE_NAME, tax, UPSTREAM, wrapText } from './prerender-util.mjs';
+import { actorBody, incidentBody, llmsFullTxt, llmsTxt, ROUTE_BODIES, ROUTE_PAGES, routeDescription } from './prerender-pages.mjs';
+import { actorGroups, byDisclosedDesc, byIdAsc, CARD_H, CARD_W, datasetModified, esc, firstSentence, gradeLine, LICENSE_URL, PUBLISHER, SITE_NAME, tax, UPSTREAM, wrapText } from './prerender-util.mjs';
 
 export { CARD_H, CARD_W, esc, firstSentence, SITE_NAME, UPSTREAM, wrapText };
 
@@ -238,7 +238,30 @@ ${[`status:${rec.status}`, `ai_role:${rec.ai_role ?? 'unknown'}`, rec.category].
   );
 }
 
-/** One of the route pages (overview, map, timeline, table, techniques, stats, about). */
+/** Per-actor page: every record behind one verbatim actor string, with CollectionPage JSON-LD. */
+export function actorHtml(group, ctx) {
+  const url = `${ctx.siteUrl}actors/${encodeURIComponent(group.slug)}/`;
+  const n = group.incidents.length;
+  const types = group.actorTypes.map((t) => tax(ctx, 'actor_type', t)).join(', ');
+  const description = `${group.actor}: ${n} AI-agent cyber incident record${n === 1 ? '' : 's'} in the Agentic Attack Index (actor type ${types}), as stated by the cited sources, with verification status, AI role, techniques, models and stated origin points.`;
+  const { site, dataset } = ids(ctx);
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': url,
+    url,
+    name: `${group.actor} — ${SITE_NAME}`,
+    description,
+    isPartOf: { '@id': site },
+    about: { '@id': dataset },
+    inLanguage: 'en',
+    license: LICENSE_URL,
+    mainEntity: { '@type': 'ItemList', numberOfItems: n, itemListElement: group.incidents.map((r, i) => ({ '@type': 'ListItem', position: i + 1, url: `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, name: r.name })) },
+  };
+  return pageHtml(ctx, { title: `${group.actor} — ${SITE_NAME}`, ogTitle: `${group.actor} · ${SITE_NAME}`, description, url, jsonLd: [jsonLd, breadcrumbJsonLd(ctx, [[SITE_NAME, ctx.siteUrl], ['Actors', `${ctx.siteUrl}actors/`], [group.actor, url]])] }, actorBody(ctx, group));
+}
+
+/** One of the route pages (overview, map, timeline, table, actors, techniques, stats, about). */
 export function routeHtml(view, ctx) {
   const route = ROUTE_PAGES.find((p) => p.view === view);
   if (!route) throw new Error(`unknown route page ${view}`);
@@ -506,6 +529,7 @@ export function sitemapXml(ctx) {
   const modified = datasetModified(ctx.incidents, ctx.snapshot?.fetched_at ?? null);
   const rows = ROUTE_PAGES.map((p) => ({ loc: `${ctx.siteUrl}${p.path}`, lastmod: p.view === 'about' ? (ctx.snapshot?.fetched_at ?? modified) : modified, priority: p.view === 'overview' ? '1.0' : '0.7', image: p.view === 'overview' ? `${ctx.siteUrl}og/site.png` : null }));
   for (const r of ctx.incidents.slice().sort(byIdAsc)) rows.push({ loc: `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, lastmod: r.last_updated ?? r.added?.date ?? r.date_disclosed, priority: '0.8', image: `${ctx.siteUrl}og/${encodeURIComponent(r.id)}.png` });
+  for (const g of actorGroups(ctx.incidents).slice().sort((a, b) => a.slug.localeCompare(b.slug))) rows.push({ loc: `${ctx.siteUrl}actors/${encodeURIComponent(g.slug)}/`, lastmod: datasetModified(g.incidents, modified), priority: '0.6', image: null });
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${rows.map((u) => `  <url><loc>${esc(u.loc)}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ''}<priority>${u.priority}</priority>${u.image ? `<image:image><image:loc>${esc(u.image)}</image:loc></image:image>` : ''}</url>`).join('\n')}
@@ -702,6 +726,12 @@ async function main() {
     mkdirSync(dir, { recursive: true });
     writeFileSync(path.join(dir, 'index.html'), routeHtml(p.view, ctx));
   }
+  const actors = actorGroups(ctx.incidents);
+  for (const g of actors) {
+    const dir = path.join(DIST, 'actors', g.slug);
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(path.join(dir, 'index.html'), actorHtml(g, ctx));
+  }
   writeFileSync(path.join(DIST, 'llms.txt'), llmsTxt(ctx));
   writeFileSync(path.join(DIST, 'llms-full.txt'), llmsFullTxt(ctx));
   writeFileSync(path.join(DIST, 'og', 'site.png'), await renderPng(siteCardSvg(ctx)));
@@ -717,7 +747,7 @@ async function main() {
   writeFileSync(path.join(DIST, 'misp', 'manifest.json'), JSON.stringify(feed.manifest, null, 2) + '\n');
   for (const [uuid, ev] of Object.entries(feed.events)) writeFileSync(path.join(DIST, 'misp', `${uuid}.json`), JSON.stringify(ev, null, 2) + '\n');
   writeFileSync(path.join(DIST, 'misp', 'hashes.csv'), feed.hashes);
-  console.log(`prerender: ${n} incident pages + cards, ${ROUTE_PAGES.length} route pages, site card, llms.txt, feed.atom, changes.json, sitemap, robots, 2 Navigator layers, MISP feed (${Object.keys(feed.events).length} events) → ${path.relative(ROOT, DIST)} (site ${ctx.siteUrl})`);
+  console.log(`prerender: ${n} incident pages + cards, ${ROUTE_PAGES.length} route pages, ${actors.length} actor pages, site card, llms.txt, feed.atom, changes.json, sitemap, robots, 2 Navigator layers, MISP feed (${Object.keys(feed.events).length} events) → ${path.relative(ROOT, DIST)} (site ${ctx.siteUrl})`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

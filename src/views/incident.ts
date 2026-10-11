@@ -187,6 +187,7 @@ export function incidentView({ ds, route, root }: ViewContext): void {
       defList([
         ['Sources', h('span', null, String(ev.sources))],
         ['First-party, vendor, or government', h('span', null, `${ev.firstParty} of ${ev.sources}`)],
+        ['Independent corroboration', h('span', null, ev.publishers <= 1 ? `${ev.publishers} publisher (single-source: rests on one account)` : `${ev.publishers} distinct publishers`)],
         ['Archived copies', h('span', null, `${ev.archived} of ${ev.sources}`)],
         ['Source dates', h('span', null, ev.earliest ? (ev.earliest === ev.latest ? ev.earliest : `${ev.earliest} to ${ev.latest}`) : 'not stated')],
         ['Framework ids', h('span', null, mapCount ? `${mapCount} (ATLAS ${inc.mappings.mitre_atlas.length}, ATT&CK ${inc.mappings.mitre_attack.length}, ASI ${inc.mappings.owasp_asi.length}, LLM ${inc.mappings.owasp_llm.length}, CVE ${inc.mappings.cve.length}, AIID ${inc.mappings.aiid.length})` : 'none recorded')],

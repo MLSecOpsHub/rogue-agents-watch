@@ -13,6 +13,8 @@ export function tableBody(ctx: PrerenderContext): string;
 export function techniquesBody(ctx: PrerenderContext): string;
 export function statsBody(ctx: PrerenderContext): string;
 export function aboutBody(ctx: PrerenderContext): string;
+export function actorsBody(ctx: PrerenderContext): string;
+export function actorBody(ctx: PrerenderContext, group: import('./prerender-util.d.mts').PrerenderActorGroup): string;
 export function routeDescription(ctx: PrerenderContext, view: string): string;
 export function incidentBody(ctx: PrerenderContext, r: PrerenderRecord): string;
 export function llmsTxt(ctx: PrerenderContext): string;

@@ -61,6 +61,8 @@ export function datasetStatesAutonomyPct(incidents: Incident[]): boolean {
 export interface EvidenceSummary {
   sources: number;
   firstParty: number;
+  /** Distinct publishers among the sources; 1 means the record rests on a single account. */
+  publishers: number;
   archived: number;
   earliest: string | null;
   latest: string | null;
@@ -71,6 +73,8 @@ export function evidenceSummary(inc: Incident): EvidenceSummary {
   return {
     sources: inc.sources.length,
     firstParty: inc.sources.filter((s) => s.type === 'first-party-disclosure' || s.type === 'vendor-report' || s.type === 'government-advisory').length,
+    // Distinct publishers: a record resting on one publisher's account, however authoritative, is not independently corroborated.
+    publishers: new Set(inc.sources.map((s) => s.publisher)).size,
     archived: inc.sources.filter((s) => Boolean(s.archive_url)).length,
     earliest: dates[0] ?? null,
     latest: dates[dates.length - 1] ?? null,

@@ -8,7 +8,7 @@
 // fact is added, grades are shown with the upstream definition, nulls say
 // "not stated". The hash-less URLs here are the canonical ones.
 import {
-  aiidUrl, atlasUrl, attackUrl, byDisclosedDesc, byIdAsc, correctionIssueUrl, cveUrl, datasetModified, esc, firstSentence, gradeLine, LICENSE_URL, owaspAsiUrl, owaspLlmUrl, PUBLISHER, SITE_NAME, tax, taxDesc, UPSTREAM,
+  actorGroups, aiidUrl, atlasUrl, attackUrl, byDisclosedDesc, byIdAsc, correctionIssueUrl, cveUrl, datasetModified, esc, firstSentence, gradeLine, LICENSE_URL, owaspAsiUrl, owaspLlmUrl, PUBLISHER, SITE_NAME, tax, taxDesc, UPSTREAM,
 } from './prerender-util.mjs';
 
 /** Route pages in navigation order. `path` is relative to the site root and ends with a slash (or is empty for the root). */
@@ -17,6 +17,7 @@ export const ROUTE_PAGES = [
   { path: 'map/', view: 'map', nav: 'Map', title: 'Map' },
   { path: 'timeline/', view: 'timeline', nav: 'Timeline', title: 'Timeline' },
   { path: 'table/', view: 'table', nav: 'Table', title: 'Table' },
+  { path: 'actors/', view: 'actors', nav: 'Actors', title: 'Actors' },
   { path: 'techniques/', view: 'techniques', nav: 'Techniques', title: 'Techniques' },
   { path: 'stats/', view: 'stats', nav: 'Stats', title: 'Stats' },
   { path: 'about/', view: 'about', nav: 'About', title: 'About' },
@@ -230,6 +231,16 @@ export function aboutBody(ctx) {
 <h2>How to read the grades</h2>
 <p>Three independent grades appear on every card, row and page. Verification status says how well the event is established; sourcing confidence says how direct the evidence is; AI role says how central the AI actually was. "Reported" is not "confirmed", and "AI incidental" means the AI was present but not what made the attack work. The definitions below are the upstream taxonomy, verbatim.</p>
 ${GRADE_KEYS.map(([key, title]) => `<h3 id="${esc(key)}">${esc(ctx.taxonomy?.[key]?.title ?? title)}</h3>\n${dl(defs(key))}`).join('\n')}
+<h2>Why there is no score</h2>
+<p>Other trackers publish a single number per incident: a severity, a capability level, a risk index. This site does not, on purpose. A number invites comparison between events that were established with very different evidence, and it hides the question a defender actually has: is this confirmed, how direct is the sourcing, and was the AI the reason it worked? Those are three separate grades here, each with its upstream definition, and they are left separate. What is counted is counted: records per technique, per model family, per actor as stated. A count can be checked against the records behind it; a score cannot.</p>
+<h2>How this differs from other trackers</h2>
+${list([
+  '<strong>Both framings in one dataset.</strong> Agents used as weapons (AI-orchestrated intrusions, AI-enabled malware) and agents that went rogue (sandbox escapes, exceeded mandates) are graded the same way and sit in the same tables, timeline and map.',
+  '<strong>Three independent grades, no score.</strong> Verification status, sourcing confidence and AI role are separate axes; "reported" is never shown as "confirmed", and "AI incidental" says the AI was present but not what made it work.',
+  '<strong>Attribution verbatim.</strong> Actors are shown exactly as the cited sources state them; "Unknown" stays Unknown; no origin is inferred from a name, and every map point says why it exists and who stated it.',
+  `<strong>Open and correctable.</strong> The dataset is CC BY-SA 4.0 in a <a href="${UPSTREAM}">public repository</a> with a schema, validation and corrections by pull request; this site adds no facts to it.`,
+  '<strong>Built for defenders’ tools.</strong> ATT&amp;CK and ATLAS Navigator layers, a MISP feed, a STIX bundle, an Atom feed and llms.txt, all generated from the same snapshot.',
+])}
 <h2>The map and the illustrative-geo rule</h2>
 <p>A record appears on the map only if the dataset carries a geo block with coordinates. Every point states its role (origin or target), the basis it rests on and the publisher that stated it; a state sponsor is never presented as an operator location. Points flagged illustrative are country-level centroids, not real locations, and are labelled as such. The dashboard never geocodes a country list, an actor name or a sector into a point; records without geo are listed beside the map rather than placed on it.</p>
 <h2>Nulls, attribution, victims</h2>
@@ -249,7 +260,75 @@ ${list([
   });
 }
 
-export const ROUTE_BODIES = { overview: overviewBody, map: mapBody, timeline: timelineBody, table: tableBody, techniques: techniquesBody, stats: statsBody, about: aboutBody };
+// ---- actors -------------------------------------------------------------------
+
+const actorUrl = (ctx, slug) => u(ctx, `actors/${encodeURIComponent(slug)}/`);
+const tallyBy = (incs, pick) => {
+  const m = new Map();
+  for (const r of incs) for (const v of new Set(pick(r) ?? [])) m.set(v, (m.get(v) ?? 0) + 1);
+  return [...m.entries()].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0])));
+};
+const countText = (ctx, key, incs) => tallyBy(incs, (r) => [r[key] ?? 'unknown']).map(([v, n]) => `${n} ${tax(ctx, key, v).toLowerCase()}`).join(', ');
+const dateRange = (incs) => {
+  const d = incs.map((r) => r.date_disclosed).sort();
+  return d.length <= 1 || d[0] === d.at(-1) ? d[0] ?? '' : `${d[0]} to ${d.at(-1)}`;
+};
+
+export function actorsBody(ctx) {
+  const groups = actorGroups(ctx.incidents);
+  return page(ctx, {
+    view: 'actors',
+    title: 'Actors, as stated by sources',
+    body: `<p class="lede">${groups.length} distinct actor strings across ${ctx.incidents.length} records. Each is shown exactly as the cited sources state it: nothing is merged across spellings, "Unknown" stays Unknown, and no origin is inferred from a name, a language, or a target. Vendor cluster names (GTG-, APT-) are the vendors' own.</p>
+${table(['Actor (verbatim)', 'Type', 'Records', 'Verification status', 'AI role', 'Disclosed'], groups.map((g) => [
+  `<a href="${esc(actorUrl(ctx, g.slug))}">${esc(g.actor)}</a>`,
+  esc(g.actorTypes.map((t) => tax(ctx, 'actor_type', t)).join(', ')),
+  `${g.incidents.length}`,
+  esc(countText(ctx, 'status', g.incidents)),
+  esc(countText(ctx, 'ai_role', g.incidents)),
+  esc(dateRange(g.incidents)),
+]))}
+<p class="muted">Counts are counts of records, not a score. Actor type is the upstream grade for each record; a group can carry more than one when the sources differ.</p>`,
+  });
+}
+
+export function actorBody(ctx, g) {
+  const incs = g.incidents;
+  const publishers = tallyBy(incs, (r) => (r.sources ?? []).map((s) => s.publisher));
+  const atlas = tallyBy(incs, (r) => r.mappings?.mitre_atlas);
+  const attack = tallyBy(incs, (r) => r.mappings?.mitre_attack);
+  const families = tallyBy(incs, (r) => r.model_families);
+  const models = tallyBy(incs, (r) => r.models);
+  const bypass = tallyBy(incs, (r) => r.guardrail_bypass);
+  const phases = tallyBy(incs, (r) => r.lifecycle_phases);
+  const origins = incs.flatMap((r) => (r.geo?.points ?? []).filter((p) => p.role === 'origin').map((p) => ({ r, p })));
+  const ids = (list, link) => list.map(([id, n]) => `<a href="${esc(link(id))}" rel="external">${esc(id)}</a> (${n})`).join(', ');
+  const body = `<p class="crumbs"><a href="${esc(u(ctx, 'actors/'))}">Actors</a> › ${esc(g.actor)}</p>
+<h1>${esc(g.actor)}</h1>
+<p class="lede">${incs.length} record${incs.length === 1 ? '' : 's'}, disclosed ${esc(dateRange(incs))}. Actor type: ${esc(g.actorTypes.map((t) => tax(ctx, 'actor_type', t)).join(', '))}. <span class="muted">Name as stated by the cited sources; see each record for who stated it.</span></p>
+<h2>Who states this attribution</h2>
+<p>${esc(publishers.map(([p, n]) => `${p} (${n})`).join(' · '))}</p>
+<h2>Techniques across these records</h2>
+<p><strong>MITRE ATLAS:</strong> ${atlas.length ? ids(atlas, atlasUrl) : '<span class="muted">no ATLAS mapping on these records yet</span>'}</p>
+<p><strong>MITRE ATT&amp;CK:</strong> ${attack.length ? ids(attack, attackUrl) : '<span class="muted">no ATT&amp;CK mapping on these records yet</span>'}</p>
+<p class="muted">Figures are the number of records carrying each id. A gap is a missing mapping upstream, never evidence of absence.</p>
+<h2>Models, guardrails, lifecycle</h2>
+${dl([
+  ['Model families', families.length ? esc(families.map(([f, n]) => `${tax(ctx, 'model_families', f)} (${n})`).join(', ')) : '<span class="muted">not stated</span>'],
+  ['Models named', models.length ? esc(models.map(([m, n]) => `${m} (${n})`).join(', ')) : '<span class="muted">not named by sources</span>'],
+  ['Guardrail bypass', bypass.length ? esc(bypass.map(([b, n]) => `${tax(ctx, 'guardrail_bypass', b)} (${n})`).join(', ')) : '<span class="muted">not stated</span>'],
+  ['Lifecycle phases', phases.length ? esc(phases.map(([p, n]) => `${tax(ctx, 'lifecycle_phases', p)} (${n})`).join(', ')) : '<span class="muted">not stated</span>'],
+])}
+<h2>Stated origin points</h2>
+${origins.length ? list(origins.map(({ r, p }) => `${pointLine(ctx, p)} — ${recLink(ctx, r)}`)) : '<p class="muted">No cited source states an origin location for these records; nothing is inferred from the actor name.</p>'}
+<h2>Records (${incs.length})</h2>
+<ol>
+${incs.map((r) => `<li>${recordItem(ctx, r)}</li>`).join('\n')}
+</ol>`;
+  return page(ctx, { view: 'actors', title: '', body });
+}
+
+export const ROUTE_BODIES = { overview: overviewBody, map: mapBody, timeline: timelineBody, table: tableBody, actors: actorsBody, techniques: techniquesBody, stats: statsBody, about: aboutBody };
 
 /** Meta description for a route page, derived from the dataset. */
 export function routeDescription(ctx, view) {
@@ -264,7 +343,9 @@ export function routeDescription(ctx, view) {
     case 'timeline':
       return `${n} AI-agent cyberattacks and rogue-agent incidents by disclosure date, ${dates[0]} to ${dates.at(-1)}, each with verification status, sourcing confidence, AI role and severity.`;
     case 'table':
-      return `Every record of the Agentic Attack Index v${ctx.version}: ${n} AI-agent cyber incidents with grades, category, actor as stated by sources, model families and source counts. Filterable table with CSV and JSON download.`;
+      return `Every record of the Agentic Attack Index v${ctx.version}: ${n} AI-agent cyber incidents with grades, category, actor as stated by sources, model families and source counts. Filterable table with CSV, JSON and Navigator-layer download.`;
+    case 'actors':
+      return `${actorGroups(ctx.incidents).length} actors behind ${n} AI-agent cyber incidents, each exactly as the cited sources state it (GTG-* clusters, APT groups, researchers, lab evaluations, Unknown), with records, verification and AI-role counts, techniques and stated origin points. Nothing merged or inferred.`;
     case 'techniques':
       return `MITRE ATLAS and ATT&CK techniques, OWASP agentic and LLM risks, CVEs and AI Incident Database ids mapped across ${n} AI-agent cyber incidents, with the records behind each id and Navigator layers to download.`;
     case 'stats':
@@ -333,7 +414,7 @@ ${mappings.length ? dl(mappings.map(([t, ids, link]) => [t, ids.map((id) => `<a 
 ${(r.mitigations ?? []).length ? `<h2>Mitigations as stated</h2>\n${list(r.mitigations.map((m) => esc(m)))}` : ''}
 ${r.geo?.points?.length ? `<h2>Map points</h2>\n${list(r.geo.points.map((p) => pointLine(ctx, p)))}` : '<h2>Map</h2>\n<p class="muted">No cited source states a location; this record is listed beside the map, never plotted.</p>'}
 ${(r.related ?? []).length ? `<h2>Related records</h2>\n${list(r.related.map((id) => (byId.get(id) ? recLink(ctx, byId.get(id)) : `<code>${esc(id)}</code>`)))}` : ''}
-<h2>Sources (${(r.sources ?? []).length})</h2>
+<h2>Sources (${(r.sources ?? []).length}; ${new Set((r.sources ?? []).map((s) => s.publisher)).size <= 1 ? 'single publisher, no independent corroboration recorded' : `${new Set((r.sources ?? []).map((s) => s.publisher)).size} distinct publishers`})</h2>
 <ol class="sources">
 ${(r.sources ?? []).map((s) => `<li>${sourceItem(ctx, s)}</li>`).join('\n')}
 </ol>
@@ -365,6 +446,10 @@ ${ROUTE_PAGES.map((p) => `- [${p.nav}](${u(ctx, p.path)}): ${routeDescription(ct
 ## Records (newest disclosure first)
 
 ${sorted.map((r) => `- [${r.name}](${recUrl(ctx, r.id)}): disclosed ${r.date_disclosed}; ${gradeLine(ctx, r)}. ${firstSentence(r.summary)}`).join('\n')}
+
+## Actors, as stated by sources
+
+${actorGroups(ctx.incidents).map((g) => `- [${g.actor}](${actorUrl(ctx, g.slug)}): ${g.incidents.length} record${g.incidents.length === 1 ? '' : 's'} (${countText(ctx, 'status', g.incidents)}); actor type ${g.actorTypes.map((t) => tax(ctx, 'actor_type', t)).join(', ')}`).join('\n')}
 
 ## Data and interop
 

@@ -60,6 +60,27 @@ export function aboutView({ ds, root }: ViewContext): void {
 
   root.appendChild(
     panel(
+      'Why there is no score',
+      h('p', null, 'Other trackers publish a single number per incident: a severity, a capability level, a risk index. This site does not, on purpose. A number invites comparison between events that were established with very different evidence, and it hides the question a defender actually has: is this confirmed, how direct is the sourcing, and was the AI the reason it worked? Those are three separate grades here, each with its upstream definition, and they are left separate.'),
+      h('p', null, 'What is counted is counted: records per technique, per model family, per actor as stated. A count can be checked against the records behind it; a score cannot.'),
+    ),
+  );
+
+  root.appendChild(
+    panel(
+      'How this differs from other trackers',
+      h('ul', null,
+        h('li', null, h('strong', null, 'Both framings in one dataset.'), ' Agents used as weapons (AI-orchestrated intrusions, AI-enabled malware) and agents that went rogue (sandbox escapes, exceeded mandates) are graded the same way and sit in the same tables, timeline and map.'),
+        h('li', null, h('strong', null, 'Three independent grades, no score.'), ' Verification status, sourcing confidence and AI role are separate axes; "reported" is never shown as "confirmed", and "AI incidental" says the AI was present but not what made it work.'),
+        h('li', null, h('strong', null, 'Attribution verbatim.'), ' Actors are shown exactly as the cited sources state them; "Unknown" stays Unknown; no origin is inferred from a name, and every map point says why it exists and who stated it.'),
+        h('li', null, h('strong', null, 'Open and correctable.'), ' The dataset is CC BY-SA 4.0 in a public repository with a schema, validation and corrections by pull request; this site adds no facts to it.'),
+        h('li', null, h('strong', null, 'Built for defenders’ tools.'), ' ATT&CK and ATLAS Navigator layers, a MISP feed, a STIX bundle, an Atom feed and llms.txt, all generated from the same snapshot.'),
+      ),
+    ),
+  );
+
+  root.appendChild(
+    panel(
       'Record lifecycle',
       h('p', null, 'Record ids are permanent citation keys, so records are never deleted. A record that no longer holds up is retracted or superseded and stays resolvable. Retracted and superseded records are visibly flagged and excluded from headline counts by default; every list has a toggle to include them.'),
       taxList('record_status'),

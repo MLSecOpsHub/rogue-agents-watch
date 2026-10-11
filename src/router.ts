@@ -13,10 +13,11 @@ export type Route =
   | { view: 'stats'; query: URLSearchParams }
   | { view: 'techniques'; query: URLSearchParams }
   | { view: 'about'; query: URLSearchParams }
+  | { view: 'actors'; slug: string | null; query: URLSearchParams }
   | { view: 'incident'; id: string; query: URLSearchParams }
   | { view: 'not-found'; path: string; query: URLSearchParams };
 
-export const VIEWS = ['map', 'timeline', 'table', 'techniques', 'stats', 'about'] as const;
+export const VIEWS = ['map', 'timeline', 'table', 'actors', 'techniques', 'stats', 'about'] as const;
 
 const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -37,8 +38,15 @@ export function parseRoute(hash: string): Route {
     if (rest.length === 1 && id && ID_PATTERN.test(id)) return { view: 'incident', id, query };
     return { view: 'not-found', path, query };
   }
+  if (head === 'actors') {
+    if (rest.length === 0) return { view: 'actors', slug: null, query };
+    const slug = rest[0] ?? '';
+    if (rest.length === 1 && ID_PATTERN.test(slug)) return { view: 'actors', slug, query };
+    return { view: 'not-found', path, query };
+  }
+  // 'actors' was handled above (it carries a slug); every other view is a bare segment.
   if (rest.length === 0 && (VIEWS as readonly string[]).includes(head as string)) {
-    return { view: head as (typeof VIEWS)[number], query };
+    return { view: head as Exclude<(typeof VIEWS)[number], 'actors'>, query };
   }
   return { view: 'not-found', path, query };
 }
@@ -51,6 +59,10 @@ export function href(view: Exclude<Route['view'], 'incident' | 'not-found'>, que
 
 export function incidentHref(id: string): string {
   return `#/incident/${encodeURIComponent(id)}`;
+}
+
+export function actorHref(slug: string): string {
+  return `#/actors/${encodeURIComponent(slug)}`;
 }
 
 function queryString(query?: URLSearchParams | Record<string, string>): string {
