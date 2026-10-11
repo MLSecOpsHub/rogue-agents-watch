@@ -135,10 +135,15 @@ header the Navigator layers and MISP feed need, and long-lived caching for
 hashed assets. There is no GitHub Pages deployment: a second host serving
 the same pages under a different canonical splits search signals.
 
-One-time setup in the GitHub repository: Settings → Actions → General →
-Workflow permissions → enable **Allow GitHub Actions to create and approve
-pull requests** (needed by the weekly `sync-data` workflow; it must also be
-allowed at the organisation level).
+One-time setup for the daily `sync-data` workflow, which opens a pull
+request when the upstream snapshot changes: add a repository secret
+**`SYNC_PR_TOKEN`** holding a fine-grained personal access token scoped to
+this repository with **Contents: write** and **Pull requests: write**. The
+built-in `GITHUB_TOKEN` cannot be used for this: the organisation does not
+allow Actions to create pull requests with it, and a branch pushed with it
+never triggers CI on the resulting PR. Without the secret the workflow still
+fetches, validates and pushes the snapshot to `chore/sync-data`, then opens
+a tracked issue with the compare link instead of a PR.
 
 The asset base path and the canonical URL (share links, Open Graph tags,
 feed, sitemap) are resolved together in `scripts/site-env.mjs`:

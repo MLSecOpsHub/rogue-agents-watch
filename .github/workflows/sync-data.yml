@@ -9,9 +9,18 @@ name: sync-data
 #    through a PR on a fixed branch (chore/sync-data) that is updated in place,
 #    so CI validates it and a human merges it.
 #
-# This is the only workflow that touches the network for data. Requires
-# Settings → Actions → General → "Allow GitHub Actions to create and approve
-# pull requests" so the built-in token can open the PR.
+# This is the only workflow that touches the network for data.
+#
+# Token: the PR is opened with the SYNC_PR_TOKEN secret when it exists (a
+# fine-grained PAT scoped to this repository with Contents: write and Pull
+# requests: write), else with the built-in token. The PAT is preferred for two
+# reasons: the MLSecOpsHub organisation does not allow GitHub Actions to create
+# pull requests with GITHUB_TOKEN ("GitHub Actions is not permitted to create
+# or approve pull requests"), and a branch pushed with GITHUB_TOKEN never
+# triggers the CI workflow on the resulting PR, so the sync PR would arrive
+# with no checks. When PR creation fails anyway, the snapshot stays on the
+# branch and ONE tracked issue (updated in place) says so, with the compare
+# link, so the data is never silently stranded.
 on:
   schedule:
     - cron: '23 5 * * *' # daily 05:23 UTC; a changed upstream snapshot is a PR the same day
@@ -40,6 +49,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Persisted for the push below: a PAT push triggers CI on the PR, a GITHUB_TOKEN push does not.
+          token: ${{ secrets.SYNC_PR_TOKEN || github.token }}
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -79,14 +91,17 @@ jobs:
           echo "exit_code=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
 
       - name: Open or update the sync PR
+        id: pr
         if: steps.diff.outputs.changed == 'true' && steps.validate.outputs.exit_code == '0'
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.SYNC_PR_TOKEN || github.token }}
+          USING_PAT: ${{ secrets.SYNC_PR_TOKEN != '' }}
           BEFORE_VERSION: ${{ steps.before.outputs.version }}
           BEFORE_TOTAL: ${{ steps.before.outputs.total }}
           BEFORE_COMMIT: ${{ steps.before.outputs.commit }}
         run: |
           set -euo pipefail
+          echo "token: $([ "$USING_PAT" = "true" ] && echo SYNC_PR_TOKEN || echo GITHUB_TOKEN)"
           VERSION=$(node -p "require('./data/snapshot/SNAPSHOT.json').dataset_version")
           TOTAL=$(node -p "require('./data/snapshot/SNAPSHOT.json').total")
           COMMIT=$(node -p "require('./data/snapshot/SNAPSHOT.json').source_commit || 'unknown'")
@@ -120,15 +135,70 @@ jobs:
           git add data/snapshot
           git commit -m "$TITLE" -m "Source: ${REF} @ ${COMMIT}. Fetched ${FETCHED}."
           git push --force origin "$SYNC_BRANCH"
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+          {
+            echo "summary<<MD"
+            echo "$TITLE"
+            echo
+            echo "| | before | after |"
+            echo "|---|---|---|"
+            echo "| dataset_version | ${BEFORE_VERSION} | ${VERSION} |"
+            echo "| records | ${BEFORE_TOTAL} | ${TOTAL} |"
+            echo "| upstream commit | \`${BEFORE_COMMIT:-unknown}\` | \`${COMMIT}\` |"
+            echo
+            echo "${ADDED}"
+            echo "MD"
+          } >> "$GITHUB_OUTPUT"
           EXISTING=$(gh pr list --head "$SYNC_BRANCH" --state open --json number --jq '.[0].number // empty')
           if [ -n "$EXISTING" ]; then
             gh pr edit "$EXISTING" --title "$TITLE" --body "$BODY"
             gh pr comment "$EXISTING" --body "Updated with a fresh snapshot: v${VERSION}, ${TOTAL} records, upstream \`${COMMIT}\`."
             echo "Updated PR #$EXISTING"
+            echo "pr=$EXISTING" >> "$GITHUB_OUTPUT"
+          elif gh pr create --base main --head "$SYNC_BRANCH" --title "$TITLE" --body "$BODY" --label data-sync 2> pr-error.log \
+            || gh pr create --base main --head "$SYNC_BRANCH" --title "$TITLE" --body "$BODY" 2>> pr-error.log; then
+            echo "pr=$(gh pr list --head "$SYNC_BRANCH" --state open --json number --jq '.[0].number')" >> "$GITHUB_OUTPUT"
           else
-            gh pr create --base main --head "$SYNC_BRANCH" --title "$TITLE" --body "$BODY" --label data-sync || \
-            gh pr create --base main --head "$SYNC_BRANCH" --title "$TITLE" --body "$BODY"
+            # The snapshot is pushed and validated; only the PR is missing. Hand it to the issue step below.
+            echo "pr_failed=true" >> "$GITHUB_OUTPUT"
+            echo "::warning::Could not open the sync PR: $(tr '\n' ' ' < pr-error.log)"
           fi
+
+      - name: Open or update the "PR could not be created" issue
+        if: steps.pr.outputs.pr_failed == 'true'
+        uses: actions/github-script@v7
+        env:
+          SUMMARY: ${{ steps.pr.outputs.summary }}
+          USING_PAT: ${{ secrets.SYNC_PR_TOKEN != '' }}
+        with:
+          script: |
+            const fs = require('fs');
+            const err = fs.existsSync('pr-error.log') ? fs.readFileSync('pr-error.log', 'utf8').trim() : '(no error output)';
+            const marker = '<!-- sync-data-pr-bot -->';
+            const label = 'data-sync';
+            const branch = process.env.SYNC_BRANCH;
+            const compare = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/compare/main...${branch}?expand=1`;
+            const title = 'sync-data: a validated snapshot is waiting on chore/sync-data (PR could not be created)';
+            const fix = process.env.USING_PAT === 'true'
+              ? 'The SYNC_PR_TOKEN secret is set but PR creation still failed; check that the token has Contents: write and Pull requests: write on this repository and has not expired.'
+              : 'Add a fine-grained PAT as the SYNC_PR_TOKEN repository secret (scoped to this repository, Contents: write, Pull requests: write), or allow GitHub Actions to create pull requests at the organisation and repository level (Settings → Actions → General → Workflow permissions).';
+            const body = `${marker}\nThe sync fetched a changed snapshot, it passed \`npm test\`, and it is pushed to \`${branch}\`, but the PR could not be created:\n\n\`\`\`\n${err}\n\`\`\`\n\n**Open it by hand:** ${compare}\n\n**Fix for next time:** ${fix}\n\n${process.env.SUMMARY}\n\nRun: [${context.runId}](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`;
+            try {
+              await github.rest.issues.getLabel({ owner: context.repo.owner, repo: context.repo.repo, name: label });
+            } catch (e) {
+              if (e.status === 404) await github.rest.issues.createLabel({ owner: context.repo.owner, repo: context.repo.repo, name: label, color: '0e8a16', description: 'Automated dataset snapshot sync' });
+              else throw e;
+            }
+            const open = await github.paginate(github.rest.issues.listForRepo, { owner: context.repo.owner, repo: context.repo.repo, state: 'open', labels: label, per_page: 100 });
+            const found = open.find((i) => !i.pull_request && i.body && i.body.includes(marker));
+            if (found) await github.rest.issues.update({ owner: context.repo.owner, repo: context.repo.repo, issue_number: found.number, title, body });
+            else await github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo, title, labels: [label], body });
+
+      - name: Fail the job if the PR could not be created
+        if: steps.pr.outputs.pr_failed == 'true'
+        run: |
+          echo "::error::The snapshot is validated and pushed to $SYNC_BRANCH, but the PR could not be created; see the data-sync issue for the compare link and the fix."
+          exit 1
 
       - name: Open or update the schema-drift issue
         if: steps.diff.outputs.changed == 'true' && steps.validate.outputs.exit_code != '0'
