@@ -174,6 +174,7 @@ export function techniquesBody(ctx) {
     title: 'Techniques',
     body: `<p class="lede">Framework ids carried by the ${ctx.incidents.length} records, with the records behind each id. Mappings come from the dataset as published; counts are counts of records, never scores. Navigator layers: <a href="${esc(u(ctx, 'navigator/attack-layer.json'))}">ATT&amp;CK (layer 4.5)</a>, <a href="${esc(u(ctx, 'navigator/atlas-layer.json'))}">ATLAS (layer 4.3)</a>.</p>
 ${mappingSection(ctx, 'MITRE ATLAS', 'mitre_atlas', atlasUrl)}
+${mappingSection(ctx, 'MITRE ATLAS case studies', 'mitre_atlas_case_studies', atlasUrl, 'ATLAS case studies that document an incident in this dataset, as mapped upstream.')}
 ${mappingSection(ctx, 'MITRE ATT&CK', 'mitre_attack', attackUrl)}
 ${mappingSection(ctx, 'OWASP Top 10 for Agentic Applications (ASI)', 'owasp_asi', owaspAsiUrl)}
 ${mappingSection(ctx, 'OWASP Top 10 for LLM Applications', 'owasp_llm', owaspLlmUrl)}
@@ -376,6 +377,7 @@ export function incidentBody(ctx, r) {
   const byId = new Map(ctx.incidents.map((x) => [x.id, x]));
   const mappings = [
     ['MITRE ATLAS', r.mappings?.mitre_atlas, atlasUrl],
+    ['MITRE ATLAS case studies', r.mappings?.mitre_atlas_case_studies, atlasUrl],
     ['MITRE ATT&CK', r.mappings?.mitre_attack, attackUrl],
     ['OWASP Agentic Top 10', r.mappings?.owasp_asi, owaspAsiUrl],
     ['OWASP LLM Top 10', r.mappings?.owasp_llm, owaspLlmUrl],
@@ -472,7 +474,7 @@ export function llmsFullTxt(ctx) {
   const field = (k, v) => `- ${k}: ${v}`;
   const rec = (r) => {
     const m = r.mappings ?? {};
-    const maps = [['MITRE ATLAS', m.mitre_atlas], ['MITRE ATT&CK', m.mitre_attack], ['OWASP ASI', m.owasp_asi], ['OWASP LLM', m.owasp_llm], ['CVE', m.cve], ['AIID', m.aiid]].filter(([, v]) => v && v.length);
+    const maps = [['MITRE ATLAS', m.mitre_atlas], ['MITRE ATLAS case studies', m.mitre_atlas_case_studies], ['MITRE ATT&CK', m.mitre_attack], ['OWASP ASI', m.owasp_asi], ['OWASP LLM', m.owasp_llm], ['CVE', m.cve], ['AIID', m.aiid]].filter(([, v]) => v && v.length);
     return `## ${r.name}
 
 URL: ${recUrl(ctx, r.id)}

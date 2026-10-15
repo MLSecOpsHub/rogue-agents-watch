@@ -21,7 +21,7 @@ describe('normalizeIncident', () => {
     const inc = normalizeIncident(rawRecord());
     expect(inc.autonomy_pct).toBeNull();
     expect(inc.targets).toEqual({ orgs_affected: null, records_exfiltrated: null, sectors: [], countries: [] });
-    expect(inc.mappings).toEqual({ mitre_atlas: [], mitre_attack: [], owasp_llm: [], owasp_asi: [], cve: [], aiid: [] });
+    expect(inc.mappings).toEqual({ mitre_atlas: [], mitre_atlas_case_studies: [], mitre_attack: [], owasp_llm: [], owasp_asi: [], cve: [], aiid: [] });
     expect(inc.related).toEqual([]);
     expect(inc.mitigations).toEqual([]);
     expect(inc.revisions).toEqual([]);

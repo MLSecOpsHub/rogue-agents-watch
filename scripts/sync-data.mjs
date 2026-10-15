@@ -6,8 +6,9 @@
 // and the tests stay hermetic.
 //
 // Usage:
-//   node scripts/sync-data.mjs            # fetch from the configured ref (default: main)
-//   DATA_REF=v0.3.0 node scripts/sync-data.mjs
+//   node scripts/sync-data.mjs            # fetch the latest tagged upstream release (default)
+//   DATA_REF=v0.3.0 node scripts/sync-data.mjs   # a specific release tag
+//   DATA_REF=main node scripts/sync-data.mjs     # the untagged tip (may carry unreleased changes)
 //
 // The script never edits incident facts. It copies upstream artifacts byte-for-byte
 // (re-serialised with stable 2-space JSON so diffs are readable) and records
@@ -21,8 +22,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'data', 'snapshot');
 
 const UPSTREAM_REPO = 'MLSecOpsHub/agentic-attack-index';
-const REF = process.env.DATA_REF ?? 'main';
-const RAW = `https://raw.githubusercontent.com/${UPSTREAM_REPO}/${REF}`;
+// Default to the latest tagged release so the site renders a pinned, citable
+// dataset version rather than whatever is on upstream main.
+const REQUESTED_REF = process.env.DATA_REF ?? 'latest';
 const API = `https://api.github.com/repos/${UPSTREAM_REPO}`;
 
 const TAXONOMY_FILES = [
@@ -56,13 +58,27 @@ function stable(value) {
   return JSON.stringify(value, null, 2) + '\n';
 }
 
-async function resolveCommit() {
+function apiHeaders() {
+  const headers = { 'user-agent': 'rogue-agents-dashboard sync-data' };
+  if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  return headers;
+}
+
+async function resolveRef() {
+  if (REQUESTED_REF !== 'latest') return REQUESTED_REF;
+  // No silent fallback to main: failing loudly keeps the snapshot pinned.
+  const res = await fetch(`${API}/releases/latest`, { headers: apiHeaders() });
+  if (!res.ok) throw new Error(`GET ${API}/releases/latest -> ${res.status} ${res.statusText}`);
+  const tag = (await res.json()).tag_name;
+  if (typeof tag !== 'string' || !tag) throw new Error('latest upstream release has no tag_name');
+  return tag;
+}
+
+async function resolveCommit(REF) {
   // Best effort: record the exact upstream commit for provenance. Falls back to
   // the ref name if the API is unreachable (rate limit, offline mirror).
   try {
-    const headers = { 'user-agent': 'rogue-agents-dashboard sync-data' };
-    if (process.env.GITHUB_TOKEN) headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
-    const res = await fetch(`${API}/commits/${REF}`, { headers });
+    const res = await fetch(`${API}/commits/${REF}`, { headers: apiHeaders() });
     if (!res.ok) return null;
     const json = await res.json();
     return { sha: json.sha, date: json.commit?.committer?.date ?? null };
@@ -73,16 +89,21 @@ async function resolveCommit() {
 
 async function main() {
   mkdirSync(OUT, { recursive: true });
+  const REF = await resolveRef();
+  const RAW = `https://raw.githubusercontent.com/${UPSTREAM_REPO}/${REF}`;
 
   const [incidents, summary, schema, commit] = await Promise.all([
     fetchJson(`${RAW}/dist/incidents.json`),
     fetchJson(`${RAW}/dist/summary.json`),
     fetchJson(`${RAW}/schema/incident.schema.json`),
-    resolveCommit(),
+    resolveCommit(REF),
   ]);
 
   if (!Array.isArray(incidents)) throw new Error('incidents.json is not an array');
   if (typeof summary?.dataset_version !== 'string') throw new Error('summary.json missing dataset_version');
+  if (REF.startsWith('v') && REF !== `v${summary.dataset_version}`) {
+    throw new Error(`tag ${REF} carries dataset_version ${summary.dataset_version}; refusing a mismatched snapshot`);
+  }
 
   const taxonomy = {};
   for (const name of TAXONOMY_FILES) {

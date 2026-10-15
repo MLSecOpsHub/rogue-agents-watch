@@ -107,6 +107,8 @@ export interface Source {
 
 export interface Mappings {
   mitre_atlas?: string[];
+  /** ATLAS case studies documenting the incident (upstream 0.7.0+). */
+  mitre_atlas_case_studies?: string[];
   mitre_attack?: string[];
   owasp_llm?: string[];
   owasp_asi?: string[];
@@ -200,6 +202,7 @@ export interface Incident {
 
   mappings: {
     mitre_atlas: string[];
+    mitre_atlas_case_studies: string[];
     mitre_attack: string[];
     owasp_llm: string[];
     owasp_asi: string[];

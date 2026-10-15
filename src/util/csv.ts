@@ -30,6 +30,8 @@ const COLUMNS: Array<[string, (i: Incident) => string]> = [
   ['record_status', (i) => i.record_status],
   ['sources', (i) => i.sources.map((s) => s.url).join('; ')],
   ['summary', (i) => i.summary],
+  // Appended last so existing column positions are unchanged.
+  ['mitre_atlas_case_studies', (i) => i.mappings.mitre_atlas_case_studies.join('; ')],
 ];
 
 function cell(v: string): string {
