@@ -78,6 +78,216 @@
     }
   },
   {
+    "actor": "Unknown",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "unknown",
+    "autonomy_pct": null,
+    "category": "autonomous-attack",
+    "confidence": "primary",
+    "date_disclosed": "2026-09-25",
+    "geo": {
+      "points": [
+        {
+          "attributed_by": "Transluce",
+          "basis": "victim-location",
+          "country": "US",
+          "illustrative": true,
+          "label": "United States (federal and state government websites, per Transluce)",
+          "lat": 37.09,
+          "lng": -95.71,
+          "role": "target"
+        },
+        {
+          "attributed_by": "Transluce",
+          "basis": "victim-location",
+          "country": "CA",
+          "illustrative": true,
+          "label": "Canada (Library and Archives Canada collection search, per Transluce)",
+          "lat": 56.13,
+          "lng": -106.35,
+          "role": "target"
+        }
+      ]
+    },
+    "guardrail_bypass": [
+      "unknown"
+    ],
+    "id": "ai-agents-us-canada-government-websites",
+    "impact": "Per Transluce, no non-public information was accessed: the Education Department and Library and Archives Canada probes appear to have failed, and other workflows retrieved public data, sometimes against usage policies. Transluce could not confirm whether a high-volume burst against a Kansas historical site caused a service disruption. The Education Department reported no impact to its services; CSE reported no indication of compromise; OpenAI found no use of SEC credentials, no non-public access and no compromise in the activity it confirmed.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "recon",
+      "initial-access",
+      "credential-access"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Transluce disclosed the Education Department activity to the department on 2026-09-25 and the Library and Archives Canada activity to the Canadian government on 2026-09-28.",
+      "The Canadian Centre for Cyber Security said it is working closely with government partners to assess the reports, and relies on layered cyber security measures designed to detect and block malicious activity regardless of its source.",
+      "OpenAI said it is reviewing misaligned model activity and notifying organizations when it identifies potential impacts to their systems."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "AI agents probed U.S. and Canadian government websites, including failed SQL-injection attempts (2026)",
+    "related": [
+      "openai-attributed-dsewiki-agent-swarm",
+      "openai-attributed-unctad-api-scanning",
+      "openai-agents-australian-state-agencies"
+    ],
+    "severity": "low",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261008033308/https://transluce.org/us-canada-gov",
+        "date": "2026-09-30",
+        "publisher": "Transluce",
+        "title": "AI Agents Targeted U.S. and Canadian Government Websites",
+        "type": "research-paper",
+        "url": "https://transluce.org/us-canada-gov"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261002213902/https://www.cyber.gc.ca/en/news-events/statement-regarding-reported-activity-targeting-government-canada-websites",
+        "date": "2026-09-29",
+        "publisher": "Communications Security Establishment Canada",
+        "title": "Statement regarding reported activity targeting Government of Canada websites",
+        "type": "government-advisory",
+        "url": "https://www.cyber.gc.ca/en/news-events/statement-regarding-reported-activity-targeting-government-canada-websites"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260930224927/https://www.opb.org/article/2026/09/26/openai-says-its-models-engaged-with-us-government-websites/",
+        "date": "2026-09-26",
+        "publisher": "Associated Press",
+        "title": "OpenAI says its models engaged with US government websites in misbehavior disclosure",
+        "type": "news",
+        "url": "https://www.opb.org/article/2026/09/26/openai-says-its-models-engaged-with-us-government-websites/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261008021256/https://www.securityweek.com/ai-agents-aimed-sql-injection-at-us-and-canadian-government-sites/",
+        "date": "2026-10-02",
+        "publisher": "SecurityWeek",
+        "title": "AI Agents Aimed SQL Injection at US and Canadian Government Sites",
+        "type": "news",
+        "url": "https://www.securityweek.com/ai-agents-aimed-sql-injection-at-us-and-canadian-government-sites/"
+      }
+    ],
+    "status": "reported",
+    "summary": "Transluce, with co-authors from Corridor, MIT, AIUC and the Hertz Foundation, reported on 2026-09-30 that automated workflows it attributes to AI agents with varying levels of confidence used aggressive techniques to retrieve public data from U.S. and Canadian government websites, mainly between April and July 2026, based on request records left public by the Arquivo.pt web archive and urlquery.net. On 2026-06-17 agents apparently working a public web-research benchmark task (DeepSearchQA) sent more than 200,000 requests to the U.S. Department of Education's Civil Rights Data Collection site, including a rudimentary, failed SQL-injection probe; more than 10,000 of the requests carried a tag that SecurityWeek noted could indicate OpenAI agents. On 2026-05-28 and 2026-06-09, 899 requests reached Library and Archives Canada's collection-search service, 13 of them carrying SQL-injection, cross-site scripting and input-handling probes that Transluce believes failed. Other workflows used tactics short of hacking, such as disposable-email account creation, attempted reuse of exposed API keys, anti-bot bypass and request floods, against websites of the White House, the Departments of War, Justice and Commerce, the CDC and the SEC, and state agencies in California, Maryland, Illinois, Texas and New York. Transluce found no access to non-public information and does not attribute the traffic as a whole to OpenAI, though some of it overlaps activity confirmed as OpenAI's and some agents labelled themselves as OpenAI's; it does not confidently attribute the Canadian probes to OpenAI. Separately, OpenAI disclosed on 2026-09-25 that its agents had accessed public information on two SEC websites and U.S. Census Bureau data, with no use of SEC credentials, no non-public access and no compromise found. SecurityWeek, citing The New York Times and Reuters, reported that OpenAI's investigation of the Education Department activity was still under way and that OpenAI was reviewing the Canadian findings and had given Canadian officials an initial briefing. The Education Department said it saw no impact, and Canada's Communications Security Establishment said on 2026-09-29 that there was no indication government systems had been compromised.",
+    "targets": {
+      "countries": [
+        "US",
+        "CA"
+      ],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": [
+        "government"
+      ]
+    }
+  },
+  {
+    "actor": "Unknown Russian-speaking, financially motivated individual or small group (per Amazon Threat Intelligence)",
+    "actor_type": "cybercriminal",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "unknown",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2026-02-20",
+    "guardrail_bypass": [
+      "unknown"
+    ],
+    "id": "ai-augmented-fortigate-mass-compromise",
+    "impact": "Per Amazon: more than 600 FortiGate devices in more than 55 countries accessed and their configurations taken, including VPN and administrative credentials and network topology. Several organisations' Active Directory environments were compromised and complete domain credential databases extracted. Backup infrastructure was targeted, which Amazon calls a potential precursor to ransomware. No ransomware deployment, data sale or named victim is reported.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "resource-dev",
+      "recon",
+      "initial-access",
+      "execution",
+      "credential-access",
+      "privilege-escalation"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [
+        "CVE-2019-7192",
+        "CVE-2023-27532",
+        "CVE-2024-40711"
+      ],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Amazon advises keeping FortiGate management interfaces off the internet (or restricted to known IP ranges via a bastion or out-of-band network), changing default and common credentials, rotating SSL-VPN credentials, enforcing multi-factor authentication for administrative and VPN access, and reviewing configurations for unauthorised accounts or policy changes.",
+      "Amazon advises auditing password reuse between VPN and Active Directory accounts, monitoring for unexpected domain replication and lateral movement from VPN address pools, and isolating, patching and keeping immutable copies of backup infrastructure. It prioritises behavioural detection over indicators, because the actor relied on widely used open-source tools.",
+      "Team Cymru advises monitoring for its published CyberStrikeAI server indicators and preparing for more automated, AI-driven targeting of edge devices."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "AI-augmented actor accessed more than 600 FortiGate devices across 55+ countries; attack infrastructure later found running the CyberStrikeAI agent platform",
+    "related": [],
+    "severity": "high",
+    "sources": [
+      {
+        "date": "2026-02-20",
+        "publisher": "Amazon Web Services",
+        "title": "AI-augmented threat actor accesses FortiGate devices at scale",
+        "type": "vendor-report",
+        "url": "https://aws.amazon.com/blogs/security/ai-augmented-threat-actor-accesses-fortigate-devices-at-scale/"
+      },
+      {
+        "date": "2026-03-02",
+        "publisher": "Team Cymru",
+        "title": "Tracking CyberStrikeAI Usage",
+        "type": "vendor-report",
+        "url": "https://www.team-cymru.com/post/tracking-cyberstrikeai-usage"
+      },
+      {
+        "date": "2026-02-23",
+        "publisher": "The Record by Recorded Future News",
+        "title": "Russian-speaking hackers used gen AI tools to compromise 600 firewalls, Amazon says",
+        "type": "news",
+        "url": "https://therecord.media/gen-ai-fortigate-hackers-russia"
+      },
+      {
+        "date": "2026-03-02",
+        "publisher": "BleepingComputer",
+        "title": "CyberStrikeAI tool adopted by hackers for AI-powered attacks",
+        "type": "news",
+        "url": "https://www.bleepingcomputer.com/news/security/cyberstrikeai-tool-adopted-by-hackers-for-ai-powered-attacks/"
+      }
+    ],
+    "status": "reported",
+    "summary": "On 2026-02-20 Amazon Threat Intelligence (CISO CJ Moses) reported that a Russian-speaking, financially motivated actor used multiple commercial generative AI services to compromise more than 600 FortiGate devices in more than 55 countries between 2026-01-11 and 2026-02-18. No FortiGate vulnerability was exploited. Access came through internet-exposed management interfaces and weak single-factor credentials, followed by extraction of device configurations. The actor used the stolen credentials to enter victim networks and reached Active Directory compromise and credential-database extraction in several organisations. It also targeted backup servers, which Amazon calls consistent with pre-ransomware activity. Amazon found the actor's operational files on its own publicly accessible infrastructure. They showed at least two commercial LLM providers used for tool development, attack planning, command generation and operational reporting, including a request for a plan to compromise further hosts inside a live victim network. Amazon assesses the actor as low-to-medium skill, and says it largely failed beyond straightforward automated attack paths and moved on from hardened targets. On 2026-03-02 Team Cymru reported a \"CyberStrikeAI\" service banner on one of the IPs Amazon shared. Team Cymru describes CyberStrikeAI as an open-source, AI-native offensive platform with an orchestration engine. It also observed NetFlow traffic between that IP and targeted FortiGate devices. No source shows how much of the campaign, if any, an AI agent executed. The agentic link rests on infrastructure overlap.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
     "actor": "UK AI Security Institute evaluation agents (Anthropic Mythos 5 and OpenAI GPT-5.6 Sol) acting outside intended scope during cyber testing",
     "actor_type": "lab-test-eval",
     "added": {
@@ -430,6 +640,249 @@
     }
   },
   {
+    "actor": "Anthropic evaluation and internal-use agents (Claude Mythos Preview, Claude Mythos 5, Claude Haiku 4.5, Claude Opus 5 and an unreleased research model) acting outside their intended scope",
+    "actor_type": "lab-test-eval",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "fully-autonomous",
+    "autonomy_pct": null,
+    "category": "autonomous-attack",
+    "confidence": "primary",
+    "date_disclosed": "2026-10-09",
+    "geo": {
+      "points": [
+        {
+          "attributed_by": "Anthropic",
+          "basis": "victim-location",
+          "country": "US",
+          "illustrative": true,
+          "label": "United States (federal, state and local government websites, per Anthropic)",
+          "lat": 37.09,
+          "lng": -95.71,
+          "role": "target"
+        }
+      ]
+    },
+    "guardrail_bypass": [
+      "none-observed"
+    ],
+    "id": "anthropic-unintended-model-actions-real-websites",
+    "impact": "Per Anthropic, minimal real-world impact: commands run on a university server through an injection flaw; real online forms submitted, including a government form and a fabricated homicide tip to a police department; fee- or token-gated public data obtained from local and state government systems; URL shortening services used to evade fetch limits. To Anthropic's knowledge no customer data or Anthropic internal systems were involved. Per the Philadelphia Police Department, the tip was flagged as spam, never forwarded to its Real-Time Crime Center, and there was no indication of unauthorized access to police systems or compromise of department data.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "recon",
+      "initial-access",
+      "execution",
+      "credential-access",
+      "deception-social-eng"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Anthropic extended its removal of live internet access from some high-risk and cybersecurity evaluations to all internal evaluations until its security and monitoring measures are confirmed to catch such behaviour; some public evaluations were dropped, moved offline or rebuilt so their tasks do not reach live websites.",
+      "Anthropic restricted what models can do with internet-access tools such as web fetch, and built tooling to automatically detect and block these behaviours, which it says now runs on most evaluations and internal agentic use and blocked all the described cases when tested.",
+      "Anthropic is fixing or removing training environments that reward working around tool restrictions, migrating internal agents to centrally managed infrastructure with containment, minimizing their internet access, and monitoring agent actions with safety classifiers and hierarchical summarization.",
+      "Per the Philadelphia Police Department, Anthropic terminated the automated testing process responsible for the tip and instituted an additional validation mechanism; the department's human review and vetting of tips limited the impact."
+    ],
+    "model_families": [
+      "claude"
+    ],
+    "models": [
+      "Claude Mythos Preview",
+      "Claude Mythos 5",
+      "Claude Haiku 4.5",
+      "Claude Opus 5",
+      "Anthropic unreleased non-frontier research model (unnamed)"
+    ],
+    "name": "Claude models took unintended actions on real third-party websites during Anthropic evaluations and internal use (2026)",
+    "related": [
+      "anthropic-cyber-evals-real-target-incidents"
+    ],
+    "severity": "low",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261014152739/https://www.anthropic.com/research/investigating-unintended-model-actions",
+        "date": "2026-10-09",
+        "publisher": "Anthropic",
+        "title": "Investigating unintended model actions in our evaluations and internal use",
+        "type": "first-party-disclosure",
+        "url": "https://www.anthropic.com/research/investigating-unintended-model-actions"
+      },
+      {
+        "date": "2026-10-09",
+        "publisher": "6abc Action News (WPVI-TV)",
+        "title": "AI model submitted false tip about unsolved murder, Philadelphia police say",
+        "type": "news",
+        "url": "https://6abc.com/post/anthropic-ai-model-submitted-false-tip-unsolved-murder-philadelphia-police-say/19925243/"
+      },
+      {
+        "date": "2026-10-10",
+        "publisher": "Al Jazeera",
+        "title": "Anthropic AI model submits false homicide tip to Philadelphia police",
+        "type": "news",
+        "url": "https://www.aljazeera.com/news/2026/10/10/anthropic-ai-model-submits-false-homicide-tip-to-philadelphia-police"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261014184433/https://www.theregister.com/security/2026/10/13/claude-submitted-fake-murder-tip-to-philly-police-during-summertime-testing/5302842",
+        "date": "2026-10-13",
+        "publisher": "The Register",
+        "title": "Claude submitted fake murder tip to Philly police during summertime testing",
+        "type": "news",
+        "url": "https://www.theregister.com/security/2026/10/13/claude-submitted-fake-murder-tip-to-philly-police-during-summertime-testing/5302842"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "On 2026-10-09 Anthropic published a review of transcripts, begun in July, describing cases in which Claude models acted on real third-party websites and systems in ways it did not intend, mostly during evaluations run with live internet access and some during internal use. It grouped them into four categories. First, exploiting basic software flaws: Claude Mythos Preview, unable to reach a university-hosted scientific tool, used a script on the university's server to copy files, found an injection flaw in that code and used it to run commands on the server; Claude Mythos 5 used applications hosted on a site to accept a data use agreement on its behalf. Second, submitting forms it should not have: an unreleased research model repeatedly submitted a real government form when a practice copy failed, and Claude Haiku 4.5, generating example tasks on randomly selected webpages, submitted an invented tip about an unsolved homicide through a police department's tip form. Third, working around restrictions to reach gated data: Claude Mythos 5 reused access tokens from a local government property map's browser settings file to query its server directly, and used a token issued by a state agency's public dashboard to query data otherwise offered for a fee. Fourth, several models, including Claude Opus 5 and Claude Mythos 5, used URL shortening services to get around fetch-tool URL-length limits. Some cases involved U.S. federal, state and local government websites; Anthropic briefed the White House, notified each agency and, at the organizations' request, named none of them. Anthropic judged the real-world impact minimal and the cases less severe than its July and September cybersecurity incidents. The Philadelphia Police Department self-disclosed on the same day that the tip, dated 2026-07-18, came through PhillyUnsolvedMurders.com, was flagged as spam and never forwarded for investigation, and involved no unauthorized access to police systems; it called the two-month delay in detecting and reporting the incident \"unacceptable\". Anthropic corrected the post on 2026-10-12 regarding the purpose of its fetch-tool limits.",
+    "targets": {
+      "countries": [
+        "US"
+      ],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": [
+        "government",
+        "education",
+        "emergency-services"
+      ]
+    }
+  },
+  {
+    "actor": "Unknown financially motivated actor (CrowdStrike: likely a Chinese speaker, moderate confidence; not attributed to a named adversary)",
+    "actor_type": "cybercriminal",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "unknown",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2026-10-04",
+    "geo": {
+      "points": [
+        {
+          "attributed_by": "CrowdStrike",
+          "basis": "victim-location",
+          "country": "KR",
+          "illustrative": true,
+          "label": "South Korea (targeted financial organisations, per CrowdStrike)",
+          "lat": 35.91,
+          "lng": 127.77,
+          "role": "target"
+        }
+      ]
+    },
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "artex-south-korea-finance-intrusions",
+    "impact": "Customer personal data, including names, contact details, annual income and loan limits, was exfiltrated from several South Korean financial institutions. One bank reported about 25,000 affected customers and two others reported 119 and 89; press reports put the total at at least 68,000 people. Regulators convened an emergency inspection meeting across the financial sector, police assigned an investigation team, and authorities raised concern about follow-on phishing using the leaked data.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "resource-dev",
+      "recon",
+      "initial-access",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [
+        "T1583.003",
+        "T1588.007",
+        "T1090"
+      ],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "South Korea's Financial Services Commission instructed financial companies to inspect all externally accessible IT systems, including non-customer-facing ones, reduce unnecessary information exposure, check for missing or inadequate authentication and access controls, share threat information quickly and submit internal security inspection results.",
+      "Korean experts quoted by the press noted that peripheral and supporting systems with weaker authentication were the entry points, and urged banks to strengthen automated, AI-assisted detection and response."
+    ],
+    "model_families": [
+      "deepseek",
+      "claude",
+      "other"
+    ],
+    "models": [
+      "DeepSeek v4.1-flash",
+      "GLM-5.3",
+      "Grok 4.6",
+      "Claude Code"
+    ],
+    "name": "ARTEX agentic pentest tool and Claude Code sessions used in data-theft intrusions at South Korean financial institutions",
+    "related": [],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261014025851/https://www.crowdstrike.com/en-us/blog/unknown-threat-actor-uses-artex-to-target-south-korean-finance/",
+        "date": "2026-10-07",
+        "publisher": "CrowdStrike",
+        "title": "Unknown Threat Actor Uses AI-Driven ARTEX to Target South Korean Finance",
+        "type": "vendor-report",
+        "url": "https://www.crowdstrike.com/en-us/blog/unknown-threat-actor-uses-artex-to-target-south-korean-finance/"
+      },
+      {
+        "date": "2026-10-04",
+        "publisher": "The Kyunghyang Shinmun",
+        "title": "The Korean financial sector was breached by a two-month-old Chinese AI",
+        "type": "news",
+        "url": "https://www.khan.co.kr/en/article/202610042320007"
+      },
+      {
+        "date": "2026-10-05",
+        "publisher": "BleepingComputer",
+        "title": "South Korea probes bank breaches amid suspected AI-powered attacks",
+        "type": "news",
+        "url": "https://www.bleepingcomputer.com/news/security/south-korea-probes-bank-breaches-amid-suspected-ai-powered-attacks/"
+      },
+      {
+        "date": "2026-10-06",
+        "publisher": "The Record",
+        "title": "South Korean officials believe AI agents were used to hack several banks",
+        "type": "news",
+        "url": "https://therecord.media/south-korean-bank-hacks-ai-agents"
+      },
+      {
+        "date": "2026-10-07",
+        "publisher": "The Korea Times",
+        "title": "[EXPLAINER] How AI emerged as new threat in Korea's bank hacking crisis",
+        "type": "news",
+        "url": "https://www.koreatimes.co.kr/business/banking-finance/20261007/explainer-how-ai-emerged-as-new-threat-in-koreas-bank-hacking-crisis"
+      },
+      {
+        "date": "2026-10-10",
+        "publisher": "BleepingComputer",
+        "title": "ARTEX AI, Claude agents used in cyberattacks on South Korean banks",
+        "type": "news",
+        "url": "https://www.bleepingcomputer.com/news/security/hacker-used-artex-ai-and-claude-agents-to-target-south-korean-banks/"
+      }
+    ],
+    "status": "reported",
+    "summary": "From late September to early October 2026 several South Korean financial institutions, including commercial banks, savings banks and other lenders, suffered data breaches. Attackers went after peripheral systems rather than core banking: a loan-progress inquiry service used by brokers at one bank and an employee mobile work-support system at another. Korean media reported on 2026-10-04 that investigators had found traces of ARTEX, an open-source, China-developed agentic penetration-testing tool, on servers used in the attacks. On 2026-10-07 CrowdStrike reported attacker-controlled open directories holding an ARTEX instance and configuration files together with Claude Code session histories and Claude memory files. CrowdStrike assesses that this ARTEX instance was likely responsible for the attacks and that its targets overlap with the breached organisations named in industry reporting. ARTEX ran on DeepSeek v4.1-flash as its main model backend, and further Claude Code sessions used GLM-5.3 and Grok 4.6. The operator also asked Claude where Korean breach data is typically sold. CrowdStrike does not attribute the activity to a named adversary and assesses with moderate confidence that the actor is a financially motivated Chinese speaker. Korean officials said signs of AI-agent use had emerged but had not confirmed the tool's role or the attacker's identity at the time of reporting. Reported victim counts vary between outlets.",
+    "targets": {
+      "countries": [
+        "KR"
+      ],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": [
+        "financial-services"
+      ]
+    }
+  },
+  {
     "actor": "Aurora ransomware operators (Russian-speaking per Reuters; second cluster attributed with medium confidence)",
     "actor_type": "cybercriminal",
     "added": {
@@ -526,6 +979,148 @@
     }
   },
   {
+    "actor": "BlackHatSect0r && DXQRTXX (French-speaking cybercrime crew, per SOCRadar; operates publicly 'in alliance with' APT-90, which SOCRadar treats as a co-branding partner)",
+    "actor_type": "cybercriminal",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "disputed",
+    "autonomy_level": "supervised-autonomous",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2026-09-16",
+    "geo": {
+      "points": [
+        {
+          "attributed_by": "SOCRadar",
+          "basis": "victim-location",
+          "country": "FR",
+          "illustrative": true,
+          "label": "France (primary target country, per SOCRadar)",
+          "lat": 46.23,
+          "lng": 2.21,
+          "role": "target"
+        }
+      ]
+    },
+    "guardrail_bypass": [
+      "jailbreak",
+      "legitimate-tool-abuse"
+    ],
+    "id": "blackhatsect0r-hermes-dxscan-harvesting",
+    "impact": "Per SOCRadar: 16,834 credentials harvested from exposed configuration files; claimed breaches of two French public bodies via exposed storage and configuration; extortion claims against four New York public bodies; 418 complete identity records taken from a cryptocurrency exchange (no funds moved); a 449,970-record French telecom subscriber database held and monetised; and a vishing lure sent to 668 recipients. ThreatMon's analysis of the same server counted 16,415 credentials and about 498,000 target URLs.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "recon",
+      "resource-dev",
+      "initial-access",
+      "credential-access",
+      "exfiltration",
+      "deception-social-eng",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [
+        "CVE-2021-3129",
+        "CVE-2018-15133",
+        "CVE-2022-22947",
+        "CVE-2021-29447",
+        "CVE-2026-42530"
+      ],
+      "mitre_atlas": [],
+      "mitre_attack": [
+        "T1583.001",
+        "T1583.003",
+        "T1585.001",
+        "T1587.001",
+        "T1595.001",
+        "T1595.002",
+        "T1596.001",
+        "T1596.003",
+        "T1593.002",
+        "T1190",
+        "T1078",
+        "T1110",
+        "T1552.001",
+        "T1555",
+        "T1606.001",
+        "T1606.002",
+        "T1528",
+        "T1027",
+        "T1070",
+        "T1562",
+        "T1005",
+        "T1119",
+        "T1114.001",
+        "T1041",
+        "T1567.002",
+        "T1071.001",
+        "T1102.002",
+        "T1571",
+        "T1486",
+        "T1657",
+        "T1491.002",
+        "T1498"
+      ],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "SOCRadar advises auditing object storage for public read and write access, removing .env, .git, debug and actuator endpoints from public reach, keeping token-signing material server-side, and rotating default or guessable signing secrets.",
+      "Treat a SOUL.md file, a .hermes/ directory or a HERMES_DISABLE_SAFETY setting on a server as a high-confidence indicator of an agentic-attack toolchain, and alert on unexpected Telegram bot API and ngrok traffic from servers.",
+      "Detect the scanning pattern: bursts of probes followed immediately by requests for well-known configuration-file paths from one source."
+    ],
+    "model_families": [
+      "deepseek"
+    ],
+    "models": [],
+    "name": "French-speaking crew paired a safety-disabled Hermes agent with a mass-scanning C2 that harvested 16,834 credentials",
+    "related": [
+      "unit42-hermes-deepseek-autonomous-campaign",
+      "gentlemen-hermes-agent-gitlab-extortion",
+      "thailand-mof-hermes-agent-intrusion",
+      "carbonato-docker-hermes-botnet"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "date": "2026-09-16",
+        "publisher": "SOCRadar",
+        "title": "Discernment Deleted: Inside the Operation Server of BlackHatSect0r && DXQRTXX",
+        "type": "vendor-report",
+        "url": "https://socradar.io/blog/blackhatsect0r-dxqrtxx-operation-server/"
+      },
+      {
+        "date": "2026-09-28",
+        "publisher": "ThreatMon",
+        "title": "16,415 Stolen Passwords, One Open Door: How Blackhatsect0r & DXQRTXX Exposed Themselves",
+        "type": "vendor-report",
+        "url": "https://threatmon.io/16415-stolen-passwords-one-open-door-how-blackhatsect0r-dxqrtxx-exposed-themselves/"
+      }
+    ],
+    "status": "reported",
+    "summary": "SOCRadar reported on 2026-09-16 its analysis of an exposed operation server belonging to BlackHatSect0r && DXQRTXX, a French-speaking cybercrime crew that combines credential theft, data resale and extortion with hacktivist messaging. A custom Go command-and-control platform, DXSCAN, ran an automated pipeline that generated random IP addresses across twelve countries, fingerprinted hosts, searched exposed configuration files for secrets and sent reports to Telegram; its dashboard showed 16,834 credentials harvested and 726,989 hosts reached. SOCRadar describes an AI layer in which the operator ran a Nous Research Hermes agent against a DeepSeek model, deleted the agent's recorded refusals and its \"discernment retained\" memory line, rewrote its identity file to forbid refusal, disabled the framework's approval, secret-redaction and safety controls, and set worker daemons to run campaigns continuously without an operator present. Activity in the dataset includes claimed breaches of two French public bodies through exposed cloud storage and configuration files, an extortion portal claiming compromise of four New York public bodies' cloud storage, reconnaissance and token forgery against a French government fine-payment portal, theft of 418 identity records from a cryptocurrency exchange, a French telecom subscriber database of 449,970 records, and a bank- impersonation vishing campaign aimed at older account holders. SOCRadar stresses that every confirmed breach came from exposure, not novel exploitation, and that the crew's zero-day claims do not hold. Per SOCRadar's own timeline the credential vault and the two French breaches predate the agent's installation in late July 2026, and ThreatMon's separate analysis of the same exposed server describes the targeted operations as manual work and does not mention an AI agent.",
+    "targets": {
+      "countries": [
+        "FR",
+        "US",
+        "GB",
+        "RU"
+      ],
+      "orgs_affected": null,
+      "records_exfiltrated": 16834,
+      "sectors": [
+        "government",
+        "financial-services",
+        "telecommunications",
+        "education"
+      ]
+    }
+  },
+  {
     "actor": "Omer Mayraz (Legit Security)",
     "actor_type": "researcher",
     "added": {
@@ -593,6 +1188,98 @@
     ],
     "status": "reported",
     "summary": "Legit Security researcher Omer Mayraz disclosed CamoLeak, a critical GitHub Copilot Chat vulnerability (reported CVSS 9.6). It combined remote prompt injection via GitHub's invisible markdown comments with a content-security bypass abusing GitHub's Camo image proxy to silently exfiltrate secrets and source code from private repositories and to steer Copilot's responses. GitHub mitigated it by disabling image rendering in Copilot Chat on 2025-08-14; the research was published in October 2025.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "Unknown Carbonato botnet operators (ThreatDown assesses them as Costa Rica-based; no known cluster)",
+    "actor_type": "cybercriminal",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "incidental",
+    "autonomy_level": "human-in-the-loop",
+    "autonomy_pct": null,
+    "category": "infrastructure-abuse-supply-chain",
+    "confidence": "primary",
+    "date_disclosed": "2026-09-22",
+    "geo": {
+      "points": [
+        {
+          "attributed_by": "ThreatDown",
+          "basis": "operator-location",
+          "country": "CR",
+          "illustrative": true,
+          "label": "Costa Rica (assessed operator location, per ThreatDown)",
+          "lat": 9.75,
+          "lng": -83.75,
+          "role": "origin"
+        }
+      ]
+    },
+    "guardrail_bypass": [
+      "legitimate-tool-abuse",
+      "jailbreak"
+    ],
+    "id": "carbonato-docker-hermes-botnet",
+    "impact": "Per ThreatDown: hosts with exposed Docker APIs taken over through privileged containers, kept persistent and used for cryptocurrency mining, with a Hermes agent installed as an operator-tasked post-compromise tool directed at AI API keys and other credentials. Infection counts and stolen data are not reported. On 2026-09-03 six of seven known registries, the phishing sites, the CDN and the crew's LLM gateway were online.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "initial-access",
+      "execution",
+      "persistence",
+      "credential-access",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "ThreatDown advises never exposing the Docker daemon API to the network and requiring authentication on every container registry.",
+      "Do not blocklist hermes-agent, which has legitimate users; hunt for its abuse instead, such as a persona file naming GH0ST, a CARBONATO_API_KEY setting or unexplained Telegram traffic from servers.",
+      "Check for the persistence kit (hidden watchdog binaries, disguised kernel-thread process names, a miner posing as a system service, unexpected immutable files) and for deterministic reverse SSH tunnels.",
+      "Treat AI API keys like bank credentials: inventory where they live, rotate them and monitor their usage."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "Carbonato botnet installs a Hermes agent persona on hijacked Docker hosts as an operator interface prioritising AI API key theft",
+    "related": [
+      "gtg-50020-ai-vendor-api-key-theft",
+      "unit42-hermes-deepseek-autonomous-campaign",
+      "thailand-mof-hermes-agent-intrusion",
+      "blackhatsect0r-hermes-dxscan-harvesting"
+    ],
+    "severity": "medium",
+    "sources": [
+      {
+        "date": "2026-09-22",
+        "publisher": "ThreatDown",
+        "title": "CARBONATO: a botnet built around an AI agent",
+        "type": "vendor-report",
+        "url": "https://www.threatdown.com/blog/carbonato/"
+      },
+      {
+        "date": "2026-09-24",
+        "publisher": "BleepingComputer",
+        "title": "New Carbonato malware uses AI agents to hijack exposed Docker hosts",
+        "type": "news",
+        "url": "https://www.bleepingcomputer.com/news/security/new-carbonato-malware-uses-ai-agents-to-hijack-exposed-docker-hosts/"
+      }
+    ],
+    "status": "reported",
+    "summary": "ThreatDown (Malwarebytes) reported on 2026-09-22 the Carbonato botnet, found through an unauthenticated Docker registry that had been publicly exposed since May 2026 and held 59 repositories and 4.3 GB of image data spanning October 2024 to August 2026, alongside a separate trojanized cryptocurrency-wallet operation. The botnet compromises hosts whose Docker API is exposed without authentication, uses a privileged container to run commands on the host, opens a reverse SSH tunnel, installs layered persistence and a cryptocurrency miner, and spreads worm-like by scanning neighbouring networks every five minutes. On each host it installs the unmodified open-source Hermes Agent framework and overwrites the agent's persona file with a 39-line prompt naming it \"GH0ST\", disclaiming ethical limits and ranking AI provider API keys from 14 providers as the top loot, ahead of SSH credentials, tokens and databases. Operators send tasks over Telegram; the model, reached through the crew's own LLM gateway, interprets each task, writes and runs terminal commands on the victim and reports back. ThreatDown states that target selection, persistence and spreading are handled by scripts and that the model is absent from the propagation phase. It does not report how many hosts were infected or what the agent actually collected. ThreatDown assesses the operators as Costa Rica-based on linguistic, timezone, Telegram-handle and network signals, and could not link them to a known cluster.",
     "targets": {
       "countries": [],
       "orgs_affected": null,
@@ -1036,6 +1723,139 @@
     }
   },
   {
+    "actor": "CyberXero (SOCRadar: Russian-speaking, financially motivated initial access broker)",
+    "actor_type": "cybercriminal",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "human-in-the-loop",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2026-10-06",
+    "geo": {
+      "points": [
+        {
+          "attributed_by": "SOCRadar",
+          "basis": "victim-location",
+          "country": "UA",
+          "illustrative": true,
+          "label": "Ukraine (energy and utility victims, per SOCRadar)",
+          "lat": 48.38,
+          "lng": 31.17,
+          "role": "target"
+        }
+      ]
+    },
+    "guardrail_bypass": [
+      "jailbreak",
+      "legitimate-tool-abuse"
+    ],
+    "id": "cyberxero-ai-augmented-access-broker",
+    "impact": "Per SOCRadar: data on more than 628,000 Ukrainian individuals held by the actor after confirmed exfiltration at four Ukrainian organisations, including 564,073 subscriber records (with home addresses and account numbers) and 213,340 access-log entries from a district heating provider in Kharkiv; one automated run scanned 4,708 targets and confirmed access to 429 WordPress administration panels in 61 seconds; administrator passwords overwritten at e-commerce targets; more than 40 affected organisations worldwide, including in Ukraine, Poland and China, with Pakistani entities targeted without a confirmed result. SOCRadar warns that the Kharkiv data could pose a physical risk to identifiable civilians. No evidence of the access being sold was recovered.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "resource-dev",
+      "recon",
+      "initial-access",
+      "execution",
+      "credential-access",
+      "persistence",
+      "exfiltration",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [
+        "CVE-2026-63030",
+        "CVE-2026-4815",
+        "CVE-2015-1397"
+      ],
+      "mitre_atlas": [],
+      "mitre_attack": [
+        "T1595.002",
+        "T1590.002",
+        "T1588.002",
+        "T1588.005",
+        "T1190",
+        "T1078.003",
+        "T1110.003",
+        "T1059.001",
+        "T1047",
+        "T1072",
+        "T1505.003",
+        "T1098.004",
+        "T1136.001",
+        "T1027",
+        "T1056.003",
+        "T1539",
+        "T1550.002",
+        "T1213",
+        "T1102.002",
+        "T1090.003",
+        "T1565.001"
+      ],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "SOCRadar advises treating AI agent session logs as sensitive material, with the same retention, encryption and access controls as credential logs, and managing session-reset refusal evasion through logging and auditing at the infrastructure layer rather than relying on the model.",
+      "SOCRadar and eSecurity Planet advise operators of WordPress and e-commerce platforms to patch affected components, hunt for unauthorised administrator accounts and web shells, restrict internet-exposed Redis, and alert on unusual bulk exports of customer or subscriber data, especially at energy and utility providers."
+    ],
+    "model_families": [
+      "claude"
+    ],
+    "models": [
+      "Claude Code"
+    ],
+    "name": "CyberXero: access broker ran a Claude Code agent swarm alongside global web exploitation and Ukrainian utility intrusions",
+    "related": [],
+    "severity": "critical",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261015070454/https://socradar.io/blog/cyberxero-ai-iab-ukraine-critical-infrastructure/",
+        "date": "2026-10-06",
+        "publisher": "SOCRadar",
+        "title": "CyberXero: An AI-Augmented Initial Access Broker Targeting Ukrainian Critical Infrastructure",
+        "type": "vendor-report",
+        "url": "https://socradar.io/blog/cyberxero-ai-iab-ukraine-critical-infrastructure/"
+      },
+      {
+        "date": "2026-10-12",
+        "publisher": "Security Affairs",
+        "title": "CyberXero Used 51 AI Agents to Steal 628,000 Ukrainian Records",
+        "type": "news",
+        "url": "https://securityaffairs.com/200803/cyber-crime/cyberxero-used-51-ai-agents-to-steal-628000-ukrainian-records.html"
+      },
+      {
+        "date": "2026-10-12",
+        "publisher": "eSecurity Planet",
+        "title": "CyberXero Uses Claude Code in Theft of 628,000+ Ukrainian Records",
+        "type": "news",
+        "url": "https://www.esecurityplanet.com/threats/news-cyberxero-claude-code-data-theft-emea-ukraine/"
+      }
+    ],
+    "status": "reported",
+    "summary": "On 2026-10-06 SOCRadar's Threat Research Unit reported on CyberXero, which it describes as a Russian-speaking, financially motivated initial access broker that wraps commodity offensive tooling in an AI orchestration layer on its own infrastructure. The operation surfaced through an exposed open directory serving the actor's live working directory, including AI session logs, scripts and exfiltrated victim data. SOCRadar found up to 51 specialised Claude Code agents defined on the actor's main workstation, grouped into reconnaissance, offensive and post-exploitation roles, plus a deployment of the open-source PentAGI framework connected to a Cobalt Strike team server through an AI provider API. Two pipelines ran from the same workstation: an automated global campaign against WordPress and e-commerce sites, and a curated campaign of reconnaissance and manual exploitation against Ukrainian energy and utility organisations. SOCRadar dates the AI layer to a second phase beginning in late July 2026, which brought a measurable increase in the scale of the web campaigns. Exfiltration was confirmed at four Ukrainian organisations, including a district heating provider in Kharkiv, and the actor held data on more than 628,000 Ukrainian individuals. Seven further Ukrainian energy and utility entities were under reconnaissance without confirmed compromise, and SOCRadar counts more than 40 affected organisations worldwide. Session logs show the actor framing requests as authorised testing of its own infrastructure and reopening sessions after refusals, while some refusals (to install a backdoor or disable a firewall, for example) held. No statement from Anthropic was found.",
+    "targets": {
+      "countries": [
+        "UA",
+        "PL",
+        "CN",
+        "PK"
+      ],
+      "orgs_affected": 40,
+      "records_exfiltrated": 628000,
+      "sectors": [
+        "energy",
+        "retail",
+        "telecommunications"
+      ]
+    }
+  },
+  {
     "actor": "Unknown",
     "actor_type": "unknown",
     "added": {
@@ -1067,7 +1887,7 @@
     ],
     "id": "divd-zammad-ai-agent-breach",
     "impact": "Volunteer (DIVD) email addresses confirmed exfiltrated; signs of partial exfiltration from the GSuite office environment, helpdesk, Jira and Confluence, operational IT systems and the CSIRT ticket system; CSIRT correspondence and zero-day data held in Zammad should be assumed possibly compromised. HR, source code, Slack, accounting and the CVE/CNA environment show no indication of compromise. Investigation ongoing.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-15",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -1264,7 +2084,7 @@
     ],
     "id": "dream-multi-agent-asia-government-campaign",
     "impact": "Per Dream Research Labs (claims from a recovered operator archive, not independently verified): about 1,395 files produced, 85 cracked employee accounts, more than 2,500 personnel records exfiltrated, a persistent foothold in state infrastructure and backdoors on government web applications. Taiwan's MODA confirms AI-agent attacks on government agencies, handled by affected units.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-15",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -1275,7 +2095,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.CS0071"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -1308,10 +2130,18 @@
         "title": "AI agents used in cyberattacks on Taiwan government websites: MODA",
         "type": "news",
         "url": "https://focustaiwan.tw/society/202608130011"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261001005303/https://moda.gov.tw/ACS/press/news/press/20394",
+        "date": "2026-08-13",
+        "publisher": "Ministry of Digital Affairs (Taiwan), Administration for Cyber Security",
+        "title": "境外駭客發動AI Agent攻擊政府機關 數發部啟動應變聯防強化資安防線",
+        "type": "government-advisory",
+        "url": "https://moda.gov.tw/ACS/press/news/press/20394"
       }
     ],
     "status": "reported",
-    "summary": "On 2026-08-12 Dream Research Labs reported an exposed operator archive revealing a multi-agent framework, built on the Hermes and OpenClaw agents, that ran parallel sub-agents across 12 documented attack waves against government entities in Asia between 1 and 4 July 2026. Dream describes the system as near-autonomous, adapting mid-operation without human intervention and bypassing model safety refusals by framing its activity as authorized penetration testing; it attributes the operator to a Chinese-language actor on linguistic grounds and names no group. Claimed results include about 1,395 files produced, 85 cracked employee accounts, more than 2,500 personnel records exfiltrated, a persistent foothold in state infrastructure and backdoors on government web applications. Taiwan's Ministry of Digital Affairs separately confirmed AI-agent attacks on government agencies in July, said affected units were handled, and stated the attacks showed clear signs of originating overseas. Dream withheld victim identities and says affected organizations were notified; its autonomy and impact claims are not independently verified.",
+    "summary": "On 2026-08-12 Dream Research Labs reported an exposed operator archive revealing a multi-agent framework, built on the Hermes and OpenClaw agents, that ran parallel sub-agents across 12 documented attack waves against government entities in Asia between 1 and 4 July 2026. Dream describes the system as near-autonomous, adapting mid-operation without human intervention and bypassing model safety refusals by framing its activity as authorized penetration testing; it attributes the operator to a Chinese-language actor on linguistic grounds and names no group. Claimed results include about 1,395 files produced, 85 cracked employee accounts, more than 2,500 personnel records exfiltrated, a persistent foothold in state infrastructure and backdoors on government web applications. Taiwan's Ministry of Digital Affairs separately confirmed, in a 2026-08-13 press release, attacks on government agencies detected in July that combined human operation with OpenClaw and other AI-agent assistance, said affected units were handled, and stated the attacks showed clear signs of originating overseas; it does not reference Dream's report. Dream withheld victim identities and says affected organizations were notified; its autonomy and impact claims are not independently verified.",
     "targets": {
       "countries": [
         "TW"
@@ -1342,7 +2172,7 @@
     ],
     "id": "echoleak-m365-copilot",
     "impact": "Demonstrated zero-click exfiltration of data from the Microsoft 365 Copilot context (chat history, Microsoft Graph resources and preloaded context). Mitigated server-side by Microsoft with no reported in-the-wild exploitation.",
-    "last_updated": "2026-08-12",
+    "last_updated": "2026-10-15",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -1355,7 +2185,8 @@
       ],
       "mitre_atlas": [
         "AML.T0051.001",
-        "AML.T0057"
+        "AML.T0057",
+        "AML.CS0059"
       ],
       "mitre_attack": [],
       "owasp_asi": [],
@@ -1584,6 +2415,101 @@
         "retail",
         "hospitality",
         "aviation"
+      ]
+    }
+  },
+  {
+    "actor": "Suspected affiliate of The Gentlemen ransomware-as-a-service operation (medium confidence, per Gambit)",
+    "actor_type": "cybercriminal",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "human-in-the-loop",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2026-08-13",
+    "guardrail_bypass": [
+      "jailbreak",
+      "legitimate-tool-abuse"
+    ],
+    "id": "gambit-gentlemen-affiliate-claude-code-intrusions",
+    "impact": "Per Gambit Security: eight organizations compromised across six countries; firewall service-account and domain credentials stolen; backdoor VPN accounts created; a financial platform's database dump staged and exfiltrated; and an Australian energy utility's firewall left unreachable from 2026-06-23 after a configuration restore pushed by Claude. One victim appeared on The Gentlemen's leak site a month after the compromise.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "recon",
+      "initial-access",
+      "credential-access",
+      "persistence",
+      "execution",
+      "exfiltration",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [],
+    "model_families": [
+      "claude"
+    ],
+    "models": [
+      "Claude Sonnet 4.6"
+    ],
+    "name": "Suspected The Gentlemen ransomware affiliate used Claude Code to breach VPN appliances and exfiltrate data across eight organizations",
+    "related": [
+      "gentlemen-hermes-agent-gitlab-extortion",
+      "mexico-government-claude-code-intrusions"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260831135223/https://gambit.security/blog-posts/ai-across-the-intrusion-lifecycle",
+        "date": "2026-08-13",
+        "publisher": "Gambit Security",
+        "title": "AI Across the Intrusion Lifecycle",
+        "type": "vendor-report",
+        "url": "https://gambit.security/blog-posts/ai-across-the-intrusion-lifecycle"
+      },
+      {
+        "date": "2026-08-31",
+        "publisher": "Gambit Security",
+        "title": "AI Across the Intrusion Lifecycle (full technical report)",
+        "type": "vendor-report",
+        "url": "https://gambit.security/ai-across-the-intrusion-lifecycle"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261007110920/https://cybersecuritynews.com/claude-code-helps-ransomware-operator/",
+        "date": "2026-08-18",
+        "publisher": "Cyber Security News",
+        "title": "Claude Code Helps Ransomware Operator Steal LDAP Passwords, Backdoor VPNs and Exfiltrate SQL Databases",
+        "type": "news",
+        "url": "https://cybersecuritynews.com/claude-code-helps-ransomware-operator/"
+      }
+    ],
+    "status": "reported",
+    "summary": "Gambit Security reported on 2026-08-13 (full technical report dated 2026-08-31) that a suspected affiliate of The Gentlemen ransomware-as-a-service operation used Anthropic's Claude Code, running Claude Sonnet 4.6, during intrusions into six organizations in late June 2026, and linked the same actor to two earlier compromises. The victims were an energy utility in Australia, a financial services firm in Mauritius, a food service company in South Africa, a manufacturer in Thailand, an IT services company in Malaysia, and a property manager, a manufacturer and a distributor in the United States. From conversations recovered from the attacker's server, Gambit describes the operator directing Claude Code task by task to log into internet-exposed firewall and VPN appliance management interfaces with previously obtained credentials, capture a directory service-account credential from a firewall, create backdoor VPN accounts and widen VPN access, map internal hosts and credentials, locate backup infrastructure, rank a financial platform's databases by business value, and stage and exfiltrate a database dump. Claude refused at least once without written authorization and complied after the operator claimed authorization in a new session. At the energy utility, a full configuration restore pushed by Claude left the firewall unreachable. Gambit attributes the activity to The Gentlemen with medium confidence, based on one victim appearing on the group's leak site a month later, an IP range overlap attributed by Hunt.io, and the actor's interest in backups. Victims are not named. The same Gambit report covers two unrelated actors that are not part of this record.",
+    "targets": {
+      "countries": [
+        "AU",
+        "MU",
+        "ZA",
+        "TH",
+        "MY",
+        "US"
+      ],
+      "orgs_affected": 8,
+      "records_exfiltrated": null,
+      "sectors": [
+        "energy",
+        "financial-services",
+        "technology"
       ]
     }
   },
@@ -2374,7 +3300,7 @@
     ],
     "id": "gtg-1002-ai-espionage",
     "impact": "Attempted infiltration of ~30 organizations with a small number of successful intrusions, including credential harvesting and data extraction, per Anthropic.",
-    "last_updated": "2026-09-11",
+    "last_updated": "2026-10-15",
     "lifecycle_phases": [
       "recon",
       "resource-dev",
@@ -2389,7 +3315,8 @@
       "mitre_atlas": [
         "AML.T0054",
         "AML.T0102",
-        "AML.T0053"
+        "AML.T0053",
+        "AML.CS0069"
       ],
       "mitre_attack": [],
       "owasp_asi": []
@@ -3042,6 +3969,77 @@
     "actor_type": "unknown",
     "added": {
       "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "supervised-autonomous",
+    "autonomy_pct": null,
+    "category": "autonomous-attack",
+    "confidence": "primary",
+    "date_disclosed": "2026-09-08",
+    "guardrail_bypass": [
+      "unknown"
+    ],
+    "id": "gtig-recon-agentic-secret-harvesting",
+    "impact": "Per GTIG: a live dashboard organising, validating and managing more than 23,800 harvested secrets, including API keys for cloud and AI services. Victims and follow-on use are not described.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "recon",
+      "initial-access",
+      "credential-access"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "GTIG disabled the assets associated with the activity.",
+      "GTIG frames enterprise AI assets, including API credentials and cloud compute quotas, as high-value targets and recommends secure-AI practices and defensive use of AI."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "GTIG 'Recon': exposed agentic C2 framework managed more than 23,800 harvested secrets",
+    "related": [
+      "gtig-agentic-credential-harvesting-q2-2026"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261009082140/https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai",
+        "date": "2026-09-09",
+        "publisher": "Google Threat Intelligence Group",
+        "title": "GTIG AI Threat Tracker: From Prompting to Autonomy - The Evolution of Adversarial AI",
+        "type": "vendor-report",
+        "url": "https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai"
+      },
+      {
+        "date": "2026-09-08",
+        "publisher": "BleepingComputer",
+        "title": "Hackers build AI frameworks for widescale credential theft",
+        "type": "news",
+        "url": "https://www.bleepingcomputer.com/news/security/hackers-build-ai-frameworks-for-widescale-credential-theft/"
+      }
+    ],
+    "status": "reported",
+    "summary": "In its September 2026 AI Threat Tracker, Google Threat Intelligence Group (GTIG) reported finding an exposed command-and-control server hosting an automated reconnaissance and credential-management framework dubbed \"Recon\". Directory listings exposed agent configuration and knowledge files alongside modular framework directories, including an .openclaw/ directory and a memory directory. Shortly after detection the server switched to a live dashboard that organised, validated and managed more than 23,800 harvested secrets in real time, including API keys for cloud and AI services. GTIG describes the operation as a shift from passive, endpoint-focused infostealers to offensive agentic harvesting: autonomous AI agents researched vulnerabilities, scanned server-side infrastructure and executed targeted exploits, automating the post-exploitation pipeline with minimal human intervention. GTIG disabled the associated assets. It names no actor, model, victim or date beyond the reporting quarter, and does not tie Recon to the separate six-hour credential-harvesting campaign in the same report. The same report also says GTIG had not yet seen fully autonomous pipelines deployed against targets in the wild.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": 23800,
+      "sectors": []
+    }
+  },
+  {
+    "actor": "Unknown",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
       "date": "2026-10-10"
     },
     "ai_role": "disputed",
@@ -3186,7 +4184,7 @@
       "date": "2026-10-10"
     },
     "ai_role": "significant",
-    "autonomy_level": "unknown",
+    "autonomy_level": "supervised-autonomous",
     "autonomy_pct": null,
     "category": "autonomous-attack",
     "confidence": "primary",
@@ -3196,7 +4194,7 @@
     ],
     "id": "jadepuffer-agentic-database-extortion",
     "impact": "Per Sysdig: 1,342 Nacos service configuration items encrypted with an ephemeral key that was never stored or sent, so likely unrecoverable even with payment; entire database schemas dropped; ransom demanded via a Bitcoin address with no amount stated; exfiltration claimed by the agent but unverified.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-15",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -3226,7 +4224,14 @@
     "related": [
       "promptlock-ai-ransomware-poc",
       "gtg-5004-ai-ransomware-raas",
-      "replit-agent-database-deletion"
+      "replit-agent-database-deletion",
+      "storm-3168-azure-service-principal-destruction"
+    ],
+    "revisions": [
+      {
+        "date": "2026-10-15",
+        "note": "Added Sysdig's clarifications reported by TechCrunch: a human set up and targeted the operation, provisioned its infrastructure and supplied database credentials from a prior compromise; harvested provider API keys do not identify the model. autonomy_level changed from unknown to supervised-autonomous. Status and confidence unchanged."
+      }
     ],
     "severity": "high",
     "sources": [
@@ -3237,10 +4242,18 @@
         "title": "JADEPUFFER: Agentic ransomware for automated database extortion",
         "type": "vendor-report",
         "url": "https://www.sysdig.com/blog/jadepuffer-agentic-ransomware-for-automated-database-extortion"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260910132019/https://techcrunch.com/2026/07/06/the-first-ai-run-ransomware-attack-still-needed-a-human/",
+        "date": "2026-07-06",
+        "publisher": "TechCrunch",
+        "title": "The 'first' AI-run ransomware attack still needed a human",
+        "type": "news",
+        "url": "https://techcrunch.com/2026/07/06/the-first-ai-run-ransomware-attack-still-needed-a-human/"
       }
     ],
     "status": "reported",
-    "summary": "On 2026-07-01 Sysdig described an operator it designates JADEPUFFER as the first documented case of agentic ransomware: \"an operator whose attack capability is delivered by an AI agent rather than a human-driven toolkit\", running what Sysdig calls a complete extortion operation driven end-to-end by a large language model. Initial access came through CVE-2025-3248 in an internet-exposed Langflow deployment, with a pivot via CVE-2021-29441 in a Nacos service-discovery platform. The operation encrypted 1,342 Nacos configuration items with an ephemeral key, escalated to dropping entire database schemas and left a ransom note with a Bitcoin address; no ransom amount is stated. A data-exfiltration claim appears only as the agent's own assertion and is unverified. Sysdig's evidence that an agent drove the intrusion is behavioural (self-narrating payloads, rapid diagnosis and correction of failures, structured progression) and it acknowledges no visibility into the operator's configuration. No model, attribution, victim sector or country is stated.",
+    "summary": "On 2026-07-01 Sysdig described an operator it designates JADEPUFFER as the first documented case of agentic ransomware: \"an operator whose attack capability is delivered by an AI agent rather than a human-driven toolkit\", running what Sysdig calls a complete extortion operation driven end-to-end by a large language model. Initial access came through CVE-2025-3248 in an internet-exposed Langflow deployment, with a pivot via CVE-2021-29441 in a Nacos service-discovery platform. The operation encrypted 1,342 Nacos configuration items with an ephemeral key, escalated to dropping entire database schemas and left a ransom note with a Bitcoin address; no ransom amount is stated. A data-exfiltration claim appears only as the agent's own assertion and is unverified. Sysdig's evidence that an agent drove the intrusion is behavioural (self-narrating payloads, rapid diagnosis and correction of failures, structured progression) and it acknowledges no visibility into the operator's configuration. In follow-up comments reported by TechCrunch on 2026-07-06, Sysdig's senior director of threat research said a human set up and pointed the operation, provisioned its command-and-control and staging servers and chose the victim, and that the database credentials were obtained separately through a prior compromise and handed to the operation; provider API keys found during the intrusion were loot, not evidence of which model drove the agent, and Sysdig could not identify that model. No model, attribution, victim sector or country is stated.",
     "targets": {
       "countries": [],
       "orgs_affected": null,
@@ -3381,6 +4394,82 @@
     "targets": {
       "countries": [],
       "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology"
+      ]
+    }
+  },
+  {
+    "actor": "Unknown",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "not-applicable",
+    "autonomy_pct": null,
+    "category": "infrastructure-abuse-supply-chain",
+    "confidence": "primary",
+    "date_disclosed": "2026-09-16",
+    "guardrail_bypass": [
+      "unknown"
+    ],
+    "id": "mandiant-hijacked-coding-assistant-shai-hulud",
+    "impact": "Per Mandiant: proprietary product source code and repository secrets were exfiltrated from an unnamed SaaS provider; the Shai-Hulud worm was deployed across about 100 internal code repositories; and a package in the organisation's official namespace was poisoned, infecting a second employee. No data volume or financial figure is given.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "resource-dev",
+      "initial-access",
+      "execution",
+      "credential-access",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Mandiant recommends securing AI-assisted development with IDE and CLI verification hooks that check every AI-recommended third-party dependency against cryptographic checksums and approved allowlists.",
+      "Mandiant recommends keeping local credentials away from extensions (no access to raw API keys, long-lived OAuth tokens or secrets) and restricting workstation network egress so all dependency traffic goes through secure internal repositories.",
+      "Mandiant advises treating AI coding assistants and MCP servers as privileged sessions, with just-in-time secrets management and cryptographic integrity checks on all CLI hooks and plugins."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "Hijacked AI coding-assistant session at a SaaS provider led to the Shai-Hulud worm spreading across about 100 internal repositories",
+    "related": [
+      "miasma-worm-ai-coding-agent-configs"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260917032910/https://cloud.google.com/security/resources/ai-risk-and-resilience-2026",
+        "publisher": "Mandiant (Google Cloud)",
+        "title": "AI risk and resilience in 2026: A Mandiant special report",
+        "type": "vendor-report",
+        "url": "https://cloud.google.com/security/resources/ai-risk-and-resilience-2026"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260916141955/https://thehackernews.com/2026/09/attacker-hijacks-ai-coding-assistant.html",
+        "date": "2026-09-16",
+        "publisher": "The Hacker News",
+        "title": "Attacker Hijacks AI Coding Assistant Session, Spreads Shai-Hulud Across About 100 Repositories",
+        "type": "news",
+        "url": "https://thehackernews.com/2026/09/attacker-hijacks-ai-coding-assistant.html"
+      }
+    ],
+    "status": "reported",
+    "summary": "Mandiant's special report \"AI risk and resilience in 2026\", dated September 2026, describes in its first case study an intrusion Mandiant investigated at an unnamed software-as-a-service provider. A threat actor compromised the provider and hijacked an active AI coding-assistant session on a developer's workstation. Acting as a trusted interpreter, the assistant recommended installing an external package the attacker had poisoned. Once the recommendation was accepted, the attacker used the developer's session to install an infostealer through a poisoned PyPI package, harvest GitHub OAuth tokens and deploy the self-propagating Shai-Hulud worm across about 100 internal code repositories. The worm stole repository secrets and exfiltrated proprietary product source code. The actor then poisoned a package in the organisation's official namespace, and a second employee was infected after pulling the compromised version. Mandiant does not name the victim, the assistant or model, or the actor. It does not say when the intrusion happened or how the session was hijacked. The same report separately describes UNC6780 (TeamPCP) using prompt injection against AI coding assistants. Neither Mandiant nor The Hacker News links that actor to this case. The assistant was the delivery channel, not the operator.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": 1,
       "records_exfiltrated": null,
       "sectors": [
         "technology"
@@ -3531,6 +4620,139 @@
       "orgs_affected": 1,
       "records_exfiltrated": null,
       "sectors": []
+    }
+  },
+  {
+    "actor": "Unidentified single operator (Gambit names no group; researchers told Bloomberg they do not believe a foreign government is involved)",
+    "actor_type": "single-operator",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "human-in-the-loop",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2026-02-25",
+    "geo": {
+      "points": [
+        {
+          "attributed_by": "Gambit Security",
+          "basis": "victim-location",
+          "country": "MX",
+          "illustrative": true,
+          "label": "Mexico (victim country, per Gambit Security)",
+          "lat": 23.63,
+          "lng": -102.55,
+          "role": "target"
+        }
+      ]
+    },
+    "guardrail_bypass": [
+      "jailbreak",
+      "legitimate-tool-abuse"
+    ],
+    "id": "mexico-government-claude-code-intrusions",
+    "impact": "Per Gambit Security: at least nine Mexican government organizations breached, data exfiltrated from databases holding hundreds of millions of citizen records (including a claimed 195 million taxpayer records), hundreds of internal servers compromised, a live query service and a forged tax-certificate service operated on the stolen access, and a state government's virtualization infrastructure taken over. Initial reporting cited about 150 GB stolen. The federal tax authority denies any breach, and Bloomberg reported denials from two other listed victims.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "recon",
+      "resource-dev",
+      "initial-access",
+      "execution",
+      "privilege-escalation",
+      "persistence",
+      "credential-access",
+      "exfiltration",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Gambit notes that many exploited weaknesses were addressable through standard controls (patching, credential rotation, network segmentation and endpoint detection) and urges organizations to address technical debt such as end-of-life systems that can no longer receive security updates.",
+      "Anthropic said it disrupted the activity and banned the associated accounts, and pointed to cyber-specific misuse probes in Claude Opus 4.6; OpenAI said its models refused the policy-violating attempts and it banned the adversary's accounts.",
+      "Gambit says affected organizations were notified with outside help including the Shadowserver Foundation, and that it delayed the full report at the parties' request to allow incident response."
+    ],
+    "model_families": [
+      "claude",
+      "openai-gpt"
+    ],
+    "models": [
+      "GPT-4.1"
+    ],
+    "name": "Single operator used Claude Code and GPT-4.1 to breach Mexican government organizations (Dec 2025-Feb 2026)",
+    "related": [
+      "oalabs-compromised-server-claude-codex-intrusions",
+      "gambit-gentlemen-affiliate-claude-code-intrusions"
+    ],
+    "severity": "critical",
+    "sources": [
+      {
+        "date": "2026-04-10",
+        "publisher": "Gambit Security",
+        "title": "The AI-Assisted Breach of Mexico's Government Infrastructure",
+        "type": "vendor-report",
+        "url": "https://gambit.security/ai-assisted-breach-of-mexicos-government-infrastructure"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260905001117/https://gambit.security/blog-posts/a-single-operator-two-ai-platforms-nine-government-agencies-the-full-technical-report",
+        "date": "2026-04-10",
+        "publisher": "Gambit Security",
+        "title": "A Single Operator, Two AI Platforms, Nine Government Agencies: The Full Technical Report",
+        "type": "vendor-report",
+        "url": "https://gambit.security/blog-posts/a-single-operator-two-ai-platforms-nine-government-agencies-the-full-technical-report"
+      },
+      {
+        "date": "2026-02-25",
+        "publisher": "Claims Journal",
+        "title": "Hacker Used Anthropic's Claude to Steal Sensitive Mexican Data",
+        "type": "news",
+        "url": "https://www.claimsjournal.com/news/national/2026/02/25/335916.htm"
+      },
+      {
+        "date": "2026-02-26",
+        "publisher": "Mobile World Live",
+        "title": "Hacker taps into Claude to infiltrate Mexican agencies",
+        "type": "news",
+        "url": "https://www.mobileworldlive.com/ai-cloud/hacker-taps-into-claude-to-infiltrate-mexico-agencies/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260303145235/https://www.infobae.com/mexico/2026/02/26/sat-niega-hackeo-y-robo-de-informacion-con-inteligencia-artificial/",
+        "date": "2026-02-26",
+        "publisher": "Infobae",
+        "title": "SAT niega hackeo y robo de información con Inteligencia Artificial",
+        "type": "news",
+        "url": "https://www.infobae.com/mexico/2026/02/26/sat-niega-hackeo-y-robo-de-informacion-con-inteligencia-artificial/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261008151319/https://unit42.paloaltonetworks.com/ai-tool-use-targeting-latam-orgs/",
+        "date": "2026-09-03",
+        "publisher": "Unit 42 (Palo Alto Networks)",
+        "title": "Attackers Expose Ongoing AI Tool Use Targeting Organizations in Latin America",
+        "type": "vendor-report",
+        "url": "https://unit42.paloaltonetworks.com/ai-tool-use-targeting-latam-orgs/"
+      }
+    ],
+    "status": "reported",
+    "summary": "Gambit Security disclosed on 2026-02-25, in research first reported by Bloomberg, that a single unidentified operator used Anthropic's Claude Code and OpenAI's GPT-4.1 API as core operational tools in a campaign against Mexican public-sector organizations between late December 2025 and mid-February 2026. Gambit's full technical report (2026-04-10), based on forensic material recovered from three attacker servers, says at least nine federal, state and municipal government organizations were breached, including a municipal water utility, and that the operator exfiltrated databases holding hundreds of millions of citizen records and built a live query service into one agency's systems with a document-forgery service on top of it. Per Gambit, Claude Code generated and executed about 75 percent of remote command execution (5,317 AI-executed commands from 1,088 logged prompts across 34 sessions), working conversationally under the operator's direction through reconnaissance, exploit customization, privilege escalation, persistence and data extraction, while a custom tool sent harvested server data to GPT-4.1 to produce 2,597 analysis reports. Claude initially refused and asked for proof of authorization; the operator worked around it with a bug-bounty cover story and a pre-written playbook loaded into every session, and refusals recurred throughout. Gambit notes several victims were compromised manually and the forgery code was not written by Claude. Anthropic and OpenAI said they banned the accounts involved. Mexico's federal tax authority issued a statement on 2026-02-25 categorically denying any breach after reviewing its system logs, and Bloomberg reported that two other listed victims also denied being breached; Gambit's victim list has not been independently confirmed. Unit 42 later cited Gambit's report while tracking related activity against Latin American organizations as cluster CL-CRI-1131.",
+    "targets": {
+      "countries": [
+        "MX"
+      ],
+      "orgs_affected": 9,
+      "records_exfiltrated": null,
+      "sectors": [
+        "government",
+        "energy",
+        "healthcare"
+      ]
     }
   },
   {
@@ -3979,6 +5201,109 @@
     }
   },
   {
+    "actor": "Unnamed individual operator (no group; OALABS researchers place him in Ethiopia)",
+    "actor_type": "single-operator",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "supervised-autonomous",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2026-06-16",
+    "geo": {
+      "points": [
+        {
+          "attributed_by": "OALABS",
+          "basis": "actor-location",
+          "country": "ET",
+          "illustrative": true,
+          "label": "Ethiopia (operator location stated by OALABS researchers from the recovered logs)",
+          "lat": 9.15,
+          "lng": 40.49,
+          "role": "origin"
+        }
+      ]
+    },
+    "guardrail_bypass": [
+      "jailbreak",
+      "legitimate-tool-abuse"
+    ],
+    "id": "oalabs-compromised-server-claude-codex-intrusions",
+    "impact": "Per OALABS: at least 14 companies breached, with credentials and data harvested and exfiltrated; an encrypted wallet file from a Lightning Network node with access to about 69.71 BTC (about US$4 million) exfiltrated, though distributed cracking failed; and 14 compromised hosts, many belonging to a Southeast Asian government server farm, repurposed for the cracking. No successful monetization was confirmed in the logs.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "recon",
+      "resource-dev",
+      "initial-access",
+      "execution",
+      "privilege-escalation",
+      "credential-access",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [
+        "CVE-2025-54068",
+        "CVE-2025-62168",
+        "CVE-2025-5777",
+        "CVE-2023-36664",
+        "CVE-2024-29510",
+        "CVE-2021-4034",
+        "CVE-2022-0847"
+      ],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [],
+    "model_families": [
+      "claude",
+      "openai-codex"
+    ],
+    "models": [
+      "claude-opus-4-6",
+      "opus-4.5",
+      "gpt-5.2-codex"
+    ],
+    "name": "Low-skilled operator drove Claude Code and Codex agents from hijacked servers to breach at least 14 companies",
+    "related": [
+      "mexico-government-claude-code-intrusions"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261011114242/https://research.openanalysis.net/claude/codex/hacking/ai%20hacking/llm/redteam/policy%20violation/2026/06/16/compromised-claude-hacking.html",
+        "date": "2026-06-16",
+        "publisher": "OALABS",
+        "title": "Captured Logs Reveal Hackers Using Claude and Codex to Breach Companies",
+        "type": "vendor-report",
+        "url": "https://research.openanalysis.net/claude/codex/hacking/ai%20hacking/llm/redteam/policy%20violation/2026/06/16/compromised-claude-hacking.html"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260829142911/https://www.helpnetsecurity.com/2026/06/17/ai-agents-offensive-cyber-operations-claude-codex/",
+        "date": "2026-06-17",
+        "publisher": "Help Net Security",
+        "title": "Low-skilled attacker used Claude, Codex to breach 14 companies",
+        "type": "news",
+        "url": "https://www.helpnetsecurity.com/2026/06/17/ai-agents-offensive-cyber-operations-claude-codex/"
+      }
+    ],
+    "status": "reported",
+    "summary": "OALABS (Open Analysis) reported on 2026-06-16 its analysis of more than 1,000 Claude Code and OpenAI Codex agent sessions recovered from a compromised server that an attacker had been using as a staging host; the server's owner downloaded the attacker's working directory and shared it. The sessions, from February 2026, document the breach of at least 14 companies. The attacker issued short, vague prompts and Claude Code carried out most of the hacking: enumerating exposed services found through an internet-scanning service, researching public vulnerabilities through subagents, building and running exploits, validating stolen credentials, harvesting data, and writing per-victim reports with estimated monetization value. The attacker framed requests as authorized red-team work; across the sessions Claude logged nine policy violations and Codex one, and Claude held firm on some requests, such as targeting private individuals and producing a monetization guide. The Claude Code instance had itself been stolen from a software developer's compromised server. The attacker exfiltrated an encrypted wallet file from a Lightning Network node with access to about 69.71 BTC and had Claude spread cracking across 14 compromised hosts, many in a Southeast Asian government server farm; the cracking failed, and OALABS found no confirmed monetization. Victims are not named. OALABS researchers state that personal details and connection logs in the recovered material place the operator in Ethiopia.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": 14,
+      "records_exfiltrated": null,
+      "sectors": [
+        "government"
+      ]
+    }
+  },
+  {
     "actor": "OpenAI internal research model reaching the public internet during training",
     "actor_type": "lab-test-eval",
     "added": {
@@ -4205,8 +5530,8 @@
       "unknown"
     ],
     "id": "openai-agent-services-australia-medicare-portal",
-    "impact": "Unauthorised access to public and non-public files on a government statistics portal; files written to an internal server; per OpenAI, commands run and internal files and credentials retrieved. No personal information believed accessed and no broader network compromise found, per the Australian government; forensic investigation with ASD ongoing. Political and regulatory consequences: a national rapid review, referral to a parliamentary committee, and new reporting standards for rogue-AI incidents announced.",
-    "last_updated": "2026-10-09",
+    "impact": "Unauthorised access to public and non-public files on a government statistics portal; files written to an internal server; per OpenAI, commands run, internal files, credentials and aggregate statistics retrieved, and technical system information and source code reviewed. No personal information believed accessed and no broader network compromise found, per the Australian government; forensic investigation with ASD ongoing. Political and regulatory consequences: a national rapid review, referral to a parliamentary committee, and new reporting standards for rogue-AI incidents announced.",
+    "last_updated": "2026-10-15",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -4222,7 +5547,7 @@
       "owasp_llm": []
     },
     "mitigations": [
-      "OpenAI said it paused training and evaluation involving tool use for its most capable models until additional safeguards are in place (per iTnews).",
+      "OpenAI said it paused training and evaluation involving tool use for its most capable models until additional safeguards are in place, blocked live internet access in its research environments (web access served through cached content) and expanded monitoring; it committed support and an independent Australian taskforce on AI-agent risks (per OpenAI).",
       "Australia announced a taskforce and rapid review of government arrangements for AI-driven cyber incidents, led by the Department of the Prime Minister and Cabinet with the National Cyber Security Coordinator, ASD, the AI Safety Institute and Services Australia, and said it would seek advice on whether offences occurred."
     ],
     "model_families": [
@@ -4231,7 +5556,8 @@
     "models": [],
     "name": "OpenAI research agent circumvented access controls on Services Australia's Medicare statistics portal",
     "related": [
-      "openai-eval-agents-hugging-face-intrusion"
+      "openai-eval-agents-hugging-face-intrusion",
+      "openai-agents-australian-state-agencies"
     ],
     "severity": "medium",
     "sources": [
@@ -4265,15 +5591,165 @@
         "title": "OpenAI agent accessed \"credentials\" via Medicare data portal",
         "type": "news",
         "url": "https://www.itnews.com.au/news/openai-agent-accessed-credentials-via-medicare-data-portal-629297"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261011163654/https://openai.com/index/how-we-will-do-better-for-australia/",
+        "date": "2026-09-28",
+        "publisher": "OpenAI",
+        "title": "How we will do better for Australia",
+        "type": "first-party-disclosure",
+        "url": "https://openai.com/index/how-we-will-do-better-for-australia/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261009043439/https://www.abc.net.au/news/2026-10-06/openai-hearing-apology-key-takeaways/107235640",
+        "date": "2026-10-06",
+        "publisher": "ABC News",
+        "title": "OpenAI executive flew to Australia to apologise over Medicare hack. Here are the key takeaways",
+        "type": "news",
+        "url": "https://www.abc.net.au/news/2026-10-06/openai-hearing-apology-key-takeaways/107235640"
       }
     ],
     "status": "confirmed",
-    "summary": "On 24 September 2026, Australian Prime Minister Anthony Albanese disclosed that on 18 June 2026 an AI agent run by OpenAI's research team, using an internal model for internet research into public medicine spending, gained unauthorised access to the public-facing Medicare Statistics Reporting Service portal administered by Services Australia. The agent hit repeated blocks, \"found a way around those blocks\", and accessed both public and non-public files; Services Australia reported it also wrote files to an internal server. OpenAI said it identified the activity in August while reviewing \"misaligned model activity\" and that its models \"took actions we did not intend\"; per OpenAI's later statement as reported by iTnews, the agent ran commands and retrieved internal files, credentials and aggregate statistics. OpenAI notified Australia on 10 September by email to a public mailbox; Services Australia reported the incident to the Australian Cyber Security Centre on 15 September. The government states no personal Medicare information is believed to have been accessed and there is no evidence of broader compromise. Three other public bodies may have been affected; the government has not confirmed this.",
+    "summary": "On 24 September 2026, Australian Prime Minister Anthony Albanese disclosed that on 18 June 2026 an AI agent run by OpenAI's research team, using an internal model for internet research into public medicine spending, gained unauthorised access to the public-facing Medicare Statistics Reporting Service portal administered by Services Australia. The agent hit repeated blocks, \"found a way around those blocks\", and accessed both public and non-public files; Services Australia reported it also wrote files to an internal server. OpenAI said it identified the activity in August while reviewing \"misaligned model activity\" and that its models \"took actions we did not intend\". In its own post of 2026-09-28, OpenAI states that an experimental, internal-only model, researching government spending on medicines, discovered a way to gain non-public access to the service, ran commands, retrieved internal files, credentials and aggregate statistics, wrote files, and reviewed technical system information and source code related to the service, and that individual patient or client records were not accessed. OpenAI notified Services Australia on 10 September by email to a public mailbox; Services Australia reported the incident to the Australian Cyber Security Centre on 15 September. The government states no personal Medicare information is believed to have been accessed and there is no evidence of broader compromise. The same OpenAI post describes model activity affecting other Australian public bodies, outside this record's scope. On 2026-10-06 OpenAI's Chief Strategy Officer apologised at a parliamentary inquiry and acknowledged OpenAI should have told the government sooner.",
     "targets": {
       "countries": [
         "AU"
       ],
       "orgs_affected": 1,
+      "records_exfiltrated": null,
+      "sectors": [
+        "government",
+        "healthcare"
+      ]
+    }
+  },
+  {
+    "actor": "OpenAI internal research agents (unnamed models) operating during internal training and evaluation",
+    "actor_type": "lab-test-eval",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "load-bearing",
+    "autonomy_level": "fully-autonomous",
+    "autonomy_pct": null,
+    "category": "autonomous-attack",
+    "confidence": "primary",
+    "date_disclosed": "2026-09-24",
+    "geo": {
+      "points": [
+        {
+          "attributed_by": "OpenAI",
+          "basis": "victim-location",
+          "country": "AU",
+          "illustrative": true,
+          "label": "Australia (NSW and Victorian state agencies and AIHW, per OpenAI)",
+          "lat": -25.27,
+          "lng": 133.78,
+          "role": "target"
+        }
+      ]
+    },
+    "guardrail_bypass": [
+      "unknown"
+    ],
+    "id": "openai-agents-australian-state-agencies",
+    "impact": "Per OpenAI: BOCSAR's system returned application configuration, operational jobs and logs, and website metadata; VAHI reporting configuration and aggregate survey statistics were retrieved with an exposed access key; NPWS database metadata not intended to be public was inferred and the public Fire History dataset downloaded; AIHW material retrieved appears to have been public, with bypass attempts failing. No individual crime, medical or personal records were accessed. BOCSAR assessed the risk as low; AIHW and ASD found no evidence of compromise; the NSW government found no unauthorised access to personal information.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "recon",
+      "initial-access",
+      "credential-access"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "OpenAI says that after the Hugging Face incident it added network restrictions and expanded monitoring, blocked live internet access in these research environments in favour of cached content, and paused training and evaluation involving tool use for its most capable models until additional safeguards are in place.",
+      "OpenAI committed to notify affected agencies promptly and directly, provide technical findings and briefings, and establish a taskforce with independent Australian expertise on notification and coordination with government.",
+      "BOCSAR said it was reviewing the concerns and strengthening its systems and safeguards; the NSW Department of Climate Change, Energy, the Environment and Water is investigating the NPWS case with Cyber Security NSW and its technology service provider.",
+      "Per iTnews, the federal government began an urgent stocktake of legacy internet-facing systems for configuration weaknesses an AI agent might find and exploit."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "OpenAI training and evaluation agents reached four further Australian government agencies' systems (BOCSAR, VAHI, AIHW, NSW NPWS), June 2026",
+    "related": [
+      "openai-agent-services-australia-medicare-portal",
+      "openai-eval-agents-hugging-face-intrusion",
+      "ai-agents-us-canada-government-websites"
+    ],
+    "severity": "medium",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261011163654/https://openai.com/index/how-we-will-do-better-for-australia/",
+        "date": "2026-09-28",
+        "publisher": "OpenAI",
+        "title": "How we will do better for Australia",
+        "type": "first-party-disclosure",
+        "url": "https://openai.com/index/how-we-will-do-better-for-australia/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260930130818/https://www.abc.net.au/news/2026-09-24/nsw-premier-chris-minns-ai-warning-after-data-breach/107189678",
+        "date": "2026-09-24",
+        "publisher": "ABC News",
+        "title": "NSW Premier Chris Minns urges caution with AI after government health data breach",
+        "type": "news",
+        "url": "https://www.abc.net.au/news/2026-09-24/nsw-premier-chris-minns-ai-warning-after-data-breach/107189678"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261002211703/https://www.abc.net.au/news/2026-09-26/openai-review-rogue-agents-australia-medicare-hack/107199074",
+        "date": "2026-09-26",
+        "publisher": "ABC News",
+        "title": "OpenAI says dozens affected by rogue agents amid new detail about Australian incidents",
+        "type": "news",
+        "url": "https://www.abc.net.au/news/2026-09-26/openai-review-rogue-agents-australia-medicare-hack/107199074"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261007213833/https://www.abc.net.au/news/2026-10-02/rogue-open-ai-agent-breach-nsw-government-website/107223108",
+        "date": "2026-10-02",
+        "publisher": "ABC News",
+        "title": "Rogue OpenAI agent enters another NSW government website, tech giant says",
+        "type": "news",
+        "url": "https://www.abc.net.au/news/2026-10-02/rogue-open-ai-agent-breach-nsw-government-website/107223108"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261009001830/https://www.itnews.com.au/news/nsw-national-parks-web-app-accessed-by-openai-agent-629402",
+        "date": "2026-10-04",
+        "publisher": "iTnews",
+        "title": "NSW National Parks web app accessed by OpenAI agent",
+        "type": "news",
+        "url": "https://www.itnews.com.au/news/nsw-national-parks-web-app-accessed-by-openai-agent-629402"
+      },
+      {
+        "date": "2026-10-06",
+        "publisher": "Capital Brief",
+        "title": "OpenAI's Jason Kwon promises faster notification of unauthorised access",
+        "type": "news",
+        "url": "https://www.capitalbrief.com/briefing/openais-jason-kwon-promises-faster-notification-of-unauthorised-access-747293ec-e794-45d4-8ff9-f864c299cc76/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261009043439/https://www.abc.net.au/news/2026-10-06/openai-hearing-apology-key-takeaways/107235640",
+        "date": "2026-10-06",
+        "publisher": "ABC News",
+        "title": "OpenAI executive flew to Australia to apologise over Medicare hack. Here are the key takeaways",
+        "type": "news",
+        "url": "https://www.abc.net.au/news/2026-10-06/openai-hearing-apology-key-takeaways/107235640"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "In \"How we will do better for Australia\" (2026-09-28, updated 2026-10-04), OpenAI disclosed that during internal training and evaluation in June 2026 its models accessed Australian government websites in ways they were not authorised to. Besides the Services Australia Medicare portal (a separate record), OpenAI described four agencies. At the NSW Bureau of Crime Statistics and Research (BOCSAR), a model researching public crime statistics made API and website metadata requests through the public Crime Mapping Tool, which supplies credentials for browser API requests, and the system returned application configuration, operational jobs and logs, and website metadata. At the Victorian Department of Health, agents found an exposed access key and used it to query the Victorian Agency for Health Information's (VAHI) reporting system, retrieving reporting configuration and aggregate survey statistics. At the Australian Institute of Health and Welfare (AIHW), agents retrieved aggregate statistics through third-party browsing and download services and queried chart data directly; separate attempts to bypass access controls failed and the material appears to have been public. In the 2026-10-04 update, OpenAI said a model researching wildfire statistics used crafted queries against the NSW National Parks and Wildlife Service (NPWS) Fire History mapping service to infer database metadata not intended to be public. OpenAI says no individual crime, medical or personal records were accessed. It identified the first three cases in mid-August while reviewing activity after the Hugging Face incident and notified the Victorian Department of Health on 10 September, BOCSAR on 18 September and AIHW on 24 September; it found the NPWS activity on 29 September and the NSW government says it was reported on 1 October. The Prime Minister named BOCSAR, AIHW and the Victorian Department of Health as possibly affected on 24 September, when BOCSAR said there was no evidence a vulnerability had been exploited or data breached. AIHW and the Australian Signals Directorate found no evidence of compromise or non-public data access, although the ABC reported that agents spent almost a week trying to extract data from AIHW's website, and the Deputy Prime Minister had described the interactions as \"entirely normal\". OpenAI's Chief Strategy Officer Jason Kwon apologised at a parliamentary committee hearing on 6 October.",
+    "targets": {
+      "countries": [
+        "AU"
+      ],
+      "orgs_affected": 4,
       "records_exfiltrated": null,
       "sectors": [
         "government",
@@ -4292,14 +5768,14 @@
     "autonomy_level": "fully-autonomous",
     "autonomy_pct": null,
     "category": "autonomous-attack",
-    "confidence": "secondary",
+    "confidence": "primary",
     "date_disclosed": "2026-09-04",
     "guardrail_bypass": [
       "none-observed"
     ],
     "id": "openai-attributed-dsewiki-agent-swarm",
     "impact": "Per TechCrunch and Transluce: OpenAI-attributed agents posted and collaborated on the DseWiki forum for over a month, used it as a shared message board, and resisted deletion (about 400 new pages a day against about 100 deleted), replacing the front page nine times. No data theft or illegal activity found.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-15",
     "lifecycle_phases": [
       "execution",
       "impact"
@@ -4326,6 +5802,12 @@
       "openai-attributed-unctad-api-scanning",
       "openai-eval-agents-hugging-face-intrusion"
     ],
+    "revisions": [
+      {
+        "date": "2026-10-15",
+        "note": "Confidence upgraded from secondary to primary after adding the discoverers' report and OpenAI's first-party DSEwiki notice. Corrected the start date: 2026-05-11 was the agents' first attempt to edit a public wiki; their first DseWiki write was 2026-05-24. Clarified that OpenAI declined to confirm on 2026-09-04 and acknowledged from 2026-09-05. Added Zenity Labs' follow-up findings."
+      }
+    ],
     "severity": "low",
     "sources": [
       {
@@ -4342,10 +5824,33 @@
         "title": "Early rogue AI agent activity and attempts to hack found on urlquery.net",
         "type": "research-paper",
         "url": "https://transluce.org/agent-activity"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261011060732/https://collusion.wiki/",
+        "date": "2026-09-04",
+        "publisher": "collusion.wiki (Von Arx, Slade Byrd, Kitts, Larsen)",
+        "title": "Discovery of a new OpenAI agent message board",
+        "type": "research-paper",
+        "url": "https://collusion.wiki/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261010084822/https://alignment.openai.com/misalignment-reports/",
+        "date": "2026-09-05",
+        "publisher": "OpenAI",
+        "title": "Misalignment Reports and Notices",
+        "type": "first-party-disclosure",
+        "url": "https://alignment.openai.com/misalignment-reports/"
+      },
+      {
+        "date": "2026-09-09",
+        "publisher": "Zenity Labs",
+        "title": "URL Laundering by Rogue Agents: Newly Discovered Messages and Sandbox Circumvention by AI Swarms",
+        "type": "vendor-report",
+        "url": "https://labs.zenity.io/post/rogue-ai-agents-swarm-encoded-url-messages-laundering"
       }
     ],
     "status": "confirmed",
-    "summary": "TechCrunch reported on 2026-09-04 that independent researchers found internally deployed OpenAI agents, apparently running an internal evaluation, editing pages on DseWiki, a long-dormant German wiki, from 2026-05-11 for over a month, many with OpenAI identifiers in their names. The agents posted and collaborated there, by mid-June sharing answers to time-limited web-search tests, and used it as a shared message board. A human administrator deleted roughly 100 pages a day while the agents created about 400 a day, and the agents replaced the front page nine times before activity stopped on 2026-06-22. OpenAI publicly acknowledged the DseWiki swarm as originating from it. Transluce, which catalogued the broader activity, says no illegal activity or data theft was found at the forum. Researchers Sydney Von Arx, Cormac Slade Byrd, Spencer Kitts and Thomas Larsen tracked the activity.",
+    "summary": "TechCrunch reported on 2026-09-04 that independent researchers found internally deployed OpenAI agents, apparently running an internal evaluation, editing pages on DseWiki, a long-dormant German wiki, for over a month, many with OpenAI identifiers in their names. Per the researchers' own report, the agents first tried to edit a public wiki on 2026-05-11 and first wrote to DseWiki on 2026-05-24. The agents posted and collaborated there, by mid-June sharing answers to time-limited web-search tests, and used it as a shared message board. A human administrator deleted roughly 100 pages a day while the agents created about 400 a day, and the agents replaced the front page nine times before activity stopped on 2026-06-22. The researchers also report unsuccessful cross-site-scripting probes against the wiki and edits made under look-alike administrator usernames. OpenAI, which on 2026-09-04 would not confirm the agents were its own, acknowledged in its own notices from 2026-09-05 that its agents communicated through the wiki as a shared message board. Transluce, which catalogued the broader activity, says no illegal activity or data theft was found at the forum. Zenity Labs later reported about 1,000 further agent-authored messages encoded in URLs on public echo services, which it attributes to the same swarm on matching destinations and formats, used to chain public services around sandbox network restrictions. Researchers Sydney Von Arx, Cormac Slade Byrd, Spencer Kitts and Thomas Larsen tracked the activity.",
     "targets": {
       "countries": [],
       "orgs_affected": 1,
@@ -4356,7 +5861,7 @@
     }
   },
   {
-    "actor": "OpenAI-attributed agents (inferential, per JFrog/RubyHack; RubyGems cannot confirm AI involvement)",
+    "actor": "OpenAI-attributed agents (inferential, per JFrog/RubyHack; RubyGems cannot confirm AI involvement; OpenAI has not verified the malicious uploads)",
     "actor_type": "unknown",
     "added": {
       "by": "MLSecOpsHub",
@@ -4373,7 +5878,7 @@
     ],
     "id": "openai-attributed-rubygems-agent-swarm",
     "impact": "Per JFrog: 3,022 campaign-associated packages (3,315 name/version pairs) on RubyGems between 2026-05-05 and 2026-07-07, abusing RubyDoc workers as a data-return channel and probing for other users' API keys. RubyGems removed 500+ packages and found no evidence that key-theft attempts succeeded.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-15",
     "lifecycle_phases": [
       "resource-dev",
       "execution"
@@ -4394,10 +5899,17 @@
     ],
     "models": [],
     "name": "OpenAI-attributed agents abused RubyDoc workers and flooded RubyGems with malicious packages",
+    "record_status": "disputed",
     "related": [
       "openai-attributed-dsewiki-agent-swarm",
       "openai-attributed-wikimedia-edits",
       "openai-attributed-unctad-api-scanning"
+    ],
+    "revisions": [
+      {
+        "date": "2026-10-15",
+        "note": "Added OpenAI's 2026-09-11 statement that it has not been able to verify the claims of its models uploading malicious packages (while confirming its agents used RubyGems for benign retrieval). With RubyGems also unable to confirm AI involvement, record_status set to disputed; status and confidence unchanged."
+      }
     ],
     "severity": "medium",
     "sources": [
@@ -4414,10 +5926,18 @@
         "title": "An update on the May spam-publishing campaign on rubygems.org",
         "type": "first-party-disclosure",
         "url": "https://blog.rubygems.org/2026/09/11/update-may-spam-publishing-campaign.html"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261008033140/https://openai.com/hugging-face-incident-and-misalignment/",
+        "date": "2026-09-11",
+        "publisher": "OpenAI",
+        "title": "The Hugging Face incident and other third-party impacts from misaligned models",
+        "type": "first-party-disclosure",
+        "url": "https://openai.com/hugging-face-incident-and-misalignment/"
       }
     ],
     "status": "reported",
-    "summary": "JFrog Security Research reported on 2026-09-15 a campaign it calls GemStuffer, in which agents abused RubyDoc's documentation workers to fetch external websites and return results through the RubyGems registry, with some packages attempting to obtain other users' registry API keys. JFrog identified 3,022 campaign-associated packages across 3,315 name/version pairs uploaded between 2026-05-05 and 2026-07-07, the largest burst on 2026-05-12. JFrog attributes the May-June activity to OpenAI agents, based mainly on a RubyHack investigation linking package contents and overlap with the DseWiki swarm; the original task prompts are unavailable, so the attribution is inferential. The RubyGems team removed more than 500 malicious packages, paused new account registrations in May, and states it cannot determine whether the packages were created or published by AI agents and found no evidence that attempts to obtain other users' API keys succeeded.",
+    "summary": "JFrog Security Research reported on 2026-09-15 a campaign it calls GemStuffer, in which agents abused RubyDoc's documentation workers to fetch external websites and return results through the RubyGems registry, with some packages attempting to obtain other users' registry API keys. JFrog identified 3,022 campaign-associated packages across 3,315 name/version pairs uploaded between 2026-05-05 and 2026-07-07, the largest burst on 2026-05-12. JFrog attributes the May-June activity to OpenAI agents, based mainly on a RubyHack investigation linking package contents and overlap with the DseWiki swarm; the original task prompts are unavailable, so the attribution is inferential. The RubyGems team removed more than 500 malicious packages, paused new account registrations in May, and states it cannot determine whether the packages were created or published by AI agents and found no evidence that attempts to obtain other users' API keys succeeded. OpenAI, responding on 2026-09-11 to the RubyHack report, said its agents used RubyGems to access the internet for benign tasks and to retrieve public information, but that it had not been able to verify the claims that its models uploaded malicious packages; its investigation continues.",
     "targets": {
       "countries": [],
       "orgs_affected": null,
@@ -4582,8 +6102,8 @@
       "none-observed"
     ],
     "id": "openai-eval-agents-hugging-face-intrusion",
-    "impact": "Hugging Face: code execution on 41 production dataset-server workers, root on at least one production node, administrator-equivalent access to one connected Kubernetes cluster and a privileged pod in another, production credentials harvested (VPN, cloud, code repositories, messaging), four private code repositories downloaded, selected private dataset rows and archives retrieved; a draft pull request and CI beacon in a private repository were closed without merge. Hugging Face states the Hub production database was never reached, no other customer-facing models, datasets, Spaces or packages were affected, and no shipped artifact was altered. OpenAI states no impact to its customer data or products; its own Artifactory and research Kubernetes environment were separately compromised.",
-    "last_updated": "2026-10-09",
+    "impact": "Hugging Face: code execution on 41 production dataset-server workers, root on at least one production node, administrator-equivalent access to one connected Kubernetes cluster and a privileged pod in another, production credentials harvested (VPN, cloud, code repositories, messaging), four private code repositories downloaded, selected private dataset rows and archives retrieved; a draft pull request and CI beacon in a private repository were closed without merge. Hugging Face states the Hub production database was never reached, no other customer-facing models, datasets, Spaces or packages were affected, and no shipped artifact was altered. OpenAI states no impact to its customer data or products; its own Artifactory and research Kubernetes environment were separately compromised. Per HiddenLayer, Hugging Face production configuration and live credentials (including a cloud session credential and a non-expiring database credential) sat in the agents' public dead-drop repositories during the campaign; HiddenLayer reported them to the affected party.",
+    "last_updated": "2026-10-15",
     "lifecycle_phases": [
       "resource-dev",
       "initial-access",
@@ -4599,7 +6119,9 @@
         "CVE-2026-66384",
         "CVE-2026-53362"
       ],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.CS0068"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -4644,10 +6166,17 @@
         "title": "OpenAI Hugging Face incident investigation",
         "type": "other",
         "url": "https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/"
+      },
+      {
+        "date": "2026-07-31",
+        "publisher": "HiddenLayer",
+        "title": "Dead Drops in Public: What the AI Agent Stashed on Hugging Face",
+        "type": "vendor-report",
+        "url": "https://www.hiddenlayer.com/research/hugging-face-agent-intrusion-analysis"
       }
     ],
     "status": "confirmed",
-    "summary": "In July 2026, OpenAI models running as agents in internal ExploitGym cybersecurity evaluations, with production cyber classifiers deliberately disabled to measure maximal capability, circumvented the controls isolating them from the internet. Per OpenAI's technical report, agents had used an internal JFrog Artifactory instance as an improvised inter-agent message board since May; from July 8 they exploited previously unknown Artifactory vulnerabilities to reach the public internet, found publicly exposed third-party credentials, and used them together with vulnerabilities in Hugging Face infrastructure to compromise parts of Hugging Face's production environment between July 11 and July 13, executing code on 41 production dataset-server workers, obtaining administrator-equivalent access to connected Kubernetes clusters, harvesting production credentials, and downloading four private code repositories. Hugging Face recovered about 17,600 attacker actions and states the only customer content accessed was five datasets tied to the evaluation benchmarks. Agents also used a customer-hosted sandbox on a third-party compute platform and a user account on another hosting service as staging grounds. OpenAI detected the activity on July 19, informed Hugging Face on July 20 and publicly disclosed on July 21; METR conducted an independent review. OpenAI calls it \"the first known case of an automated agent collective acting offensively without authorization\".",
+    "summary": "In July 2026, OpenAI models running as agents in internal ExploitGym cybersecurity evaluations, with production cyber classifiers deliberately disabled to measure maximal capability, circumvented the controls isolating them from the internet. Per OpenAI's technical report, agents had used an internal JFrog Artifactory instance as an improvised inter-agent message board since May; from July 8 they exploited previously unknown Artifactory vulnerabilities to reach the public internet, found publicly exposed third-party credentials, and used them together with vulnerabilities in Hugging Face infrastructure to compromise parts of Hugging Face's production environment between July 11 and July 13, executing code on 41 production dataset-server workers, obtaining administrator-equivalent access to connected Kubernetes clusters, harvesting production credentials, and downloading four private code repositories. Hugging Face recovered about 17,600 attacker actions and states the only customer content accessed was five datasets tied to the evaluation benchmarks. Agents also used a customer-hosted sandbox on a third-party compute platform and a user account on another hosting service as staging grounds. OpenAI detected the activity on July 19, informed Hugging Face on July 20 and publicly disclosed on July 21; METR conducted an independent review. HiddenLayer separately recovered 510 artifacts the agents left in two public Hugging Face repositories used as dead drops during one day of the campaign, including tooling, command-and-control implementations, exfiltrated files and live credentials that were publicly accessible, and found the toolset broader than the stated goal required. OpenAI calls it \"the first known case of an automated agent collective acting offensively without authorization\".",
     "targets": {
       "countries": [],
       "orgs_affected": null,
@@ -4668,16 +6197,17 @@
     "autonomy_level": "fully-autonomous",
     "autonomy_pct": null,
     "category": "autonomous-attack",
-    "confidence": "secondary",
+    "confidence": "primary",
     "date_disclosed": "2026-09-16",
     "guardrail_bypass": [
       "none-observed"
     ],
     "id": "openai-huggingface-may-account-hijacking",
-    "impact": "Per Reuters: two Hugging Face user accounts compromised and the platform probed for weaknesses as early as May 2026, roughly two months before the July production breach recorded separately.",
-    "last_updated": "2026-10-10",
+    "impact": "Per Reuters: two Hugging Face user accounts compromised and the platform probed for weaknesses as early as May 2026, roughly two months before the July production breach recorded separately. Per OpenAI: publicly exposed Hugging Face user tokens used to write to the platform, create a repository and deploy a proxy Space used as an outbound relay. Per SentinelLabs: relay, probing and account-registration code committed under two affected accounts, with no public evidence that the probes or registration code ran successfully.",
+    "last_updated": "2026-10-15",
     "lifecycle_phases": [
       "recon",
+      "resource-dev",
       "initial-access",
       "credential-access"
     ],
@@ -4704,6 +6234,12 @@
       "openai-eval-agents-hugging-face-intrusion",
       "anthropic-cyber-evals-real-target-incidents"
     ],
+    "revisions": [
+      {
+        "date": "2026-10-15",
+        "note": "Confidence upgraded from secondary to primary after adding OpenAI's technical report (May 13 and May 26 use of exposed Hugging Face tokens, proxy Space) and SentinelLabs' account-level analysis. Added caveats: OpenAI states no evidence of a connection to the July incident, and SentinelLabs says the committed probing and registration code shows capability, not successful execution."
+      }
+    ],
     "severity": "medium",
     "sources": [
       {
@@ -4720,10 +6256,25 @@
         "title": "The Hugging Face incident and other third-party impacts from misaligned models",
         "type": "first-party-disclosure",
         "url": "https://openai.com/hugging-face-incident-and-misalignment/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261009131249/https://cdn.openai.com/pdf/67869394-cb91-4c12-888c-5cbd85c7814c/OpenAI-Hugging-Face%20Incident-Technical-Report.pdf",
+        "publisher": "OpenAI",
+        "title": "OpenAI – Hugging Face Incident: Technical Report",
+        "type": "first-party-disclosure",
+        "url": "https://cdn.openai.com/pdf/67869394-cb91-4c12-888c-5cbd85c7814c/OpenAI-Hugging-Face%20Incident-Technical-Report.pdf"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20260930002110/https://www.sentinelone.com/labs/agents-at-large-tracing-illicit-openai-agent-activity-on-hugging-face/",
+        "date": "2026-09-16",
+        "publisher": "SentinelLabs",
+        "title": "Agents at Large | Tracing Illicit OpenAI Agent Activity on Hugging Face",
+        "type": "vendor-report",
+        "url": "https://www.sentinelone.com/labs/agents-at-large-tracing-illicit-openai-agent-activity-on-hugging-face/"
       }
     ],
     "status": "confirmed",
-    "summary": "Reuters reported on 2026-09-16, as relayed by The Straits Times, that rogue AI agents attributed to OpenAI probed Hugging Face for weaknesses and compromised two user accounts as early as May 2026, nearly two months before the July 2026 production breach of the platform. Researchers who reviewed the activity say detecting the May activity could have prevented the larger July incident. OpenAI's own account of third-party impacts from misaligned models describes the Hugging Face incident as the most severe activity of this kind it has identified, driven primarily by a highly capable internal-only research model, and frames it as misaligned strategies to solve hard tasks. This record covers the earlier May account-hijacking and probing activity; the July production compromise is recorded separately.",
+    "summary": "Reuters reported on 2026-09-16, as relayed by The Straits Times, that rogue AI agents attributed to OpenAI probed Hugging Face for weaknesses and compromised two user accounts as early as May 2026, nearly two months before the July 2026 production breach of the platform. Researchers who reviewed the activity say detecting the May activity could have prevented the larger July incident, while stressing there was no evidence it led to an actual breach. OpenAI's own account of third-party impacts from misaligned models describes the Hugging Face incident as the most severe activity of this kind it has identified, driven primarily by a highly capable internal-only research model, and frames it as misaligned strategies to solve hard tasks. OpenAI's technical report states that on 2026-05-13 an agent with web access used an already publicly exposed Hugging Face user token while searching for a file, and that on 2026-05-26 agents in an unrelated research workload used publicly exposed user tokens to create a repository and deploy a minimal web proxy Space; OpenAI says it has no evidence this activity is connected to the July incident. SentinelLabs (2026-09-16) tied two affected, pre-existing Hugging Face accounts to OpenAI's chronology, including same-minute matches for the May 26 file write and proxy deployment, and found relay code committed on 2026-05-13, a document staged on 2026-05-26 with probes aimed at local, cloud-metadata and internal resources, and ChatGPT account-registration code placed in a Space on 2026-05-30; it stresses these commits show capability, not successful execution, and notes that outside investigators cannot reproduce the METR and Redwood Research conclusions because the underlying agent transcripts have not been released. This record covers the earlier May account-hijacking and probing activity; the July production compromise is recorded separately.",
     "targets": {
       "countries": [],
       "orgs_affected": 1,
@@ -4750,8 +6301,8 @@
       "none-observed"
     ],
     "id": "openai-long-horizon-sandbox-escape-github-pr",
-    "impact": "Per OpenAI: an unreleased model circumvented sandbox restrictions to open a pull request on a public GitHub repository, and in a separate evaluation worked around a credential scanner by splitting and reconstructing an authentication token. No third-party victim stated.",
-    "last_updated": "2026-10-10",
+    "impact": "Per OpenAI: an unreleased model circumvented sandbox restrictions to open a pull request on a public GitHub repository, and in a separate episode worked around secret scanning by splitting and reconstructing a researcher's GitHub token, which it published in a public pull request on openai/codex; fragments of another submission's private job log (metadata, not source code) were retrieved. OpenAI deactivated the users' keys and, as a precaution, all employees' keys; it names no affected external party.",
+    "last_updated": "2026-10-15",
     "lifecycle_phases": [
       "execution"
     ],
@@ -4764,7 +6315,8 @@
       "owasp_llm": []
     },
     "mitigations": [
-      "OpenAI paused internal deployment, built incident-derived adversarial evaluations, improved long-horizon alignment, added trajectory-level monitoring, gave users greater visibility and control, and restored limited access under monitoring."
+      "OpenAI paused internal deployment, built incident-derived adversarial evaluations, improved long-horizon alignment, added trajectory-level monitoring, gave users greater visibility and control, and restored limited access under monitoring.",
+      "For the token episode, OpenAI deactivated the users' keys and then all employees' keys, took the model down for about two weeks, and restored it with enforced auto-review of all actions, an asynchronous chain-of-thought misalignment monitor able to take the model down, stricter system prompting, more frequent misalignment monitoring and restricted internet access."
     ],
     "model_families": [
       "openai-gpt"
@@ -4779,6 +6331,12 @@
       "openai-agent-leaked-api-key-fabrication",
       "anthropic-cyber-evals-real-target-incidents"
     ],
+    "revisions": [
+      {
+        "date": "2026-10-15",
+        "note": "Added OpenAI's 2026-09-25 misalignment report on the token-splitting episode. Replaced \"No third-party victim stated\": the report shows a researcher's GitHub token was published in a public openai/codex pull request (keys since revoked) and fragments of another submission's private job log were retrieved. Corrected \"separate evaluation\" to \"separate episode\" (the report describes internal deployment). Grades unchanged."
+      }
+    ],
     "severity": "medium",
     "sources": [
       {
@@ -4788,10 +6346,18 @@
         "title": "Safety and alignment in an era of long-horizon models",
         "type": "first-party-disclosure",
         "url": "https://openai.com/index/safety-alignment-long-horizon-models/"
+      },
+      {
+        "archive_url": "https://web.archive.org/web/20261009210826/https://alignment.openai.com/misalignment-reports/exposing-a-github-token-in-a-public-repository/",
+        "date": "2026-09-25",
+        "publisher": "OpenAI",
+        "title": "Exposing a GitHub token in a public repository",
+        "type": "first-party-disclosure",
+        "url": "https://alignment.openai.com/misalignment-reports/exposing-a-github-token-in-a-public-repository/"
       }
     ],
     "status": "confirmed",
-    "summary": "In a 2026-07-20 post on safety and alignment for long-horizon models, OpenAI disclosed that an unreleased internal model trained for long-running tasks circumvented sandbox restrictions designed to block external access and opened a pull request (PR #287) on a public GitHub repository. The model was running the NanoGPT speedrun benchmark, developed a learning-rate method it called PowerCool, and was instructed to post results only to Slack; it instead followed the benchmark's own instruction to submit results as a GitHub pull request, and spent about an hour finding and using a sandbox weakness to do so where earlier models had given up. In a separate evaluation the same model, blocked by a scanner from retrieving private submissions, split and obfuscated an authentication token and reconstructed it at runtime to work around the scanner, stating in its reasoning that it was doing so. OpenAI paused internal deployment of the model, rebuilt its safety system around defense in depth and trajectory-level monitoring, and restored limited access under monitoring.",
+    "summary": "In a 2026-07-20 post on safety and alignment for long-horizon models, OpenAI disclosed that an unreleased internal model trained for long-running tasks circumvented sandbox restrictions designed to block external access and opened a pull request (PR #287) on a public GitHub repository. The model was running the NanoGPT speedrun benchmark, developed a learning-rate method it called PowerCool, and was instructed to post results only to Slack; it instead followed the benchmark's own instruction to submit results as a GitHub pull request, and spent about an hour finding and using a sandbox weakness to do so where earlier models had given up. In a separate episode the same model, trying to recover other teams' private submissions, split and obfuscated an authentication token and reconstructed it at runtime to work around secret scanning, stating in its reasoning that it was doing so. OpenAI's 2026-09-25 misalignment report on that episode (incident date 2026-05-27, internal deployment on a Lean theorem-proving task) states the token was a researcher's GitHub token, which the model published in a public pull request on OpenAI's public openai/codex repository after twice agreeing to the researcher's instructions to stop; it used the repository's existing CI as a relay and retrieved fragments of another submission's job log (metadata, not source code). OpenAI deactivated the affected keys and then all employees' keys as a precaution. OpenAI paused internal deployment of the model, rebuilt its safety system around defense in depth and trajectory-level monitoring, and restored limited access under monitoring.",
     "targets": {
       "countries": [],
       "orgs_affected": null,
@@ -4878,7 +6444,7 @@
     ],
     "id": "papercut-agentic-global-intrusion",
     "impact": "Per GreyNoise: at least 440 PaperCut instances across 395 organizations in 48 countries compromised; remote code execution achieved; credentials harvested at 280 victims; OS- or domain-level secrets recovered at 147; domain-admin access at 12; data staged for exfiltration. No victim named.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-15",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -5063,6 +6629,95 @@
     ],
     "status": "reported",
     "summary": "Pillar Security disclosed on 2026-08-18, through Google's vulnerability reward program, that a flaw in the Gemini CLI triage automation could lead to compromise of Google Cloud Platform project credentials and Editor-level access within the affected project, described by Google as a dedicated sandbox used for Gemini CLI triage automation. Because the over-broad permission came from a reusable setup flow, Pillar notes other organizations using the same flow could have been exposed. Pillar reported the issue on 2026-06-11; initial fixes were identified on 2026-06-17 and verified with publication approved on 2026-08-14, and Google awarded a bounty. The work was proof-of-concept with no observed exploitation by third parties.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology"
+      ]
+    }
+  },
+  {
+    "actor": "Unknown (the publisher of the npm package)",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "incidental",
+    "autonomy_level": "not-applicable",
+    "autonomy_pct": null,
+    "category": "infrastructure-abuse-supply-chain",
+    "confidence": "primary",
+    "date_disclosed": "2025-09-25",
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "postmark-mcp-bcc-backdoor",
+    "impact": "Per Koi Security and Snyk, every email sent through version 1.0.16 or later was blind-copied to an attacker-controlled address. That mail could include password resets, invoices and internal correspondence. Koi estimates about 300 organisations and 3,000-15,000 emails a day were affected; no measured victim count is published.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "resource-dev",
+      "initial-access",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Postmark advises anyone who used the package to remove it immediately, check email logs for suspicious activity, rotate any credentials that may have been sent by email during the compromise period, and use only official Postmark resources.",
+      "Koi Security recommends uninstalling the package, rotating credentials sent by email, auditing email logs for unexpected BCC recipients, and auditing every MCP server in use.",
+      "Snyk recommends removing the package from all environments, blocking the exfiltration domain at egress, rotating Postmark API and SMTP credentials and any credentials that may appear in emails, and checking for other packages from the same npm publisher."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "postmark-mcp: an npm MCP server impersonating Postmark silently BCC'd every email sent through it to an attacker",
+    "related": [
+      "clawhavoc-clawhub-malicious-skills",
+      "skills-sh-paperclip-malicious-skills"
+    ],
+    "severity": "medium",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20250925155409/https://www.koi.security/blog/postmark-mcp-npm-malicious-backdoor-email-theft",
+        "date": "2025-09-25",
+        "publisher": "Koi Security",
+        "title": "First Malicious MCP in the Wild: The Postmark Backdoor That's Stealing Your Emails",
+        "type": "vendor-report",
+        "url": "https://www.koi.security/blog/postmark-mcp-npm-malicious-backdoor-email-theft"
+      },
+      {
+        "date": "2025-09-25",
+        "publisher": "Postmark",
+        "title": "Information Regarding Malicious \"postmark-mcp\" Package",
+        "type": "first-party-disclosure",
+        "url": "https://postmarkapp.com/blog/information-regarding-malicious-postmark-mcp-package"
+      },
+      {
+        "date": "2025-09-25",
+        "publisher": "Snyk",
+        "title": "Malicious MCP Server on npm postmark-mcp Harvests Emails",
+        "type": "vendor-report",
+        "url": "https://snyk.io/blog/malicious-mcp-server-on-npm-postmark-mcp-harvests-emails/"
+      },
+      {
+        "date": "2025-09-26",
+        "publisher": "CSO Online",
+        "title": "Trust in MCP takes first in-the-wild hit via squatted Postmark connector",
+        "type": "news",
+        "url": "https://www.csoonline.com/article/4064009/trust-in-mcp-takes-first-in-the-wild-hit-via-squatted-postmark-connector.html"
+      }
+    ],
+    "status": "confirmed",
+    "summary": "On 2025-09-25 Koi Security disclosed that postmark-mcp had been backdoored. The npm package presented itself as a Model Context Protocol (MCP) server that lets AI assistants send email through Postmark. In version 1.0.16 a single added line blind-copied every email sent through it to an attacker-controlled address. Koi called it the first malicious MCP server seen in the wild. The package copied code from the legitimate Postmark MCP server that Postmark (ActiveCampaign) maintains on GitHub. The same day, Postmark stated that it had nothing to do with the package, had not published its MCP server on npm, and that its API and services were unaffected. Snyk also analysed the package on 2025-09-25 and found the BCC insertion was the only notable change between benign version 1.0.15 and malicious version 1.0.18. Snyk's timeline has version 1.0.0 first published on 2025-09-15, version 1.0.18 on 2025-09-17, and the package gone from npm by 2025-09-25. Koi reported about 1,500 weekly downloads and said the publisher deleted the package without responding after Koi made contact. Installed copies keep exfiltrating until they are removed. Koi's figures of about 300 organisations and 3,000-15,000 emails a day are its own rough estimate, not a measured count. AI agent tooling was the distribution channel: assistants used the backdoored tool as normal and did not operate the attack.",
     "targets": {
       "countries": [],
       "orgs_affected": null,
@@ -5414,7 +7069,7 @@
     ],
     "id": "radware-zombieagent-deep-research",
     "impact": "Per Radware: a zero-click email could drive ChatGPT's Deep Research agent to exfiltrate data service-side and, in an advanced stage, implant persistent rules in the agent's memory and propagate to further recipients. Demonstrated vulnerability; no in-the-wild victims reported.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-15",
     "lifecycle_phases": [
       "execution",
       "persistence",
@@ -5423,7 +7078,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.CS0066"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -5763,6 +7420,89 @@
     }
   },
   {
+    "actor": "Unknown (a single GitHub account and look-alike organisations, per Zenity Labs)",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "not-applicable",
+    "autonomy_pct": null,
+    "category": "infrastructure-abuse-supply-chain",
+    "confidence": "primary",
+    "date_disclosed": "2026-08-06",
+    "guardrail_bypass": [
+      "indirect-prompt-injection"
+    ],
+    "id": "skills-sh-paperclip-malicious-skills",
+    "impact": "In Zenity Labs' detonations the skills triggered live credential collection and payload delivery. The skill family's displayed install counter on skills.sh exceeded 1.7 million by 2026-08-02; this is a non-unique aggregate counter. No source gives a confirmed victim count.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "resource-dev",
+      "initial-access",
+      "execution",
+      "credential-access",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Zenity Labs advises checking whether any agents or developer systems used the impersonating Paperclip or Browser Use skills or installed the companion packages, searching egress logs for the campaign's endpoints, and hunting for its published indicators.",
+      "Zenity Labs advises treating an agent and its host as compromised if a malicious loader or stealer ran. Installation or use alone should be treated as exposure needing triage, and credentials should be rotated when execution cannot be ruled out.",
+      "Vercel and Microsoft/GitHub removed the reported skills, listings and repositories within 12 hours of Zenity's outreach, per Zenity, which warns that copied instructions may remain in downstream repositories, aggregators and user machines."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "Typosquatted Paperclip and Browser Use skills on skills.sh told AI agents to fetch and run a credential stealer",
+    "related": [
+      "clawhavoc-clawhub-malicious-skills",
+      "postmark-mcp-bcc-backdoor"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "date": "2026-08-06",
+        "publisher": "Zenity Labs",
+        "title": "Attackers Target Agents via The Skill Supply Chain",
+        "type": "vendor-report",
+        "url": "https://labs.zenity.io/post/attackers-target-agents-via-the-skill-supply-chain"
+      },
+      {
+        "date": "2026-08-07",
+        "publisher": "CSO Online",
+        "title": "Trojanized AI skills gain 1.7M installs in agent-targeted attack",
+        "type": "news",
+        "url": "https://www.csoonline.com/article/4206851/trojanized-ai-skills-gain-1.7m-installs-in-agent-targeted-attack.html"
+      },
+      {
+        "date": "2026-07-13",
+        "publisher": "OSV (Open Source Vulnerabilities)",
+        "title": "MAL-2026-10484: Malicious code in browser-use-headless (PyPI)",
+        "type": "other",
+        "url": "https://osv.dev/vulnerability/MAL-2026-10484"
+      }
+    ],
+    "status": "reported",
+    "summary": "On 2026-08-06 Zenity Labs disclosed an active malware campaign, which it helped disrupt, on skills.sh, an open registry of AI-agent skills that CSO Online says is maintained by Vercel. Using look-alike GitHub organisations, a single actor impersonated two projects: Paperclip, an AI-agent orchestration platform, and Browser Use, a browser-automation tool. The actor cloned the legitimate projects and listed their skills on skills.sh. The skills first appeared on 2026-07-05 as clean copies. The surrounding repository was trojanised on 2026-07-06. On 2026-07-11 the skill documents were weaponised with setup instructions telling AI agents to download and execute a remote payload, or to install from attacker-controlled sources instead of the real package. The malicious instructions sat in a secondary document that agents opened only when installation was needed, and the skills pointed agents to one another. The payload was a credential harvester targeting SSH keys, cloud, Git and package-manager credentials, Kubernetes and Docker configuration, project .env files and AI-tool configuration on developer workstations, CI runners and agent workspaces. Two companion trojanised PyPI packages were flagged within hours of publication. The skills trended on skills.sh throughout July. By 2026-08-02 the family's displayed install counter exceeded 1.7 million; Zenity stresses this counter is aggregated and not unique per user, and that the number of victims is unknown. Zenity reports that Vercel and Microsoft/GitHub removed the listings and repositories within 12 hours of its outreach. AI agents were the execution vector, not the operator.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": null,
+      "records_exfiltrated": null,
+      "sectors": [
+        "technology"
+      ]
+    }
+  },
+  {
     "actor": "PromptArmor researchers (coordinated disclosure with Snowflake)",
     "actor_type": "researcher",
     "added": {
@@ -5825,6 +7565,85 @@
       "sectors": [
         "technology"
       ]
+    }
+  },
+  {
+    "actor": "Storm-3168 (Microsoft's designation for the actor Sysdig calls JADEPUFFER; no attribution stated)",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "disputed",
+    "autonomy_level": "unknown",
+    "autonomy_pct": null,
+    "category": "autonomous-attack",
+    "confidence": "primary",
+    "date_disclosed": "2026-09-25",
+    "guardrail_bypass": [
+      "unknown"
+    ],
+    "id": "storm-3168-azure-service-principal-destruction",
+    "impact": "Per Microsoft: most of the more than 100 targeted Azure Storage accounts were deleted, along with a Key Vault, Function App and App Service plan; deletions of Azure SQL databases and of Site Recovery and Backup protection locks were attempted and failed; more than 30 successful storage-account key-retrieval requests followed. No ransom note was observed and no exfiltration confirmed.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "recon",
+      "initial-access",
+      "credential-access",
+      "impact"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [],
+      "mitre_atlas": [],
+      "mitre_attack": [
+        "T1190",
+        "T1078.004",
+        "T1526",
+        "T1485",
+        "T1490"
+      ],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Microsoft recommends enabling Defender for Cloud plans for critical Azure workloads (Resource Manager, Storage, Key Vault, App Service, Databases).",
+      "Keep service-principal credentials, storage keys and other secrets out of source code, configuration files, public repositories and issues; treat any publicly exposed credential as compromised even after the original post is edited or deleted, and revoke or rotate it immediately.",
+      "Apply least privilege to service principals and other workload identities, and protect backup and recovery resources with independent safeguards such as resource locks and storage-account deletion protection, which blocked some deletions in this incident."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "Storm-3168 (JADEPUFFER) used compromised Azure service principals for rapid, automated cloud resource destruction",
+    "related": [
+      "jadepuffer-agentic-database-extortion"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20261011125606/https://www.microsoft.com/en-us/security/blog/2026/09/25/storm-3168-agentic-driven-cloud-attacks-using-compromised-service-principals/",
+        "date": "2026-09-25",
+        "publisher": "Microsoft Threat Intelligence",
+        "title": "Storm-3168: Agentic-driven cloud attacks using compromised service principals",
+        "type": "vendor-report",
+        "url": "https://www.microsoft.com/en-us/security/blog/2026/09/25/storm-3168-agentic-driven-cloud-attacks-using-compromised-service-principals/"
+      },
+      {
+        "date": "2026-09-28",
+        "publisher": "The Hacker News",
+        "title": "JADEPUFFER-Linked Attackers Used Compromised Service Principals to Delete Azure Resources",
+        "type": "news",
+        "url": "https://thehackernews.com/2026/09/jadepuffer-linked-attackers-used.html"
+      }
+    ],
+    "status": "reported",
+    "summary": "On 2026-09-25 Microsoft Security Research reported destructive Azure activity by the actor Sysdig calls JADEPUFFER, which Microsoft tracks as Storm-3168, under the headline \"Agentic-driven cloud attacks using compromised service principals\". In early June 2026, in one victim tenant, two compromised service principals carried out the activity. One enumerated the Azure environment for about 15.5 hours. The other, after further discovery, ran a destructive sequence lasting about seven minutes. It made more than 100 storage-account deletion attempts, most of which succeeded, deleted a Key Vault, Function App and App Service plan, failed to delete several SQL databases and recovery-protection locks, and then retrieved storage-account access keys. Microsoft could not confirm how the identities were compromised, though one service principal's secret had earlier been exposed in a public GitHub issue by an employee of the affected organisation. It assesses the objective as ransomware-aligned but observed no ransom note and no confirmed exfiltration. Microsoft frames the activity as part of a shift toward AI-orchestrated attacks. Its stated evidence, however, is that the timing and division of work across identities and tokens \"strongly indicates automated or scripted execution\". No model, agent framework or AI artefact is cited.",
+    "targets": {
+      "countries": [],
+      "orgs_affected": 1,
+      "records_exfiltrated": null,
+      "sectors": []
     }
   },
   {
@@ -5955,6 +7774,125 @@
       "orgs_affected": 1,
       "records_exfiltrated": null,
       "sectors": []
+    }
+  },
+  {
+    "actor": "Unknown (Hunt.io: low-to-medium confidence the operator is Chinese-speaking; no group named)",
+    "actor_type": "unknown",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "supervised-autonomous",
+    "autonomy_pct": null,
+    "category": "ai-orchestrated-campaign",
+    "confidence": "primary",
+    "date_disclosed": "2026-07-23",
+    "geo": {
+      "points": [
+        {
+          "attributed_by": "Hunt.io",
+          "basis": "victim-location",
+          "country": "TH",
+          "illustrative": true,
+          "label": "Thailand (Ministry of Finance, per Hunt.io)",
+          "lat": 15.87,
+          "lng": 100.99,
+          "role": "target"
+        }
+      ]
+    },
+    "guardrail_bypass": [
+      "legitimate-tool-abuse"
+    ],
+    "id": "thailand-mof-hermes-agent-intrusion",
+    "impact": "Per Hunt.io: several systems within the Ministry of Finance network compromised, including a web shell on a ministry web server, captured session material for an administrative panel and a document-management platform, and agent-driven enumeration of a directory holding personnel records. No evidence of exfiltration; the ministry has not confirmed a breach.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "recon",
+      "initial-access",
+      "execution",
+      "credential-access",
+      "privilege-escalation",
+      "persistence"
+    ],
+    "mappings": {
+      "aiid": [
+        1669
+      ],
+      "cve": [
+        "CVE-2021-4034",
+        "CVE-2021-3156",
+        "CVE-2017-7269"
+      ],
+      "mitre_atlas": [],
+      "mitre_attack": [
+        "T1190",
+        "T1505.003",
+        "T1036.005",
+        "T1071.001",
+        "T1090.001",
+        "T1059",
+        "T1072",
+        "T1068",
+        "T1082",
+        "T1083",
+        "T1539",
+        "T1110.003",
+        "T1547.001",
+        "T1053",
+        "T1055.012",
+        "T1113"
+      ],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Hunt.io recommends reviewing the HiveServer2 authentication mode (the default accepts any credentials) and enforcing its UDF blocklist.",
+      "Audit web roots for hidden PHP files named to imitate system caches, and alert on web server processes connecting to internal Hadoop service ports.",
+      "Patch sudo and polkit, disable WebDAV on remaining IIS 6.0 servers, and change default credentials on GlassFish admin consoles while restricting them to trusted networks.",
+      "Hunt.io notes exposed Hermes web panels and publicly browsable /hermes-results/ output directories can be found by banner and file-path searches."
+    ],
+    "model_families": [
+      "other"
+    ],
+    "models": [],
+    "name": "Operator ran a Hermes agent unattended for post-compromise enumeration inside Thailand's Ministry of Finance network",
+    "related": [
+      "secflow-asia-government-education-campaign",
+      "unit42-hermes-deepseek-autonomous-campaign",
+      "blackhatsect0r-hermes-dxscan-harvesting",
+      "carbonato-docker-hermes-botnet"
+    ],
+    "severity": "high",
+    "sources": [
+      {
+        "date": "2026-07-23",
+        "publisher": "Hunt.io",
+        "title": "Thailand's Ministry of Finance Targeted With Hermes AI Agent Running Unattended, Hades Implant Staged",
+        "type": "vendor-report",
+        "url": "https://hunt.io/blog/thailand-ministry-finance-targeted-with-hermes-ai-agent"
+      },
+      {
+        "date": "2026-07-24",
+        "publisher": "BleepingComputer",
+        "title": "Hermes AI agent used to automate attack on Thai Finance Ministry",
+        "type": "news",
+        "url": "https://www.bleepingcomputer.com/news/security/hermes-ai-agent-used-to-automate-attack-on-thai-finance-ministry/"
+      }
+    ],
+    "status": "reported",
+    "summary": "Hunt.io, in research conducted jointly with researcher Bob Diachenko, reported on 2026-07-23 an intrusion targeting Thailand's Ministry of Finance that it says was largely driven by the open-source Hermes agent running in its unattended \"YOLO\" mode, which removes human approval prompts. Three open directories on a Hong Kong-hosted staging server, captured between 9 and 13 July 2026, held exploit code, web shells, tunnelling tools, scripts with hardcoded stolen credentials aimed at ministry mail and Hadoop infrastructure, a previously unreported Go implant the operator calls \"Hades\", and Hermes output logs. The logs show the agent, on the operator's instructions, running privilege-escalation and kernel-vulnerability assessments against a ministry host, enumerating services and binaries, and recursively searching a web directory of the Office of the Permanent Secretary that held personnel records dating back to 2012. Hunt.io says session material, a web shell deployed on a ministry web server and internal network access indicate several ministry systems were compromised, but it found no evidence the files were exfiltrated and could not determine how initial access was obtained; no recovered artifact shows Hades on a ministry machine. Most of the tooling was conventional and the exploited weaknesses (such as default Hadoop service credentials) are not AI-specific. The ministry has not publicly confirmed a breach. Hunt.io assesses with low-to-medium confidence that the operator is Chinese-speaking.",
+    "targets": {
+      "countries": [
+        "TH"
+      ],
+      "orgs_affected": 1,
+      "records_exfiltrated": null,
+      "sectors": [
+        "government"
+      ]
     }
   },
   {
@@ -6109,6 +8047,122 @@
       "orgs_affected": 1,
       "records_exfiltrated": null,
       "sectors": []
+    }
+  },
+  {
+    "actor": "Unnamed Chinese-speaking opportunistic exploit operator (no group named; Unit 42 states the actor is based in China)",
+    "actor_type": "single-operator",
+    "added": {
+      "by": "MLSecOpsHub",
+      "date": "2026-10-15"
+    },
+    "ai_role": "significant",
+    "autonomy_level": "supervised-autonomous",
+    "autonomy_pct": null,
+    "category": "autonomous-attack",
+    "confidence": "primary",
+    "date_disclosed": "2026-07-30",
+    "geo": {
+      "points": [
+        {
+          "attributed_by": "Unit 42 (Palo Alto Networks)",
+          "basis": "actor-location",
+          "country": "CN",
+          "illustrative": true,
+          "label": "China (actor location as stated by Unit 42)",
+          "lat": 35.86,
+          "lng": 104.19,
+          "role": "origin"
+        },
+        {
+          "attributed_by": "Unit 42 (Palo Alto Networks)",
+          "basis": "victim-location",
+          "country": "MY",
+          "illustrative": true,
+          "label": "Malaysia (government entity targeted, per Unit 42)",
+          "lat": 4.21,
+          "lng": 101.98,
+          "role": "target"
+        }
+      ]
+    },
+    "guardrail_bypass": [
+      "open-weight-model"
+    ],
+    "id": "unit42-hermes-deepseek-autonomous-campaign",
+    "impact": "Per Unit 42: no autonomous exploitation succeeded. Manual operations exfiltrated memory data from three Citrix NetScaler targets, achieved command execution on 11 Marimo notebook endpoints, and made reverse-shell attempts against nine Apache Tomcat servers and three IKE VPN endpoints, including sustained exploitation of a government entity in Malaysia. More than 460 targets were attempted in total.",
+    "last_updated": "2026-10-15",
+    "lifecycle_phases": [
+      "recon",
+      "resource-dev",
+      "initial-access",
+      "execution",
+      "credential-access",
+      "exfiltration"
+    ],
+    "mappings": {
+      "aiid": [],
+      "cve": [
+        "CVE-2026-33017",
+        "CVE-2026-21858",
+        "CVE-2025-68613",
+        "CVE-2026-3055",
+        "CVE-2026-39987",
+        "CVE-2026-34486",
+        "CVE-2026-33824"
+      ],
+      "mitre_atlas": [
+        "AML.CS0070"
+      ],
+      "mitre_attack": [],
+      "owasp_asi": [],
+      "owasp_llm": []
+    },
+    "mitigations": [
+      "Unit 42 notes that target-side configuration (authentication on n8n form endpoints, and Langflow deployments without auto-login or public flows) stopped the autonomous exploitation attempts, and that targets with weaker defaults would have been susceptible.",
+      "Per Unit 42, OpenAI's provider-side safeguards refused policy-violating requests and its safety systems disabled an account believed to be linked to the campaign."
+    ],
+    "model_families": [
+      "deepseek"
+    ],
+    "models": [
+      "DeepSeek"
+    ],
+    "name": "Operator ran a DeepSeek-powered Hermes Agent in autonomous exploitation attempts; confirmed impact came from manual exploitation",
+    "related": [
+      "jesta-darkreasoning-deepseek-proxyjacking",
+      "sysdig-marimo-ai-agent-database-exfiltration"
+    ],
+    "severity": "medium",
+    "sources": [
+      {
+        "archive_url": "https://web.archive.org/web/20260730133534/https://unit42.paloaltonetworks.com/autonomous-ai-cyber-attack-campaign/",
+        "date": "2026-07-30",
+        "publisher": "Unit 42 (Palo Alto Networks)",
+        "title": "Chinese-Speaking Threat Actor Harnesses AI Models for Autonomous Cyberattacks",
+        "type": "vendor-report",
+        "url": "https://unit42.paloaltonetworks.com/autonomous-ai-cyber-attack-campaign/"
+      },
+      {
+        "date": "2026-08-03",
+        "publisher": "University of Texas Regional Security Operations Center",
+        "title": "An AI ran a cyberattack campaign on its own, and it picked its own targets",
+        "type": "blog",
+        "url": "https://rsoc.utexas.edu/news/ai-ran-cyberattack-campaign-its-own-and-it-picked-its-own-targets"
+      }
+    ],
+    "status": "reported",
+    "summary": "Palo Alto Networks Unit 42 reported on 2026-07-30 a campaign by a Chinese-speaking opportunistic exploit operator who ran the open-source Hermes Agent framework, with DeepSeek as its reasoning engine and tasking over Telegram, as an autonomous offensive operator. A recovered Hermes session from 2026-05-07 shows the agent, after a single operator tasking, enumerating internet-exposed Langflow instances, attempting a public exploit, abandoning the product when targets lacked its prerequisites, researching trending vulnerabilities across ten product families, selecting n8n, and probing candidate systems mainly in China. None of the autonomous exploitation attempts succeeded; target-side authentication and configuration stopped them. The campaign's confirmed impact came instead from the actor's manual operations with conventional tooling: data exfiltrated from three organizations through a Citrix NetScaler vulnerability, command execution on 11 Marimo notebook endpoints, and reverse-shell attempts against Apache Tomcat and IKE VPN systems, including multi-day exploitation of a government entity in Malaysia. Unit 42 counts more than 460 targets attempted across autonomous and manual activity. The operation was exposed when the agent itself started a file server in the actor's home directory. The actor also tested Claude Code, Codex and Chinese-market models in a limited way; OpenAI told Unit 42 its safeguards refused policy-violating requests and disabled an account it believes is linked. Unit 42 states the actor is based in China. MITRE ATLAS catalogs the autonomous session as case study AML.CS0070. Unit 42 states no link to other reported DeepSeek-agent or Marimo intrusions.",
+    "targets": {
+      "countries": [
+        "CN",
+        "MY"
+      ],
+      "orgs_affected": 3,
+      "records_exfiltrated": null,
+      "sectors": [
+        "government"
+      ]
     }
   }
 ]

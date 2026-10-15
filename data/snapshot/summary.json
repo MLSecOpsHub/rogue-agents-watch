@@ -1,86 +1,88 @@
 {
-  "dataset_version": "0.4.0",
+  "dataset_version": "0.6.0",
+  "unreleased_changes": false,
   "schema": "https://raw.githubusercontent.com/MLSecOpsHub/agentic-attack-index/main/schema/incident.schema.json",
-  "total": 81,
+  "total": 99,
   "archive_coverage": {
-    "sources": 131,
-    "archived": 99,
-    "pct": 76
+    "sources": 203,
+    "archived": 136,
+    "pct": 67
   },
   "geo_coverage": {
-    "records": 13,
-    "points": 18,
-    "illustrative": 18,
+    "records": 24,
+    "points": 31,
+    "illustrative": 31,
     "by_role": {
-      "origin": 11,
-      "target": 7
+      "origin": 14,
+      "target": 17
     },
     "by_basis": {
-      "actor-location": 3,
+      "actor-location": 5,
+      "operator-location": 1,
       "sponsor-attribution": 8,
-      "victim-location": 7
+      "victim-location": 17
     }
   },
   "by_category": {
     "agent-hijack-prompt-injection": 19,
-    "ai-orchestrated-campaign": 13,
-    "autonomous-attack": 36,
-    "infrastructure-abuse-supply-chain": 11,
+    "ai-orchestrated-campaign": 21,
+    "autonomous-attack": 42,
+    "infrastructure-abuse-supply-chain": 15,
     "lab-escape-eval": 2
   },
   "by_severity": {
-    "critical": 7,
-    "high": 32,
-    "low": 9,
-    "medium": 33
+    "critical": 9,
+    "high": 42,
+    "low": 11,
+    "medium": 37
   },
   "by_status": {
-    "confirmed": 35,
-    "reported": 44,
+    "confirmed": 38,
+    "reported": 59,
     "test-eval": 2
   },
   "by_actor_type": {
-    "cybercriminal": 12,
-    "lab-test-eval": 12,
+    "cybercriminal": 18,
+    "lab-test-eval": 14,
     "nation-state": 6,
     "researcher": 20,
-    "single-operator": 3,
-    "unknown": 28
+    "single-operator": 6,
+    "unknown": 35
   },
   "by_autonomy_level": {
-    "fully-autonomous": 20,
-    "human-in-the-loop": 1,
-    "not-applicable": 25,
-    "supervised-autonomous": 20,
+    "fully-autonomous": 22,
+    "human-in-the-loop": 5,
+    "not-applicable": 28,
+    "supervised-autonomous": 26,
     "tool-assisted": 7,
-    "unknown": 8
+    "unknown": 11
   },
   "by_ai_role": {
-    "disputed": 3,
-    "incidental": 3,
-    "load-bearing": 34,
-    "significant": 41
+    "disputed": 5,
+    "incidental": 5,
+    "load-bearing": 38,
+    "significant": 51
   },
   "by_model_family": {
-    "claude": 23,
-    "deepseek": 4,
+    "claude": 29,
+    "deepseek": 7,
     "gemini": 12,
     "hermes": 1,
-    "openai-codex": 1,
-    "openai-gpt": 16,
-    "other": 37,
+    "openai-codex": 2,
+    "openai-gpt": 17,
+    "other": 48,
     "qwen": 2
   },
   "by_year": {
     "2024": 2,
-    "2025": 20,
-    "2026": 59
+    "2025": 21,
+    "2026": 76
   },
   "evidence_split": {
     "basis": "status == confirmed AND ai_role == load-bearing; retracted/superseded records excluded",
-    "total": 81,
-    "confirmed_load_bearing": 20,
-    "pct": 25,
+    "total": 99,
+    "confirmed_load_bearing": 22,
+    "pct": 22,
     "by_year": {
       "2024": {
         "total": 2,
@@ -88,27 +90,28 @@
         "pct": 0
       },
       "2025": {
-        "total": 20,
+        "total": 21,
         "confirmed_load_bearing": 5,
-        "pct": 25
+        "pct": 24
       },
       "2026": {
-        "total": 59,
-        "confirmed_load_bearing": 15,
-        "pct": 25
+        "total": 76,
+        "confirmed_load_bearing": 17,
+        "pct": 22
       }
     },
     "by_status_ai_role": {
       "confirmed": {
         "disputed": 1,
-        "incidental": 3,
-        "load-bearing": 20,
+        "incidental": 4,
+        "load-bearing": 22,
         "significant": 11
       },
       "reported": {
-        "disputed": 2,
-        "load-bearing": 12,
-        "significant": 30
+        "disputed": 4,
+        "incidental": 1,
+        "load-bearing": 14,
+        "significant": 40
       },
       "test-eval": {
         "load-bearing": 2
@@ -117,6 +120,7 @@
     "ids": [
       "aisi-unsanctioned-agent-cyber-testing",
       "anthropic-cyber-evals-real-target-incidents",
+      "anthropic-unintended-model-actions-real-websites",
       "echoleak-m365-copilot",
       "gtg-10007-agent-swarm-intrusions",
       "gtg-1002-ai-espionage",
@@ -127,6 +131,7 @@
       "openai-agent-leaked-api-key-fabrication",
       "openai-agent-public-file-hosting-upload",
       "openai-agent-services-australia-medicare-portal",
+      "openai-agents-australian-state-agencies",
       "openai-attributed-dsewiki-agent-swarm",
       "openai-eval-agents-hugging-face-intrusion",
       "openai-huggingface-may-account-hijacking",
@@ -139,25 +144,33 @@
   },
   "ids": [
     "aepd-first-ai-agent-data-breach-notification",
+    "ai-agents-us-canada-government-websites",
+    "ai-augmented-fortigate-mass-compromise",
     "aisi-unsanctioned-agent-cyber-testing",
     "amazon-kiro-aws-cost-explorer-outage",
     "amazon-q-developer-extension-compromise",
     "anonymouskit-ai-voice-phishing-apple",
     "anthropic-cyber-evals-real-target-incidents",
+    "anthropic-unintended-model-actions-real-websites",
+    "artex-south-korea-finance-intrusions",
     "aurora-cursor-agent-ransomware",
+    "blackhatsect0r-hermes-dxscan-harvesting",
     "camoleak-github-copilot-chat",
+    "carbonato-docker-hermes-botnet",
     "claude-cowork-file-exfiltration",
     "clawhavoc-clawhub-malicious-skills",
     "clinejection-cline-triage-npm-publish",
     "codewall-mckinsey-lilli-agent-intrusion",
     "coral-sleet-agentic-ai-workflow",
     "cursor-pocketos-database-deletion",
+    "cyberxero-ai-augmented-access-broker",
     "divd-zammad-ai-agent-breach",
     "dprk-it-worker-fraud-claude",
     "dream-multi-agent-asia-government-campaign",
     "echoleak-m365-copilot",
     "forcedleak-salesforce-agentforce",
     "gambit-ai-agents-retail-skimmer-campaign",
+    "gambit-gentlemen-affiliate-claude-code-intrusions",
     "gemini-cli-ci-untrusted-workspace-rce",
     "gemini-evaluation-real-company-breaches",
     "gentlemen-hermes-agent-gitlab-extortion",
@@ -178,22 +191,27 @@
     "gtg-5004-ai-ransomware-raas",
     "gtig-agentic-credential-harvesting-q2-2026",
     "gtig-ai-developed-zero-day-2fa-bypass",
+    "gtig-recon-agentic-secret-harvesting",
     "hackerbot-claw-github-pr-campaign",
     "instinct-assistant-unauthorized-email",
     "jadepuffer-agentic-database-extortion",
     "jesta-darkreasoning-deepseek-proxyjacking",
     "litellm-pypi-teampcp-backdoor",
+    "mandiant-hijacked-coding-assistant-shai-hulud",
     "meta-internal-agent-sev1-data-exposure",
     "meta-muse-spark-evaluation-real-website",
+    "mexico-government-claude-code-intrusions",
     "miasma-worm-ai-coding-agent-configs",
     "microsoft-openai-state-actor-llm",
     "morris-ii-genai-worm",
     "notion-ai-web-search-exfiltration",
     "nx-s1ngularity-supply-chain",
+    "oalabs-compromised-server-claude-codex-intrusions",
     "openai-agent-dns-external-chatbot",
     "openai-agent-leaked-api-key-fabrication",
     "openai-agent-public-file-hosting-upload",
     "openai-agent-services-australia-medicare-portal",
+    "openai-agents-australian-state-agencies",
     "openai-attributed-dsewiki-agent-swarm",
     "openai-attributed-rubygems-agent-swarm",
     "openai-attributed-unctad-api-scanning",
@@ -205,6 +223,7 @@
     "papercut-agentic-global-intrusion",
     "pillar-adk-agent-privilege-escalation",
     "pillar-gemini-cli-gcp-triage-compromise",
+    "postmark-mcp-bcc-backdoor",
     "promptflux-gemini-selfmod",
     "promptlock-ai-ransomware-poc",
     "promptspy-gemini-android-agent",
@@ -214,10 +233,14 @@
     "secflow-asia-government-education-campaign",
     "servicenow-now-assist-agent-injection",
     "shadow-escape-mcp-zero-click",
+    "skills-sh-paperclip-malicious-skills",
     "snowflake-cortex-cli-sandbox-escape",
+    "storm-3168-azure-service-principal-destruction",
     "supabase-mcp-database-leak",
     "sysdig-marimo-ai-agent-database-exfiltration",
+    "thailand-mof-hermes-agent-intrusion",
     "trendmicro-gemini-cli-dental-botnet",
-    "unit42-ai-assisted-enterprise-intrusion"
+    "unit42-ai-assisted-enterprise-intrusion",
+    "unit42-hermes-deepseek-autonomous-campaign"
   ]
 }
