@@ -27,9 +27,9 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: Upstream git ref (branch or tag) to sync from
+        description: Upstream ref to sync from ('latest' = newest tagged release; or a tag like v0.6.0; or main)
         required: false
-        default: main
+        default: latest
 
 permissions:
   contents: write
@@ -68,7 +68,7 @@ jobs:
       - name: Fetch upstream dist/ artifacts
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          DATA_REF: ${{ inputs.ref || 'main' }}
+          DATA_REF: ${{ inputs.ref || 'latest' }}
         run: npm run sync:data
 
       - name: Detect snapshot change

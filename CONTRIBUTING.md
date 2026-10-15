@@ -50,8 +50,8 @@ npm run size       # gzipped bundle report + 500 KB budget check
 Refreshing the dataset snapshot (the only step that uses the network):
 
 ```sh
-npm run sync:data                 # from upstream main
-DATA_REF=v0.3.0 npm run sync:data # from a tag
+npm run sync:data                 # latest tagged upstream release (default)
+DATA_REF=v0.3.0 npm run sync:data # a specific release tag; DATA_REF=main for the untagged tip
 npm test
 ```
 

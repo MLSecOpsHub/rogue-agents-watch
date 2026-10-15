@@ -113,7 +113,7 @@ npm test           # typecheck + lint + snapshot validation + unit tests incl. a
 npm run build      # validates, then builds dist/ (reproducible)
 npm run preview    # serves dist/
 npm run size       # gzipped bundle report; core must stay under 500 KB
-npm run sync:data  # refresh data/snapshot from upstream main (network)
+npm run sync:data  # refresh data/snapshot from the latest tagged upstream release (network)
 ```
 
 ## Reporting a data correction
