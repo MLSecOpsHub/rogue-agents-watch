@@ -2095,7 +2095,8 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [
+      "mitre_atlas": [],
+      "mitre_atlas_case_studies": [
         "AML.CS0071"
       ],
       "mitre_attack": [],
@@ -2185,7 +2186,9 @@
       ],
       "mitre_atlas": [
         "AML.T0051.001",
-        "AML.T0057",
+        "AML.T0057"
+      ],
+      "mitre_atlas_case_studies": [
         "AML.CS0059"
       ],
       "mitre_attack": [],
@@ -3315,7 +3318,9 @@
       "mitre_atlas": [
         "AML.T0054",
         "AML.T0102",
-        "AML.T0053",
+        "AML.T0053"
+      ],
+      "mitre_atlas_case_studies": [
         "AML.CS0069"
       ],
       "mitre_attack": [],
@@ -6119,7 +6124,8 @@
         "CVE-2026-66384",
         "CVE-2026-53362"
       ],
-      "mitre_atlas": [
+      "mitre_atlas": [],
+      "mitre_atlas_case_studies": [
         "AML.CS0068"
       ],
       "mitre_attack": [],
@@ -7078,7 +7084,8 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [
+      "mitre_atlas": [],
+      "mitre_atlas_case_studies": [
         "AML.CS0066"
       ],
       "mitre_attack": [],
@@ -8111,7 +8118,8 @@
         "CVE-2026-34486",
         "CVE-2026-33824"
       ],
-      "mitre_atlas": [
+      "mitre_atlas": [],
+      "mitre_atlas_case_studies": [
         "AML.CS0070"
       ],
       "mitre_attack": [],
