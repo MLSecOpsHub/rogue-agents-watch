@@ -177,7 +177,8 @@ describe('discoverability and interop generators', () => {
     expect(atl.domain).toBe('atlas-atlas');
     expect(atl.versions.layer).toBe('4.3');
     const expectAtlas = new Map<string, number>();
-    for (const r of ctx.incidents) for (const t of (r.mappings as { mitre_atlas?: string[] })?.mitre_atlas ?? []) expectAtlas.set(t, (expectAtlas.get(t) ?? 0) + 1);
+    // Techniques only: ATLAS case studies (AML.CS…) are not Navigator cells.
+    for (const r of ctx.incidents) for (const t of (r.mappings as { mitre_atlas?: string[] })?.mitre_atlas ?? []) if (/^AML\.T\d{4}/.test(t)) expectAtlas.set(t, (expectAtlas.get(t) ?? 0) + 1);
     expect(atl.techniques.map((t) => [t.techniqueID, t.score])).toEqual([...expectAtlas.entries()].sort((a, b) => a[0].localeCompare(b[0])));
     for (const t of atl.techniques) expect(t.techniqueID).toMatch(/^AML\.T\d{4}(\.\d{3})?$/);
     for (const t of atk.techniques) expect(t.techniqueID).toMatch(/^T\d{4}(\.\d{3})?$/);

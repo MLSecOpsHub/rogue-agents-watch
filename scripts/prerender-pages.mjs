@@ -76,7 +76,8 @@ function page(ctx, { view, title, body }) {
 
 export function overviewBody(ctx) {
   const s = ctx.summary;
-  const active = ctx.incidents.filter((r) => !r.record_status || r.record_status === 'active');
+  // Same rule as the adapter's isActiveRecord: disputed records stay listed (flagged); only retracted and superseded drop out.
+  const active = ctx.incidents.filter((r) => r.record_status !== 'retracted' && r.record_status !== 'superseded');
   const status = countRows(ctx, 'status', s.by_status);
   const role = countRows(ctx, 'ai_role', s.by_ai_role);
   const dates = ctx.incidents.map((r) => r.date_disclosed).sort();

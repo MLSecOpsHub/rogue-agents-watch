@@ -332,7 +332,7 @@ describe('overview, stats, timeline, table, about', () => {
     const atlasIds = new Set(ds.incidents.filter((i) => i.isActiveRecord).flatMap((i) => i.mappings.mitre_atlas));
     const rows = c.root.querySelectorAll('.technique-table tbody tr');
     expect(rows.length).toBeGreaterThanOrEqual(atlasIds.size);
-    for (const id of atlasIds) expect(c.root.querySelector(`a[href="https://atlas.mitre.org/techniques/${id}"]`), id).not.toBeNull();
+    for (const id of atlasIds) expect(c.root.querySelector(`a[href="${atlasUrl(id)}"]`), id).not.toBeNull();
     expect(c.root.textContent).toMatch(/Mapped in \d+ of \d+ records/);
     expect(c.root.querySelector('a[href$="navigator/attack-layer.json"]')).not.toBeNull();
     expect(c.root.querySelector('a[href$="navigator/atlas-layer.json"]')).not.toBeNull();

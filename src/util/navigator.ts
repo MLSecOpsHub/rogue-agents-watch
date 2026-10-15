@@ -40,14 +40,17 @@ export function attackLayer(records: Incident[], o: LayerOptions): Record<string
   };
 }
 
+// A Navigator layer holds techniques only; ATLAS case studies (AML.CS…) and tactics stay on record pages.
+const ATLAS_TECHNIQUE = /^AML\.T\d{4}/;
+
 export function atlasLayer(records: Incident[], o: LayerOptions): Record<string, unknown> {
-  const entries = techniqueCounts(records, 'mitre_atlas');
+  const entries = techniqueCounts(records, 'mitre_atlas').filter(([id]) => ATLAS_TECHNIQUE.test(id));
   const max = Math.max(1, ...entries.map(([, ids]) => ids.length));
   return {
     name: `${SITE.name} — ATLAS techniques (dataset v${o.version}${o.suffix ?? ''})`,
     versions: { layer: '4.3', navigator: '4.6.4' },
     domain: 'atlas-atlas',
-    description: `MITRE ATLAS techniques mapped upstream in the Agentic Attack Index, dataset v${o.version}. Score = number of records carrying the technique; the comment lists the record ids. Mapped in ${records.filter((r) => r.mappings.mitre_atlas.length).length} of ${records.length} records. CC BY-SA 4.0.`,
+    description: `MITRE ATLAS techniques mapped upstream in the Agentic Attack Index, dataset v${o.version}. Score = number of records carrying the technique; the comment lists the record ids. Mapped in ${records.filter((r) => r.mappings.mitre_atlas.some((id) => ATLAS_TECHNIQUE.test(id))).length} of ${records.length} records. ATLAS case studies mapped upstream are linked from record pages, not included here. CC BY-SA 4.0.`,
     techniques: entries.map(([id, ids]) => ({ techniqueID: id, score: ids.length, comment: ids.join(', '), enabled: true, showSubtechniques: true })),
     gradient: { colors: GRADIENT, minValue: 0, maxValue: max },
     legendItems: [{ label: 'records carrying the technique', color: GRADIENT[1] }],
