@@ -73,6 +73,7 @@ export function normalizeIncident(raw: RawIncident): Incident {
 
     mappings: {
       mitre_atlas: arr(raw.mappings?.mitre_atlas),
+      mitre_atlas_case_studies: arr(raw.mappings?.mitre_atlas_case_studies),
       mitre_attack: arr(raw.mappings?.mitre_attack),
       owasp_llm: arr(raw.mappings?.owasp_llm),
       owasp_asi: arr(raw.mappings?.owasp_asi),

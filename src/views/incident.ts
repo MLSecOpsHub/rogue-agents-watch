@@ -118,6 +118,7 @@ export function incidentView({ ds, route, root }: ViewContext): void {
       'Framework mappings',
       defList([
         ['MITRE ATLAS', linkList(inc.mappings.mitre_atlas, atlasUrl)],
+        ['MITRE ATLAS case studies', linkList(inc.mappings.mitre_atlas_case_studies, atlasUrl)],
         ['MITRE ATT&CK', linkList(inc.mappings.mitre_attack, attackUrl)],
         ['OWASP Top 10 for LLM Apps', linkList(inc.mappings.owasp_llm, owaspLlmUrl)],
         ['OWASP Agentic Security Initiative', linkList(inc.mappings.owasp_asi, owaspAsiUrl)],
@@ -178,7 +179,7 @@ export function incidentView({ ds, route, root }: ViewContext): void {
   );
 
   const ev = evidenceSummary(inc);
-  const mapCount = inc.mappings.mitre_atlas.length + inc.mappings.mitre_attack.length + inc.mappings.owasp_asi.length + inc.mappings.owasp_llm.length + inc.mappings.cve.length + inc.mappings.aiid.length;
+  const mapCount = inc.mappings.mitre_atlas.length + inc.mappings.mitre_atlas_case_studies.length + inc.mappings.mitre_attack.length + inc.mappings.owasp_asi.length + inc.mappings.owasp_llm.length + inc.mappings.cve.length + inc.mappings.aiid.length;
   sideCol.appendChild(
     h(
       'section',
@@ -190,7 +191,7 @@ export function incidentView({ ds, route, root }: ViewContext): void {
         ['Independent corroboration', h('span', null, ev.publishers <= 1 ? `${ev.publishers} publisher (single-source: rests on one account)` : `${ev.publishers} distinct publishers`)],
         ['Archived copies', h('span', null, `${ev.archived} of ${ev.sources}`)],
         ['Source dates', h('span', null, ev.earliest ? (ev.earliest === ev.latest ? ev.earliest : `${ev.earliest} to ${ev.latest}`) : 'not stated')],
-        ['Framework ids', h('span', null, mapCount ? `${mapCount} (ATLAS ${inc.mappings.mitre_atlas.length}, ATT&CK ${inc.mappings.mitre_attack.length}, ASI ${inc.mappings.owasp_asi.length}, LLM ${inc.mappings.owasp_llm.length}, CVE ${inc.mappings.cve.length}, AIID ${inc.mappings.aiid.length})` : 'none recorded')],
+        ['Framework ids', h('span', null, mapCount ? `${mapCount} (ATLAS ${inc.mappings.mitre_atlas.length + inc.mappings.mitre_atlas_case_studies.length}, ATT&CK ${inc.mappings.mitre_attack.length}, ASI ${inc.mappings.owasp_asi.length}, LLM ${inc.mappings.owasp_llm.length}, CVE ${inc.mappings.cve.length}, AIID ${inc.mappings.aiid.length})` : 'none recorded')],
         ['Location', h('span', null, inc.geo ? `${inc.geo.points.length} point${inc.geo.points.length === 1 ? '' : 's'}, ${inc.geo.points.every((p) => p.illustrative) ? 'country-level only' : 'stated'}` : 'none')],
         ['Figures stated', h('span', null, [inc.targets.orgs_affected !== null && 'organisations affected', inc.targets.records_exfiltrated !== null && 'records exfiltrated', inc.autonomy_pct !== null && 'autonomy %'].filter(Boolean).join(', ') || 'none')],
       ]),
