@@ -50,6 +50,17 @@ export function svgEl<K extends keyof SVGElementTagNameMap>(tag: K, attrs?: Reco
   return el;
 }
 
-export function externalLink(url: string, text?: string, cls?: string): HTMLAnchorElement {
+/** True only for absolute http(s) URLs. Everything else (javascript:, data:, relative, malformed) is not linkable. */
+export function isHttpUrl(url: unknown): url is string {
+  return typeof url === 'string' && /^https?:\/\/[^\s]/i.test(url);
+}
+
+/**
+ * Link to an external URL from the dataset. Defense in depth behind the
+ * upstream schema (which already requires http(s)): a non-http(s) URL is
+ * rendered as inert text, never as an href.
+ */
+export function externalLink(url: string, text?: string, cls?: string): HTMLAnchorElement | HTMLSpanElement {
+  if (!isHttpUrl(url)) return h('span', { class: `${cls ?? 'ext'} unlinked` }, text ?? url);
   return h('a', { href: url, target: '_blank', rel: 'noopener noreferrer external', class: cls ?? 'ext' }, text ?? url);
 }

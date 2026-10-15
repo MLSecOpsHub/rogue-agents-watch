@@ -8,7 +8,7 @@
 // fact is added, grades are shown with the upstream definition, nulls say
 // "not stated". The hash-less URLs here are the canonical ones.
 import {
-  actorGroups, aiidUrl, atlasUrl, attackUrl, byDisclosedDesc, byIdAsc, correctionIssueUrl, cveUrl, datasetModified, esc, firstSentence, gradeLine, LICENSE_URL, owaspAsiUrl, owaspLlmUrl, PUBLISHER, SITE_NAME, tax, taxDesc, UPSTREAM,
+  actorGroups, aiidUrl, atlasUrl, attackUrl, byDisclosedDesc, byIdAsc, correctionIssueUrl, cveUrl, datasetModified, esc, firstSentence, safeHref, gradeLine, LICENSE_URL, owaspAsiUrl, owaspLlmUrl, PUBLISHER, SITE_NAME, tax, taxDesc, UPSTREAM,
 } from './prerender-util.mjs';
 
 /** Route pages in navigation order. `path` is relative to the site root and ends with a slash (or is empty for the root). */
@@ -369,8 +369,11 @@ function gradeRows(ctx, r) {
 function sourceItem(ctx, s) {
   const bits = [esc(s.publisher), esc(tax(ctx, 'source_type', s.type))];
   if (s.date) bits.push(`<time datetime="${esc(s.date)}">${esc(s.date)}</time>`);
-  bits.push(s.archive_url ? `<a href="${esc(s.archive_url)}" rel="external">archived copy</a>` : '<span class="muted">no archive recorded</span>');
-  return `<a href="${esc(s.url)}" rel="external">${esc(s.title)}</a><br><span class="muted">${bits.join(' · ')}</span>`;
+  // Only http(s) URLs become links (defense in depth behind the upstream schema).
+  const archive = safeHref(s.archive_url);
+  bits.push(archive ? `<a href="${esc(archive)}" rel="external">archived copy</a>` : '<span class="muted">no archive recorded</span>');
+  const url = safeHref(s.url);
+  return `${url ? `<a href="${esc(url)}" rel="external">${esc(s.title)}</a>` : esc(s.title)}<br><span class="muted">${bits.join(' · ')}</span>`;
 }
 
 export function incidentBody(ctx, r) {
