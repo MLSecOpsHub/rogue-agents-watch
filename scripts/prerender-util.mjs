@@ -8,6 +8,11 @@ export const LICENSE_URL = 'https://creativecommons.org/licenses/by-sa/4.0/';
 export const CARD_W = 1200;
 export const CARD_H = 630;
 
+/** The URL if it is an absolute http(s) URL, else null. Mirrors isHttpUrl() in src/util/dom.ts. */
+export function safeHref(url) {
+  return typeof url === 'string' && /^https?:\/\/[^\s]/i.test(url) ? url : null;
+}
+
 export function esc(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
