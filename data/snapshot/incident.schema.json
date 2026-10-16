@@ -406,8 +406,8 @@
           "archive_url": {
             "type": "string",
             "format": "uri",
-            "pattern": "^https?://",
-            "description": "Optional archival snapshot (e.g. Wayback Machine) so the record survives link rot. Must resolve independently of url."
+            "pattern": "^https://web\\.archive\\.org/web/[0-9]{14}/",
+            "description": "Optional Wayback Machine snapshot (https://web.archive.org/web/<14-digit timestamp>/<original url>) so the record survives link rot. Restricted to Wayback snapshots so no other host can be introduced as an archive."
           },
           "publisher": {
             "type": "string",
