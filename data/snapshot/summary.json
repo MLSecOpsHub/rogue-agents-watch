@@ -1,5 +1,5 @@
 {
-  "dataset_version": "0.7.1",
+  "dataset_version": "0.8.0",
   "unreleased_changes": false,
   "schema": "https://raw.githubusercontent.com/MLSecOpsHub/agentic-attack-index/main/schema/incident.schema.json",
   "total": 99,
