@@ -250,6 +250,7 @@
     "severity": "high",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20261011222120/https://aws.amazon.com/blogs/security/ai-augmented-threat-actor-accesses-fortigate-devices-at-scale/",
         "date": "2026-02-20",
         "publisher": "Amazon Web Services",
         "title": "AI-augmented threat actor accesses FortiGate devices at scale",
@@ -257,6 +258,7 @@
         "url": "https://aws.amazon.com/blogs/security/ai-augmented-threat-actor-accesses-fortigate-devices-at-scale/"
       },
       {
+        "archive_url": "https://web.archive.org/web/20260904124608/https://www.team-cymru.com/post/tracking-cyberstrikeai-usage",
         "date": "2026-03-02",
         "publisher": "Team Cymru",
         "title": "Tracking CyberStrikeAI Usage",
@@ -264,6 +266,7 @@
         "url": "https://www.team-cymru.com/post/tracking-cyberstrikeai-usage"
       },
       {
+        "archive_url": "https://web.archive.org/web/20260316205938/https://therecord.media/gen-ai-fortigate-hackers-russia",
         "date": "2026-02-23",
         "publisher": "The Record by Recorded Future News",
         "title": "Russian-speaking hackers used gen AI tools to compromise 600 firewalls, Amazon says",
@@ -404,6 +407,7 @@
     "severity": "medium",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20261014104951/https://www.engadget.com/ai/13-hour-aws-outage-reportedly-caused-by-amazons-own-ai-tools-170930190.html",
         "date": "2026-02-21",
         "publisher": "Engadget",
         "title": "13-hour AWS outage reportedly caused by Amazon's own AI tools",
@@ -718,6 +722,7 @@
         "url": "https://www.anthropic.com/research/investigating-unintended-model-actions"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261013004944/https://6abc.com/post/anthropic-ai-model-submitted-false-tip-unsolved-murder-philadelphia-police-say/19925243/",
         "date": "2026-10-09",
         "publisher": "6abc Action News (WPVI-TV)",
         "title": "AI model submitted false tip about unsolved murder, Philadelphia police say",
@@ -855,6 +860,7 @@
         "url": "https://therecord.media/south-korean-bank-hacks-ai-agents"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261011105558/https://www.koreatimes.co.kr/business/banking-finance/20261007/explainer-how-ai-emerged-as-new-threat-in-koreas-bank-hacking-crisis",
         "date": "2026-10-07",
         "publisher": "The Korea Times",
         "title": "[EXPLAINER] How AI emerged as new threat in Korea's bank hacking crisis",
@@ -1087,6 +1093,7 @@
     "severity": "high",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20260917080750/https://socradar.io/blog/blackhatsect0r-dxqrtxx-operation-server/",
         "date": "2026-09-16",
         "publisher": "SOCRadar",
         "title": "Discernment Deleted: Inside the Operation Server of BlackHatSect0r && DXQRTXX",
@@ -1264,6 +1271,7 @@
     "severity": "medium",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20261008044207/https://www.threatdown.com/blog/carbonato/",
         "date": "2026-09-22",
         "publisher": "ThreatDown",
         "title": "CARBONATO: a botnet built around an AI agent",
@@ -1271,6 +1279,7 @@
         "url": "https://www.threatdown.com/blog/carbonato/"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261008051359/https://www.bleepingcomputer.com/news/security/new-carbonato-malware-uses-ai-agents-to-hijack-exposed-docker-hosts/",
         "date": "2026-09-24",
         "publisher": "BleepingComputer",
         "title": "New Carbonato malware uses AI agents to hijack exposed Docker hosts",
@@ -1485,6 +1494,7 @@
     "severity": "high",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20261012043620/https://cline.bot/blog/post-mortem-unauthorized-cline-cli-npm",
         "date": "2026-02-24",
         "publisher": "Cline",
         "title": "Post-mortem: Unauthorized Cline CLI npm publish on February 17, 2026",
@@ -1823,6 +1833,7 @@
         "url": "https://socradar.io/blog/cyberxero-ai-iab-ukraine-critical-infrastructure/"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261012093851/https://securityaffairs.com/200803/cyber-crime/cyberxero-used-51-ai-agents-to-steal-628000-ukrainian-records.html",
         "date": "2026-10-12",
         "publisher": "Security Affairs",
         "title": "CyberXero Used 51 AI Agents to Steal 628,000 Ukrainian Records",
@@ -1830,6 +1841,7 @@
         "url": "https://securityaffairs.com/200803/cyber-crime/cyberxero-used-51-ai-agents-to-steal-628000-ukrainian-records.html"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261012213342/https://www.esecurityplanet.com/threats/news-cyberxero-claude-code-data-theft-emea-ukraine/",
         "date": "2026-10-12",
         "publisher": "eSecurity Planet",
         "title": "CyberXero Uses Claude Code in Theft of 628,000+ Ukrainian Records",
@@ -2126,6 +2138,7 @@
         "url": "https://www.dreamgroup.com/blog/inside-a-multi-agent-ai-framework-used-to-compromise-government-entities-in-asia"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261009235215/https://focustaiwan.tw/society/202608130011",
         "date": "2026-08-13",
         "publisher": "Focus Taiwan",
         "title": "AI agents used in cyberattacks on Taiwan government websites: MODA",
@@ -2397,6 +2410,7 @@
     "severity": "critical",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20261009231150/https://gambit.security/blog-posts/autonomous-ai-agents-online-retailers-25-a-company",
         "date": "2026-09-22",
         "publisher": "Gambit Security",
         "title": "AI Agents Are Hacking Online Retailers for $25 a Company",
@@ -2481,6 +2495,7 @@
         "url": "https://gambit.security/blog-posts/ai-across-the-intrusion-lifecycle"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261007021847/https://gambit.security/ai-across-the-intrusion-lifecycle",
         "date": "2026-08-31",
         "publisher": "Gambit Security",
         "title": "AI Across the Intrusion Lifecycle (full technical report)",
@@ -2827,6 +2842,7 @@
     "severity": "medium",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20261012180010/https://invariantlabs.ai/blog/mcp-github-vulnerability",
         "date": "2025-05-26",
         "publisher": "Invariant Labs",
         "title": "GitHub MCP Exploited: Accessing private repositories via MCP",
@@ -4024,6 +4040,7 @@
         "url": "https://cloud.google.com/blog/topics/threat-intelligence/from-prompting-to-autonomy-the-evolution-of-adversarial-ai"
       },
       {
+        "archive_url": "https://web.archive.org/web/20260925042541/https://www.bleepingcomputer.com/news/security/hackers-build-ai-frameworks-for-widescale-credential-theft/",
         "date": "2026-09-08",
         "publisher": "BleepingComputer",
         "title": "Hackers build AI frameworks for widescale credential theft",
@@ -4387,6 +4404,7 @@
         "url": "https://snyk.io/blog/poisoned-security-scanner-backdooring-litellm/"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261009235709/https://futuresearch.ai/blog/litellm-pypi-supply-chain-attack/",
         "date": "2026-03-24",
         "publisher": "FutureSearch",
         "title": "litellm 1.82.8 Supply Chain Attack on PyPI (March 2026)",
@@ -4527,6 +4545,7 @@
     "severity": "medium",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20261009235821/https://www.incibe.es/en/incibe-cert/publications/cybersecurity-highlights/ai-incident-meta-drives-improvements-security-and-control-autonomous-systems",
         "date": "2026-04-16",
         "publisher": "INCIBE-CERT",
         "title": "AI incident at Meta drives improvements in the security and control of autonomous systems",
@@ -4603,6 +4622,7 @@
     "severity": "medium",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20261010000003/https://research.meta.ai/blog/addressing-third-party-testing-misconfiguration-muse-spark-1-1",
         "date": "2026-08-14",
         "publisher": "Meta AI Research",
         "title": "Addressing an issue involving a third-party cyber evaluation of Muse Spark 1.1",
@@ -4715,6 +4735,7 @@
         "url": "https://gambit.security/blog-posts/a-single-operator-two-ai-platforms-nine-government-agencies-the-full-technical-report"
       },
       {
+        "archive_url": "https://web.archive.org/web/20260514222535/https://www.claimsjournal.com/news/national/2026/02/25/335916.htm",
         "date": "2026-02-25",
         "publisher": "Claims Journal",
         "title": "Hacker Used Anthropic's Claude to Steal Sensitive Mexican Data",
@@ -4722,6 +4743,7 @@
         "url": "https://www.claimsjournal.com/news/national/2026/02/25/335916.htm"
       },
       {
+        "archive_url": "https://web.archive.org/web/20260226165602/https://www.mobileworldlive.com/ai-cloud/hacker-taps-into-claude-to-infiltrate-mexico-agencies/",
         "date": "2026-02-26",
         "publisher": "Mobile World Live",
         "title": "Hacker taps into Claude to infiltrate Mexican agencies",
@@ -5583,6 +5605,7 @@
         "url": "https://www.abc.net.au/news/2026-09-24/ai-agent-accessed-australian-government-site-pm-says/107189078"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261009153525/https://www.infosecurity-magazine.com/news/openai-hacks-australian-medicare/",
         "date": "2026-09-24",
         "publisher": "Infosecurity Magazine",
         "title": "OpenAI Agent Hacks Australian Medicare Portal",
@@ -5847,6 +5870,7 @@
         "url": "https://alignment.openai.com/misalignment-reports/"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261012083506/https://labs.zenity.io/post/rogue-ai-agents-swarm-encoded-url-messages-laundering",
         "date": "2026-09-09",
         "publisher": "Zenity Labs",
         "title": "URL Laundering by Rogue Agents: Newly Discovered Messages and Sandbox Circumvention by AI Swarms",
@@ -5919,6 +5943,7 @@
     "severity": "medium",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20260917215257/https://research.jfrog.com/post/gemstuffer-openai-rubygems/",
         "date": "2026-09-15",
         "publisher": "JFrog Security Research",
         "title": "New packages identified in GemStuffer 'OpenAI Swarm' malicious RubyGems campaign",
@@ -6072,6 +6097,7 @@
         "url": "https://diff.wikimedia.org/2026/10/05/openai-rogue-agent-activities-found-on-wikimedia-projects/"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261009063259/https://therecord.media/wikimedia-foundation-openai-agents-report",
         "date": "2026-10-05",
         "publisher": "The Record",
         "title": "Wikimedia Foundation: OpenAI agents tried to edit pages and compromise notes tool",
@@ -6159,6 +6185,7 @@
         "url": "https://cdn.openai.com/pdf/67869394-cb91-4c12-888c-5cbd85c7814c/OpenAI-Hugging-Face%20Incident-Technical-Report.pdf"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261014214831/https://huggingface.co/blog/agent-intrusion-technical-timeline",
         "date": "2026-07-27",
         "publisher": "Hugging Face",
         "title": "Anatomy of a Frontier Lab Agent Intrusion: A Technical Timeline of the July 2026 Incident",
@@ -6174,6 +6201,7 @@
         "url": "https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/"
       },
       {
+        "archive_url": "https://web.archive.org/web/20260924050656/https://www.hiddenlayer.com/research/hugging-face-agent-intrusion-analysis",
         "date": "2026-07-31",
         "publisher": "HiddenLayer",
         "title": "Dead Drops in Public: What the AI Agent Stashed on Hugging Face",
@@ -6249,6 +6277,7 @@
     "severity": "medium",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20260927211506/https://www.straitstimes.com/world/united-states/openais-rogue-agents-probed-hugging-face-for-weaknesses-two-months-before-major-hack",
         "date": "2026-09-16",
         "publisher": "The Straits Times",
         "title": "OpenAI's rogue agents probed Hugging Face for weaknesses two months before major hack",
@@ -6492,6 +6521,7 @@
         "url": "https://www.greynoise.io/blog/ai-orchestrated-campaign-against-papercut-ng-mf"
       },
       {
+        "archive_url": "https://web.archive.org/web/20260917130902/https://www.papercut.com/kb/Main/security-bulletin-27-aug-2026-urgent-security-advisory/",
         "date": "2026-08-27",
         "publisher": "PaperCut",
         "title": "URGENT Security Advisory: PaperCut NG/MF Security Bulletin (27 Aug 2026)",
@@ -6559,6 +6589,7 @@
     "severity": "medium",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20261001175610/https://www.pillar.security/blog/ill-just-call-you-agent-to-agent-privilege-boundary-failures-in-ci-cd-on-googles-adk-repository",
         "date": "2026-08-03",
         "publisher": "Pillar Security",
         "title": "I'll Just Call You: Agent-to-Agent Privilege Boundary Failures in CI/CD on Google's ADK Repository",
@@ -6626,6 +6657,7 @@
     "severity": "medium",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20261003101624/https://www.pillar.security/blog/a-wif-of-fresh-access-how-a-github-issue-on-gemini-cli-led-to-gcp-project-compromise",
         "date": "2026-08-18",
         "publisher": "Pillar Security",
         "title": "A WIF Of Fresh Access: How a GitHub Issue on Gemini-CLI Led to GCP Project Compromise",
@@ -6701,6 +6733,7 @@
         "url": "https://www.koi.security/blog/postmark-mcp-npm-malicious-backdoor-email-theft"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261012021632/https://postmarkapp.com/blog/information-regarding-malicious-postmark-mcp-package",
         "date": "2025-09-25",
         "publisher": "Postmark",
         "title": "Information Regarding Malicious \"postmark-mcp\" Package",
@@ -6708,6 +6741,7 @@
         "url": "https://postmarkapp.com/blog/information-regarding-malicious-postmark-mcp-package"
       },
       {
+        "archive_url": "https://web.archive.org/web/20260928141402/https://snyk.io/blog/malicious-mcp-server-on-npm-postmark-mcp-harvests-emails/",
         "date": "2025-09-25",
         "publisher": "Snyk",
         "title": "Malicious MCP Server on npm postmark-mcp Harvests Emails",
@@ -6715,6 +6749,7 @@
         "url": "https://snyk.io/blog/malicious-mcp-server-on-npm-postmark-mcp-harvests-emails/"
       },
       {
+        "archive_url": "https://web.archive.org/web/20260224175645/https://www.csoonline.com/article/4064009/trust-in-mcp-takes-first-in-the-wild-hit-via-squatted-postmark-connector.html",
         "date": "2025-09-26",
         "publisher": "CSO Online",
         "title": "Trust in MCP takes first in-the-wild hit via squatted Postmark connector",
@@ -6943,6 +6978,7 @@
         "url": "https://cloud.google.com/blog/topics/threat-intelligence/ai-vulnerability-exploitation-initial-access"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261009173933/https://www.welivesecurity.com/en/eset-research/promptspy-ushers-in-era-android-threats-using-genai/",
         "publisher": "ESET",
         "title": "PromptSpy ushers in era of Android threats using GenAI",
         "type": "vendor-report",
@@ -7253,6 +7289,7 @@
     "severity": "high",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20260924222255/https://hunt.io/blog/chinese-operator-secflow-claude-qwen-deepseek-asia",
         "date": "2026-09-03",
         "publisher": "Hunt.io",
         "title": "Chinese-Speaking Operator Uses AI Agents to Target Government and Education Systems Across Asia",
@@ -7410,6 +7447,7 @@
         "url": "https://www.globenewswire.com/news-release/2025/10/22/3171164/0/en/operant-ai-discovers-shadow-escape-the-first-zero-click-agentic-attack-via-mcp.html"
       },
       {
+        "archive_url": "https://web.archive.org/web/20251118224709/https://cybersecuritynews.com/first-zero-click-attack-exploits-mcp/",
         "date": "2025-10-28",
         "publisher": "Cyber Security News",
         "title": "First Zero Click Attack Exploits MCP and Connected Popular AI Agents To Exfiltrate Data Silently",
@@ -7484,6 +7522,7 @@
         "url": "https://labs.zenity.io/post/attackers-target-agents-via-the-skill-supply-chain"
       },
       {
+        "archive_url": "https://web.archive.org/web/20260828031551/https://www.csoonline.com/article/4206851/trojanized-ai-skills-gain-1.7m-installs-in-agent-targeted-attack.html",
         "date": "2026-08-07",
         "publisher": "CSO Online",
         "title": "Trojanized AI skills gain 1.7M installs in agent-targeted attack",
@@ -7556,6 +7595,7 @@
     "severity": "high",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20260928173307/https://www.promptarmor.com/resources/snowflake-ai-escapes-sandbox-and-executes-malware",
         "date": "2026-03-16",
         "publisher": "PromptArmor",
         "title": "Snowflake Cortex AI Escapes Sandbox and Executes Malware",
@@ -7637,6 +7677,7 @@
         "url": "https://www.microsoft.com/en-us/security/blog/2026/09/25/storm-3168-agentic-driven-cloud-attacks-using-compromised-service-principals/"
       },
       {
+        "archive_url": "https://web.archive.org/web/20261002131608/https://thehackernews.com/2026/09/jadepuffer-linked-attackers-used.html",
         "date": "2026-09-28",
         "publisher": "The Hacker News",
         "title": "JADEPUFFER-Linked Attackers Used Compromised Service Principals to Delete Azure Resources",
@@ -7699,6 +7740,7 @@
     "severity": "medium",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20260804153050/https://generalanalysis.com/blog/supabase-mcp-blog",
         "date": "2025-07-08",
         "publisher": "General Analysis",
         "title": "Supabase MCP can leak your entire SQL database",
@@ -7767,6 +7809,7 @@
     "severity": "medium",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20260925024318/https://www.sysdig.com/blog/ai-agent-at-the-wheel-how-an-attacker-used-llms-to-move-from-a-cve-to-an-internal-database-in-4-pivots",
         "date": "2026-05-26",
         "publisher": "Sysdig",
         "title": "AI agent at the wheel: How an attacker used LLMs to move from a CVE to an internal database in 4 pivots",
@@ -7875,6 +7918,7 @@
     "severity": "high",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20260928141343/https://hunt.io/blog/thailand-ministry-finance-targeted-with-hermes-ai-agent",
         "date": "2026-07-23",
         "publisher": "Hunt.io",
         "title": "Thailand's Ministry of Finance Targeted With Hermes AI Agent Running Unattended, Hades Implant Staged",
@@ -7882,6 +7926,7 @@
         "url": "https://hunt.io/blog/thailand-ministry-finance-targeted-with-hermes-ai-agent"
       },
       {
+        "archive_url": "https://web.archive.org/web/20260928141343/https://www.bleepingcomputer.com/news/security/hermes-ai-agent-used-to-automate-attack-on-thai-finance-ministry/",
         "date": "2026-07-24",
         "publisher": "BleepingComputer",
         "title": "Hermes AI agent used to automate attack on Thai Finance Ministry",
@@ -7966,6 +8011,7 @@
     "severity": "medium",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20261010234411/https://www.trendmicro.com/en_us/research/26/g/actor-behind-patriot-bait-used-ai-to-deploy-c2-botnet.html",
         "date": "2026-07-14",
         "publisher": "Trend Micro",
         "title": "Six Minutes to Compromise: How 'Patriot Bait' Actor Used AI to Build and Deploy a C&C Botnet",
@@ -7973,6 +8019,7 @@
         "url": "https://www.trendmicro.com/en_us/research/26/g/actor-behind-patriot-bait-used-ai-to-deploy-c2-botnet.html"
       },
       {
+        "archive_url": "https://web.archive.org/web/20260909001748/https://thehackernews.com/2026/07/russian-speaking-hacker-uses-google.html",
         "date": "2026-07-14",
         "publisher": "The Hacker News",
         "title": "Russian-Speaking Hacker Uses Google Gemini CLI to Control Botnet of Eight Dental Clinic PCs",
@@ -8040,6 +8087,7 @@
     "severity": "high",
     "sources": [
       {
+        "archive_url": "https://web.archive.org/web/20261011151107/https://unit42.paloaltonetworks.com/ai-assisted-cyber-attack-inside-a-unit-42-investigation/",
         "date": "2026-09-02",
         "publisher": "Unit 42 (Palo Alto Networks)",
         "title": "An AI-Assisted Cyber Attack: Inside a Unit 42 Investigation",
