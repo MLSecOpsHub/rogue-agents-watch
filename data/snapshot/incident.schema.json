@@ -312,7 +312,7 @@
       "properties": {
         "mitre_atlas": {
           "type": "array",
-          "description": "MITRE ATLAS technique, tactic or mitigation IDs (AML.T/TA/M). Case studies go in mitre_atlas_case_studies.",
+          "description": "MITRE ATLAS technique, tactic or mitigation IDs (AML.T/TA/M) as published in the ATLAS release vendored in schema/mitre-atlas.json. ATLAS techniques adapted from ATT&CK go in mitre_attack. Case studies go in mitre_atlas_case_studies. Method: docs/atlas-mapping.md.",
           "items": {
             "type": "string",
             "pattern": "^AML\\.(T|TA|M)[0-9]{4}(\\.[0-9]{3})?$"

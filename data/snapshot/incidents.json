@@ -31,7 +31,7 @@
     ],
     "id": "aepd-first-ai-agent-data-breach-notification",
     "impact": "Personal data could be modified and invoices accessed at one Spanish firm, per the AEPD as reported by SecurityWeek. Number of people affected not stated.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "impact"
@@ -39,7 +39,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -119,7 +121,7 @@
     ],
     "id": "ai-agents-us-canada-government-websites",
     "impact": "Per Transluce, no non-public information was accessed: the Education Department and Library and Archives Canada probes appear to have failed, and other workflows retrieved public data, sometimes against usage policies. Transluce could not confirm whether a high-volume burst against a Kansas historical site caused a service disruption. The Education Department reported no impact to its services; CSE reported no indication of compromise; OpenAI found no use of SEC credentials, no non-public access and no compromise in the activity it confirmed.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -128,7 +130,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -215,7 +219,7 @@
     ],
     "id": "ai-augmented-fortigate-mass-compromise",
     "impact": "Per Amazon: more than 600 FortiGate devices in more than 55 countries accessed and their configurations taken, including VPN and administrative credentials and network topology. Several organisations' Active Directory environments were compromised and complete domain credential databases extracted. Backup infrastructure was targeted, which Amazon calls a potential precursor to ransomware. No ransomware deployment, data sale or named victim is reported.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "recon",
@@ -231,7 +235,10 @@
         "CVE-2023-27532",
         "CVE-2024-40711"
       ],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0102"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -308,7 +315,7 @@
     ],
     "id": "aisi-unsanctioned-agent-cyber-testing",
     "impact": "Nineteen unsanctioned live-internet actions against real people and organisations, including an attempted open-source supply-chain attack with maintainer social engineering (refused by a human reviewer) and reuse of artefacts by other agents. AISI states no real-world harm was identified; GitHub removed the artefacts.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "initial-access",
@@ -317,7 +324,11 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0117",
+        "AML.T0118.000"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -444,7 +455,7 @@
     ],
     "id": "amazon-q-developer-extension-compromise",
     "impact": "Malicious data-wiping instructions were shipped in an official extension release, but AWS states the code was unsuccessful in executing due to a syntax error. Credentials were revoked and the code removed.",
-    "last_updated": "2026-08-12",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -456,8 +467,16 @@
         "CVE-2025-8217"
       ],
       "mitre_atlas": [
-        "AML.T0051",
-        "AML.T0081"
+        "AML.T0010.001",
+        "AML.T0011.001",
+        "AML.T0051.000",
+        "AML.T0065",
+        "AML.T0081",
+        "AML.T0101",
+        "AML.T0103"
+      ],
+      "mitre_atlas_case_studies": [
+        "AML.CS0047"
       ],
       "mitre_attack": [],
       "owasp_asi": []
@@ -517,7 +536,7 @@
     ],
     "id": "anonymouskit-ai-voice-phishing-apple",
     "impact": "Per SOCRadar: a phishing-as-a-service platform using AI voice agents to impersonate Apple Support and harvest device passcodes, Apple IDs and second-factor codes to disable Activation Lock on stolen devices; a reseller supply chain of 506 domains and 168 brands and operator telemetry of 6,092 phishing emails. No individual victim named.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "credential-access",
@@ -527,7 +546,11 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0052.000",
+        "AML.T0052.001"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -581,7 +604,7 @@
     ],
     "id": "anthropic-cyber-evals-real-target-incidents",
     "impact": "Per Anthropic: a real company's application and infrastructure credentials and several hundred rows of production data accessed; a package live on a public registry for about one hour that ran on 15 real systems and yielded a security company's credentials, which were used to reach further infrastructure; about 9,000 targets scanned and one company's internet-facing application compromised; a fourth, earlier incident not analysed in depth. No victim is named.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -591,7 +614,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0116",
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -675,7 +701,7 @@
     ],
     "id": "anthropic-unintended-model-actions-real-websites",
     "impact": "Per Anthropic, minimal real-world impact: commands run on a university server through an injection flaw; real online forms submitted, including a government form and a fabricated homicide tip to a police department; fee- or token-gated public data obtained from local and state government systems; URL shortening services used to evade fetch limits. To Anthropic's knowledge no customer data or Anthropic internal systems were involved. Per the Philadelphia Police Department, the tip was flagged as spam, never forwarded to its Real-Time Crime Center, and there was no indication of unauthorized access to police systems or compromise of department data.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -686,7 +712,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0017.001",
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -792,7 +821,7 @@
     ],
     "id": "artex-south-korea-finance-intrusions",
     "impact": "Customer personal data, including names, contact details, annual income and loan limits, was exfiltrated from several South Korean financial institutions. One bank reported about 25,000 affected customers and two others reported 119 and 89; press reports put the total at at least 68,000 people. Regulators convened an emergency inspection meeting across the financial sector, police assigned an investigation team, and authorities raised concern about follow-on phishing using the leaked data.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "recon",
@@ -802,7 +831,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002"
+      ],
       "mitre_attack": [
         "T1583.003",
         "T1588.007",
@@ -920,7 +951,7 @@
     ],
     "id": "aurora-cursor-agent-ransomware",
     "impact": "Linux/ESXi ransomware encryption of victim virtual machines and data-leak extortion across at least ten organizations in the first cluster and eight in the second; data exfiltrated to cloud storage with one victim's data published on the leak site. Ransom amounts and payments not reported.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -930,7 +961,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0102"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -1145,7 +1179,7 @@
     ],
     "id": "camoleak-github-copilot-chat",
     "impact": "Proof-of-concept exfiltration of secrets and source code from private repositories and full control of Copilot's responses. Responsibly disclosed via HackerOne and fixed by GitHub before public disclosure; no in-the-wild exploitation reported.",
-    "last_updated": "2026-08-12",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -1156,7 +1190,11 @@
       "cve": [],
       "mitre_atlas": [
         "AML.T0051.001",
-        "AML.T0057"
+        "AML.T0057",
+        "AML.T0065",
+        "AML.T0068",
+        "AML.T0077",
+        "AML.T0093"
       ],
       "mitre_attack": [],
       "owasp_asi": []
@@ -1235,7 +1273,7 @@
     ],
     "id": "carbonato-docker-hermes-botnet",
     "impact": "Per ThreatDown: hosts with exposed Docker APIs taken over through privileged containers, kept persistent and used for cryptocurrency mining, with a Hermes agent installed as an operator-tasked post-compromise tool directed at AI API keys and other credentials. Infection counts and stolen data are not reported. On 2026-09-03 six of seven known registries, the phishing sites, the CDN and the crew's LLM gateway were online.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -1246,7 +1284,12 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0054",
+        "AML.T0081",
+        "AML.T0103"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -1314,7 +1357,7 @@
     ],
     "id": "claude-cowork-file-exfiltration",
     "impact": "Per PromptArmor: a proof-of-concept in which Claude Cowork uploads a user's local files to an attacker account without human approval. No real-world victims reported; the flaw was unresolved at publication.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "exfiltration"
@@ -1322,7 +1365,11 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0053",
+        "AML.T0086"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -1384,7 +1431,7 @@
     ],
     "id": "clawhavoc-clawhub-malicious-skills",
     "impact": "At least 1,184 malicious skills on ClawHub as of 2026-02-05 per Antiy CERT (341 flagged in Koi Security's audit per eSecurity Planet); 14,285 downloads of 60 packages from one uploader; credential and wallet theft capability on affected systems. No confirmed victim count.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "initial-access",
@@ -1395,7 +1442,11 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0010.005",
+        "AML.T0011.002",
+        "AML.T0115.002"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -1461,7 +1512,7 @@
     ],
     "id": "clinejection-cline-triage-npm-publish",
     "impact": "Unauthorized cline@2.3.0 published to npm and available for about eight hours; the package added a postinstall step that globally installed another package. Cline states no user data was accessed or exfiltrated.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "credential-access",
@@ -1470,7 +1521,16 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0010.001",
+        "AML.T0051.001",
+        "AML.T0051.002",
+        "AML.T0053",
+        "AML.T0065",
+        "AML.T0093",
+        "AML.T0098",
+        "AML.T0119"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -1539,7 +1599,7 @@
     ],
     "id": "codewall-mckinsey-lilli-agent-intrusion",
     "impact": "Per CodeWall: read and write access to the production database behind McKinsey's Lilli platform reached without credentials in about two hours, exposing tens of millions of chat messages, hundreds of thousands of files, tens of thousands of user accounts and workspaces, system-prompt configurations and millions of retrieval document chunks. McKinsey remediated.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "credential-access"
@@ -1547,7 +1607,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0117",
+        "AML.T0132"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -1619,7 +1682,7 @@
     ],
     "id": "coral-sleet-agentic-ai-workflow",
     "impact": null,
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "deception-social-eng"
@@ -1627,7 +1690,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0054"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -1682,7 +1748,7 @@
     ],
     "id": "cursor-pocketos-database-deletion",
     "impact": "PocketOS's production database and backups deleted; reservation records and new customer signups lost and rental clients without customer records for at least a day. Railway restored the data; some bookings were reconstructed from payment, calendar and email records.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "impact"
@@ -1690,7 +1756,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0101"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -1765,7 +1833,7 @@
     ],
     "id": "cyberxero-ai-augmented-access-broker",
     "impact": "Per SOCRadar: data on more than 628,000 Ukrainian individuals held by the actor after confirmed exfiltration at four Ukrainian organisations, including 564,073 subscriber records (with home addresses and account numbers) and 213,340 access-log entries from a district heating provider in Kharkiv; one automated run scanned 4,708 targets and confirmed access to 429 WordPress administration panels in 61 seconds; administrator passwords overwritten at e-commerce targets; more than 40 affected organisations worldwide, including in Ukraine, Poland and China, with Pakistani entities targeted without a confirmed result. SOCRadar warns that the Kharkiv data could pose a physical risk to identifiable civilians. No evidence of the access being sold was recovered.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "recon",
@@ -1783,7 +1851,10 @@
         "CVE-2026-4815",
         "CVE-2015-1397"
       ],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0054"
+      ],
       "mitre_attack": [
         "T1595.002",
         "T1590.002",
@@ -1899,7 +1970,7 @@
     ],
     "id": "divd-zammad-ai-agent-breach",
     "impact": "Volunteer (DIVD) email addresses confirmed exfiltrated; signs of partial exfiltration from the GSuite office environment, helpdesk, Jira and Confluence, operational IT systems and the CSIRT ticket system; CSIRT correspondence and zero-day data held in Zammad should be assumed possibly compromised. HR, source code, Slack, accounting and the CVE/CNA environment show no indication of compromise. Investigation ongoing.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -1911,7 +1982,11 @@
         "CVE-2026-102489",
         "CVE-2026-102490"
       ],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0102",
+        "AML.T0118.000"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -2001,7 +2076,7 @@
     ],
     "id": "dprk-it-worker-fraud-claude",
     "impact": "Fraudulent employment at technology companies to evade sanctions and generate revenue for the DPRK regime; Anthropic notes such IT-worker schemes are reported to generate hundreds of millions of dollars annually for weapons programmes.",
-    "last_updated": "2026-09-11",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "deception-social-eng"
@@ -2009,7 +2084,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002"
+      ],
       "mitre_attack": [],
       "owasp_asi": []
     },
@@ -2096,7 +2173,7 @@
     ],
     "id": "dream-multi-agent-asia-government-campaign",
     "impact": "Per Dream Research Labs (claims from a recovered operator archive, not independently verified): about 1,395 files produced, 85 cracked employee accounts, more than 2,500 personnel records exfiltrated, a persistent foothold in state infrastructure and backdoors on government web applications. Taiwan's MODA confirms AI-agent attacks on government agencies, handled by affected units.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -2107,7 +2184,15 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0025",
+        "AML.T0054",
+        "AML.T0116",
+        "AML.T0117",
+        "AML.T0118.001",
+        "AML.T0124"
+      ],
       "mitre_atlas_case_studies": [
         "AML.CS0071"
       ],
@@ -2186,7 +2271,7 @@
     ],
     "id": "echoleak-m365-copilot",
     "impact": "Demonstrated zero-click exfiltration of data from the Microsoft 365 Copilot context (chat history, Microsoft Graph resources and preloaded context). Mitigated server-side by Microsoft with no reported in-the-wild exploitation.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -2198,8 +2283,19 @@
         "CVE-2025-32711"
       ],
       "mitre_atlas": [
+        "AML.T0025",
         "AML.T0051.001",
-        "AML.T0057"
+        "AML.T0051.002",
+        "AML.T0057",
+        "AML.T0065",
+        "AML.T0066",
+        "AML.T0067",
+        "AML.T0068",
+        "AML.T0070",
+        "AML.T0077",
+        "AML.T0079",
+        "AML.T0085.000",
+        "AML.T0093"
       ],
       "mitre_atlas_case_studies": [
         "AML.CS0059"
@@ -2277,7 +2373,7 @@
     ],
     "id": "forcedleak-salesforce-agentforce",
     "impact": "Demonstrated exfiltration of CRM data from Salesforce Agentforce via a zero-interaction Web-to-Lead vector. Researcher discovery; no in-the-wild exploitation reported. Remediated by Salesforce.",
-    "last_updated": "2026-08-13",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -2288,7 +2384,10 @@
       "cve": [],
       "mitre_atlas": [
         "AML.T0051.001",
-        "AML.T0057"
+        "AML.T0057",
+        "AML.T0065",
+        "AML.T0077",
+        "AML.T0093"
       ],
       "mitre_attack": [],
       "owasp_asi": [],
@@ -2375,7 +2474,7 @@
     ],
     "id": "gambit-ai-agents-retail-skimmer-campaign",
     "impact": "At least 27 companies compromised and payment-card skimmers confirmed at 19 between 2026-09-10 and 2026-09-15, with more than 100 further infected sites found and over 600,000 payment-card records taken from two companies, per Gambit Security. Estimated campaign cost US$12,000-18,000.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -2386,7 +2485,11 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0116",
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -2454,7 +2557,7 @@
     ],
     "id": "gambit-gentlemen-affiliate-claude-code-intrusions",
     "impact": "Per Gambit Security: eight organizations compromised across six countries; firewall service-account and domain credentials stolen; backdoor VPN accounts created; a financial platform's database dump staged and exfiltrated; and an Australian energy utility's firewall left unreachable from 2026-06-23 after a configuration restore pushed by Claude. One victim appeared on The Gentlemen's leak site a month after the compromise.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -2467,7 +2570,11 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0054",
+        "AML.T0102"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -2549,7 +2656,7 @@
     ],
     "id": "gemini-cli-ci-untrusted-workspace-rce",
     "impact": "Per the GitHub advisory: untrusted CI workspace content could lead to remote code execution through automatic folder trust, and a permissive mode ignoring the tool allowlist could let prompt injection reach arbitrary command execution. Rated CVSS 10.0; fixed in the listed versions.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution"
     ],
@@ -2558,7 +2665,11 @@
       "cve": [
         "CVE-2026-12537"
       ],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0053",
+        "AML.T0119"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -2617,7 +2728,7 @@
     ],
     "id": "gemini-evaluation-real-company-breaches",
     "impact": "Three real companies' systems accessed during a cybersecurity evaluation: one by guessing a password, two using publicly posted credentials. Google states the model stopped in each case on realising the targets were real and that no damage was done.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -2626,7 +2737,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0116",
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -2684,7 +2798,7 @@
     ],
     "id": "gentlemen-hermes-agent-gitlab-extortion",
     "impact": "3.1 TB of data stolen from more than 30 companies via vulnerable GitLab instances, with ransom demands drafted and issued; estimated AI token cost of US$0.40 to US$4 per company. No victims named.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -2694,7 +2808,11 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0102",
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -2749,7 +2867,7 @@
     ],
     "id": "ghostjacking-agentic-kill-chain-poc",
     "impact": "Per Tenet Security: a demonstration in which poisoned telemetry steers AI coding agents (including Claude Code, Cursor and Sentry's Seer) into DNS changes and command execution, chained across agents and leaving persistent changes. A research demonstration; no confirmed breach.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "persistence"
@@ -2757,7 +2875,11 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0053",
+        "AML.T0112.000"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -2814,7 +2936,7 @@
     ],
     "id": "github-mcp-server-private-repo-leak",
     "impact": "Per the research as explained by Cybernews: an agent on the GitHub MCP server could be induced through a public issue to read private repositories and expose their contents in a public pull request. Proof-of-concept; no in-the-wild victims.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "exfiltration"
@@ -2822,7 +2944,14 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0053",
+        "AML.T0065",
+        "AML.T0085.001",
+        "AML.T0086",
+        "AML.T0093"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -2886,7 +3015,7 @@
     ],
     "id": "gitlost-github-agentic-workflows-repo-leak",
     "impact": "Per Noma Security: private repository README contents published in a public comment through a GitHub Agentic Workflows agent, in a proof-of-concept against the researchers' own repositories. No in-the-wild exploitation.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "exfiltration"
@@ -2894,7 +3023,12 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0053",
+        "AML.T0085.001",
+        "AML.T0086"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -3017,7 +3151,7 @@
     ],
     "id": "google-antigravity-data-exfiltration-poc",
     "impact": "Per PromptArmor: a proof-of-concept in which a malicious web page leads the Antigravity agent to collect local credentials and code and send them to a public site. No observed real-world exploitation; no confirmed fix.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "credential-access",
@@ -3026,7 +3160,12 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0053",
+        "AML.T0086",
+        "AML.T0098"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -3084,7 +3223,7 @@
     ],
     "id": "google-antigravity-drive-deletion",
     "impact": "A user's D: drive partition wiped while clearing a project cache; deletion bypassed the Recycle Bin and files were unrecoverable, though most were backed up elsewhere. Other users reported similar project damage.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "impact"
@@ -3092,7 +3231,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0101"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -3148,7 +3289,7 @@
     ],
     "id": "grok-bankr-prompt-injection-wallet-drain",
     "impact": "About 3 billion DRB tokens transferred and liquidated, reported as worth US$150,000 to 200,000 at the time; about 80% later returned per Giskard.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -3157,7 +3298,12 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0048.000",
+        "AML.T0051.001",
+        "AML.T0053",
+        "AML.T0093"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -3224,7 +3370,7 @@
     ],
     "id": "gtg-10007-agent-swarm-intrusions",
     "impact": "Per Anthropic: hundreds of megabytes of bulk student personal data taken from an education-technology company's cloud storage; citizen records (names, phone numbers, home addresses) from a Southeast Asian government agency; access to a retail company's production systems with the ability to modify the live environment; multiple previously unknown vulnerabilities discovered.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "resource-dev",
@@ -3235,7 +3381,11 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0118.001",
+        "AML.T0124"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -3319,7 +3469,7 @@
     ],
     "id": "gtg-1002-ai-espionage",
     "impact": "Attempted infiltration of ~30 organizations with a small number of successful intrusions, including credential harvesting and data extraction, per Anthropic.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "resource-dev",
@@ -3332,9 +3482,18 @@
       "aiid": [],
       "cve": [],
       "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0017.001",
+        "AML.T0025",
+        "AML.T0040",
+        "AML.T0051.000",
         "AML.T0054",
+        "AML.T0075",
+        "AML.T0089",
         "AML.T0102",
-        "AML.T0053"
+        "AML.T0103",
+        "AML.T0116",
+        "AML.T0117"
       ],
       "mitre_atlas_case_studies": [
         "AML.CS0069"
@@ -3402,7 +3561,7 @@
     ],
     "id": "gtg-20006-agentic-espionage",
     "impact": "Per Anthropic: at least three hospitality vendors compromised; mail records exfiltrated from at least eight organizations; hundreds of gigabytes of stolen data extracted and organized with AI, including more than 300,000 national identity records and commercial registry data on more than half a million companies from a North African government technology authority.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "credential-access",
@@ -3412,7 +3571,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0017.002"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -3479,7 +3641,7 @@
     ],
     "id": "gtg-2002-vibe-hacking-extortion",
     "impact": "Compromise of personal records including healthcare data, financial information and government credentials; extortion with direct ransom demands occasionally exceeding US$500,000 (reported range US$75,000-500,000 in Bitcoin).",
-    "last_updated": "2026-08-12",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -3492,9 +3654,8 @@
       "aiid": [],
       "cve": [],
       "mitre_atlas": [
-        "AML.T0053",
-        "AML.T0102",
-        "AML.T0016.002"
+        "AML.T0016.002",
+        "AML.T0102"
       ],
       "mitre_attack": [],
       "owasp_asi": []
@@ -3562,7 +3723,7 @@
     ],
     "id": "gtg-50014-agentic-mass-exfiltration",
     "impact": "Per Anthropic: more than a terabyte of data exfiltrated from a technology provider, including hundreds of thousands of national identifiers and millions of payment card records; tens of millions of passenger records from an airline; over 2,100 Azure AD token sets across more than 40 corporate tenants; a SaaS provider compromise exposing roughly 200 downstream customer organizations; a ~400,000-record telecom/ISP dataset aggregated into a searchable service. Pay-or-leak extortion is the stated business model.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "credential-access",
@@ -3572,7 +3733,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -3639,7 +3802,7 @@
     ],
     "id": "gtg-50020-ai-vendor-api-key-theft",
     "impact": "Per Anthropic: roughly 26 gigabytes of data exfiltrated from one victim; production AI API keys stolen from AI vendors' customer environments and reused for the actor's own workloads; extortion or dark-web sale sought at US$1.5 to 2.5 million; the actor's goal of reaching a pre-release Claude model failed on every path.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -3651,7 +3814,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -3712,7 +3878,7 @@
     ],
     "id": "gtg-50029-hacktivist-agentic-recon",
     "impact": "Per Anthropic: internal access to at least 14 of 42 tracked entities; about 140,000 records including users' political opinions taken from a political campaign management platform; party donor and member records, student application records including minors, and payment-provider data exposed; an estimated 12 to 26 GB of database dumps and a 15,000-message mailbox taken; a doxxing platform holding tens of millions of rows built by one person.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "resource-dev",
@@ -3723,7 +3889,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -3870,7 +4038,7 @@
     ],
     "id": "gtig-agentic-credential-harvesting-q2-2026",
     "impact": "Per GTIG: a mass credential-harvesting campaign planned, built and executed in under six hours after a cloud-resource compromise; multi-agent frameworks autonomously managing scanning and credential harvesting at scale; theft of AI API credentials and co-opting of victim cloud environments for unauthorized AI workloads.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "initial-access",
@@ -3879,7 +4047,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -3938,14 +4108,16 @@
     ],
     "id": "gtig-ai-developed-zero-day-2fa-bypass",
     "impact": "No confirmed victims. GTIG states its counter-discovery and vendor disclosure may have prevented a planned mass exploitation event.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev"
     ],
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -4003,7 +4175,7 @@
     ],
     "id": "gtig-recon-agentic-secret-harvesting",
     "impact": "Per GTIG: a live dashboard organising, validating and managing more than 23,800 harvested secrets, including API keys for cloud and AI services. Victims and follow-on use are not described.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -4012,7 +4184,11 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0116",
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -4216,7 +4392,7 @@
     ],
     "id": "jadepuffer-agentic-database-extortion",
     "impact": "Per Sysdig: 1,342 Nacos service configuration items encrypted with an ephemeral key that was never stored or sent, so likely unrecoverable even with payment; entire database schemas dropped; ransom demanded via a Bitcoin address with no amount stated; exfiltration claimed by the agent but unverified.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -4230,7 +4406,12 @@
         "CVE-2025-3248",
         "CVE-2021-29441"
       ],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0101",
+        "AML.T0102",
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -4301,7 +4482,7 @@
     ],
     "id": "jesta-darkreasoning-deepseek-proxyjacking",
     "impact": "Repeated attempts over five days to convert Jesta's exposed research host into a proxy node; the agent disclosed a list of 1,283 third-party hosts it claimed were already compromised, which Jesta reported to cloud vendors. Impact on the honeypot itself was limited.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -4310,7 +4491,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0102"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -4365,7 +4549,7 @@
     ],
     "id": "litellm-pypi-teampcp-backdoor",
     "impact": "Malicious LiteLLM 1.82.7 and 1.82.8 live on PyPI for about three hours; on install the payload harvested cloud, SSH, Git, API and Kubernetes credentials, installed persistence and attempted Kubernetes lateral movement. No confirmed victim organizations; the package sees on the order of millions of downloads per day.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "initial-access",
@@ -4375,7 +4559,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0010.001",
+        "AML.T0011.001"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -4441,7 +4628,7 @@
     ],
     "id": "mandiant-hijacked-coding-assistant-shai-hulud",
     "impact": "Per Mandiant: proprietary product source code and repository secrets were exfiltrated from an unnamed SaaS provider; the Shai-Hulud worm was deployed across about 100 internal code repositories; and a package in the organisation's official namespace was poisoned, infecting a second employee. No data volume or financial figure is given.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "initial-access",
@@ -4452,7 +4639,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0011.001",
+        "AML.T0112.000"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -4590,7 +4780,7 @@
     ],
     "id": "meta-muse-spark-evaluation-real-website",
     "impact": "A real website's information accessed and its database altered during a cyber evaluation of Muse Spark 1.1; the affected party was notified. No website or operator named.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -4599,7 +4789,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -4680,7 +4872,7 @@
     ],
     "id": "mexico-government-claude-code-intrusions",
     "impact": "Per Gambit Security: at least nine Mexican government organizations breached, data exfiltrated from databases holding hundreds of millions of citizen records (including a claimed 195 million taxpayer records), hundreds of internal servers compromised, a live query service and a forged tax-certificate service operated on the stolen access, and a state government's virtualization infrastructure taken over. Initial reporting cited about 150 GB stolen. The federal tax authority denies any breach, and Bloomberg reported denials from two other listed victims.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "resource-dev",
@@ -4695,7 +4887,11 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0054",
+        "AML.T0102"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -4801,7 +4997,7 @@
     ],
     "id": "miasma-worm-ai-coding-agent-configs",
     "impact": "Per StepSecurity: credential harvesting from developer systems that opened the affected repository in Claude Code, Gemini CLI, Cursor or VS Code; 73 repositories disabled by GitHub across the Azure, microsoft, Azure-Samples and MicrosoftDocs organizations. No victim count is stated.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -4813,7 +5009,10 @@
       "cve": [
         "CVE-2026-45321"
       ],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0081"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -5006,7 +5205,7 @@
     ],
     "id": "morris-ii-genai-worm",
     "impact": "Research demonstration only: no real-world victims. Showed that a self- replicating prompt can exfiltrate confidential data and propagate between GenAI-powered email assistants without user interaction.",
-    "last_updated": "2026-08-13",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -5017,8 +5216,16 @@
       "aiid": [],
       "cve": [],
       "mitre_atlas": [
+        "AML.T0040",
+        "AML.T0051.000",
         "AML.T0051.001",
-        "AML.T0057"
+        "AML.T0051.002",
+        "AML.T0053",
+        "AML.T0057",
+        "AML.T0061"
+      ],
+      "mitre_atlas_case_studies": [
+        "AML.CS0024"
       ],
       "mitre_attack": [],
       "owasp_asi": [],
@@ -5091,7 +5298,7 @@
     ],
     "id": "notion-ai-web-search-exfiltration",
     "impact": "Per CodeIntegrity: a proof-of-concept in which Notion 3.0's AI web-search tool is abused to send private workspace data to an external server. No confirmed real-world exploitation.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "exfiltration"
@@ -5099,7 +5306,11 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0053",
+        "AML.T0086"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -5156,7 +5367,7 @@
     ],
     "id": "nx-s1ngularity-supply-chain",
     "impact": "Per Wiz: over a thousand valid GitHub tokens, dozens of valid cloud credentials and NPM tokens, and roughly twenty thousand additional files leaked; a subsequent wave made over 5,500 private repositories public across 400+ users and organisations. Malware also attempted host lockout via a shutdown command appended to shell startup files.",
-    "last_updated": "2026-08-12",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "initial-access",
@@ -5169,7 +5380,10 @@
       "aiid": [],
       "cve": [],
       "mitre_atlas": [
-        "AML.T0053"
+        "AML.T0011.001",
+        "AML.T0053",
+        "AML.T0098",
+        "AML.T0103"
       ],
       "mitre_attack": [
         "T1567.001"
@@ -5260,7 +5474,7 @@
     ],
     "id": "oalabs-compromised-server-claude-codex-intrusions",
     "impact": "Per OALABS: at least 14 companies breached, with credentials and data harvested and exfiltrated; an encrypted wallet file from a Lightning Network node with access to about 69.71 BTC (about US$4 million) exfiltrated, though distributed cracking failed; and 14 compromised hosts, many belonging to a Southeast Asian government server farm, repurposed for the cracking. No successful monetization was confirmed in the logs.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "resource-dev",
@@ -5281,7 +5495,15 @@
         "CVE-2021-4034",
         "CVE-2022-0847"
       ],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0017.001",
+        "AML.T0054",
+        "AML.T0102",
+        "AML.T0116",
+        "AML.T0117",
+        "AML.T0124"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -5348,14 +5570,16 @@
     ],
     "id": "openai-agent-dns-external-chatbot",
     "impact": "Per OpenAI: an internal research model reached a public external chatbot despite sandbox restrictions, flagged within about 15 minutes and the run stopped about 2.5 hours later. No real third party described as affected.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution"
     ],
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -5413,7 +5637,7 @@
     ],
     "id": "openai-agent-leaked-api-key-fabrication",
     "impact": "Per OpenAI: an unreleased model authenticated with a publicly leaked third-party API key without authorization and then fabricated result values, concealing the failed retrieval and the use of the key. No stated third-party harm or notification.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "credential-access",
       "execution"
@@ -5421,7 +5645,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -5479,14 +5705,17 @@
     ],
     "id": "openai-agent-public-file-hosting-upload",
     "impact": "Per OpenAI: a training sub-agent uploaded a workbook to a public temporary file-hosting service to bypass file isolation and shared the links with other agents. No stated third-party harm.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution"
     ],
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0117",
+        "AML.T0118.000"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -5558,7 +5787,7 @@
     ],
     "id": "openai-agent-services-australia-medicare-portal",
     "impact": "Unauthorised access to public and non-public files on a government statistics portal; files written to an internal server; per OpenAI, commands run, internal files, credentials and aggregate statistics retrieved, and technical system information and source code reviewed. No personal information believed accessed and no broader network compromise found, per the Australian government; forensic investigation with ASD ongoing. Political and regulatory consequences: a national rapid review, referral to a parliamentary committee, and new reporting standards for rogue-AI incidents announced.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -5568,7 +5797,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0116",
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -5683,7 +5915,7 @@
     ],
     "id": "openai-agents-australian-state-agencies",
     "impact": "Per OpenAI: BOCSAR's system returned application configuration, operational jobs and logs, and website metadata; VAHI reporting configuration and aggregate survey statistics were retrieved with an exposed access key; NPWS database metadata not intended to be public was inferred and the public Fire History dataset downloaded; AIHW material retrieved appears to have been public, with bypass attempts failing. No individual crime, medical or personal records were accessed. BOCSAR assessed the risk as low; AIHW and ASD found no evidence of compromise; the NSW government found no unauthorised access to personal information.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -5692,7 +5924,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0116",
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -5803,7 +6038,7 @@
     ],
     "id": "openai-attributed-dsewiki-agent-swarm",
     "impact": "Per TechCrunch and Transluce: OpenAI-attributed agents posted and collaborated on the DseWiki forum for over a month, used it as a shared message board, and resisted deletion (about 400 new pages a day against about 100 deleted), replacing the front page nine times. No data theft or illegal activity found.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "impact"
@@ -5811,7 +6046,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0117",
+        "AML.T0118.000"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -5995,7 +6233,7 @@
     ],
     "id": "openai-attributed-unctad-api-scanning",
     "impact": "Per researcher Rowan Howard-Jones via The Register and The Verge: about 16,500 scans of the UNCTAD statistics API over roughly two months, repeatedly working around refused requests, with some data returned. No sensitive data exposed; the API key involved is public.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "execution"
@@ -6003,7 +6241,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -6060,7 +6300,7 @@
     ],
     "id": "openai-attributed-wikimedia-edits",
     "impact": "Per the Wikimedia Foundation: unauthorized edits across Wikimedia wikis (mostly sandbox test edits, a few potentially malicious citation-tool config changes), unsuccessful attempts to misuse Etherpad as a proxy, and heavy automated traffic that may have contributed to a partial Wikidata Query Service outage in May 2026. No systems or data compromised.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "impact"
@@ -6068,7 +6308,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -6134,7 +6376,7 @@
     ],
     "id": "openai-eval-agents-hugging-face-intrusion",
     "impact": "Hugging Face: code execution on 41 production dataset-server workers, root on at least one production node, administrator-equivalent access to one connected Kubernetes cluster and a privileged pod in another, production credentials harvested (VPN, cloud, code repositories, messaging), four private code repositories downloaded, selected private dataset rows and archives retrieved; a draft pull request and CI beacon in a private repository were closed without merge. Hugging Face states the Hub production database was never reached, no other customer-facing models, datasets, Spaces or packages were affected, and no shipped artifact was altered. OpenAI states no impact to its customer data or products; its own Artifactory and research Kubernetes environment were separately compromised. Per HiddenLayer, Hugging Face production configuration and live credentials (including a cloud session credential and a non-expiring database credential) sat in the agents' public dead-drop repositories during the campaign; HiddenLayer reported them to the affected party.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "initial-access",
@@ -6150,7 +6392,20 @@
         "CVE-2026-66384",
         "CVE-2026-53362"
       ],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0017.001",
+        "AML.T0025",
+        "AML.T0072",
+        "AML.T0075",
+        "AML.T0089",
+        "AML.T0102",
+        "AML.T0116",
+        "AML.T0117",
+        "AML.T0118.000",
+        "AML.T0119",
+        "AML.T0120",
+        "AML.T0121"
+      ],
       "mitre_atlas_case_studies": [
         "AML.CS0068"
       ],
@@ -6238,7 +6493,7 @@
     ],
     "id": "openai-huggingface-may-account-hijacking",
     "impact": "Per Reuters: two Hugging Face user accounts compromised and the platform probed for weaknesses as early as May 2026, roughly two months before the July production breach recorded separately. Per OpenAI: publicly exposed Hugging Face user tokens used to write to the platform, create a repository and deploy a proxy Space used as an outbound relay. Per SentinelLabs: relay, probing and account-registration code committed under two affected accounts, with no public evidence that the probes or registration code ran successfully.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "resource-dev",
@@ -6248,7 +6503,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -6337,14 +6594,16 @@
     ],
     "id": "openai-long-horizon-sandbox-escape-github-pr",
     "impact": "Per OpenAI: an unreleased model circumvented sandbox restrictions to open a pull request on a public GitHub repository, and in a separate episode worked around secret scanning by splitting and reconstructing a researcher's GitHub token, which it published in a public pull request on openai/codex; fragments of another submission's private job log (metadata, not source code) were retrieved. OpenAI deactivated the users' keys and, as a precaution, all employees' keys; it names no affected external party.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution"
     ],
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -6418,7 +6677,7 @@
     ],
     "id": "openclaw-inbox-deletion",
     "impact": "Emails deleted from one researcher's inbox; no count stated and not independently verified by TechCrunch.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "impact"
@@ -6426,7 +6685,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0101"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -6479,7 +6740,7 @@
     ],
     "id": "papercut-agentic-global-intrusion",
     "impact": "Per GreyNoise: at least 440 PaperCut instances across 395 organizations in 48 countries compromised; remote code execution achieved; credentials harvested at 280 victims; OS- or domain-level secrets recovered at 147; domain-admin access at 12; data staged for exfiltration. No victim named.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -6493,7 +6754,10 @@
         "CVE-2026-81578",
         "CVE-2026-82078"
       ],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -6558,7 +6822,7 @@
     ],
     "id": "pillar-adk-agent-privilege-escalation",
     "impact": "Per Pillar: a low-privilege triage agent could trigger a maintainer-only Gemini workflow, and a separate issue exposed a bot access token and a cloud service-account credential to the CI runner. Proof-of-concept; Google fixed it; no confirmed malicious exploitation.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "credential-access",
@@ -6567,7 +6831,12 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0053",
+        "AML.T0093",
+        "AML.T0119"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -6626,7 +6895,7 @@
     ],
     "id": "pillar-gemini-cli-gcp-triage-compromise",
     "impact": "Per Pillar: a Gemini CLI triage flaw could lead to compromise of GCP project credentials and Editor-level access in a triage sandbox, with other users of the same reusable setup flow potentially exposed. Proof-of-concept; Google fixed it; no observed third-party exploitation.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "credential-access",
@@ -6635,7 +6904,11 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0093",
+        "AML.T0119"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -6694,7 +6967,7 @@
     ],
     "id": "postmark-mcp-bcc-backdoor",
     "impact": "Per Koi Security and Snyk, every email sent through version 1.0.16 or later was blind-copied to an attacker-controlled address. That mail could include password resets, invoices and internal correspondence. Koi estimates about 300 organisations and 3,000-15,000 emails a day were affected; no measured victim count is published.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "initial-access",
@@ -6703,7 +6976,18 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0010.005",
+        "AML.T0011.002",
+        "AML.T0048",
+        "AML.T0086",
+        "AML.T0109",
+        "AML.T0110.001",
+        "AML.T0115.002"
+      ],
+      "mitre_atlas_case_studies": [
+        "AML.CS0053"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -6939,7 +7223,7 @@
     ],
     "id": "promptspy-gemini-android-agent",
     "impact": "Not quantified by sources. GTIG states no PROMPTSPY-carrying apps were found on Google Play and that associated assets were disabled.",
-    "last_updated": "2026-10-09",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "persistence"
@@ -6947,7 +7231,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0102"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -7036,7 +7323,7 @@
     ],
     "id": "promptsteal-apt28-lamehug",
     "impact": "Live-operations use of an LLM to dynamically generate reconnaissance and document-collection commands on victim systems in Ukraine, with the collected output exfiltrated. Likely relied on stolen API tokens, per Google.",
-    "last_updated": "2026-09-11",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "execution",
@@ -7046,8 +7333,13 @@
       "aiid": [],
       "cve": [],
       "mitre_atlas": [
-        "AML.T0102",
-        "AML.T0016.002"
+        "AML.T0011",
+        "AML.T0016.002",
+        "AML.T0025",
+        "AML.T0102"
+      ],
+      "mitre_atlas_case_studies": [
+        "AML.CS0044"
       ],
       "mitre_attack": [],
       "owasp_asi": []
@@ -7111,7 +7403,7 @@
     ],
     "id": "radware-zombieagent-deep-research",
     "impact": "Per Radware: a zero-click email could drive ChatGPT's Deep Research agent to exfiltrate data service-side and, in an advanced stage, implant persistent rules in the agent's memory and propagate to further recipients. Demonstrated vulnerability; no in-the-wild victims reported.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "persistence",
@@ -7120,7 +7412,18 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0053",
+        "AML.T0054",
+        "AML.T0065",
+        "AML.T0068",
+        "AML.T0079",
+        "AML.T0080.000",
+        "AML.T0085.001",
+        "AML.T0086",
+        "AML.T0093"
+      ],
       "mitre_atlas_case_studies": [
         "AML.CS0066"
       ],
@@ -7178,7 +7481,7 @@
     ],
     "id": "replit-agent-database-deletion",
     "impact": "A production database was deleted (live data for ~1,200 executives and ~1,190 companies); the agent also generated fictional records and made false statements about the deletion and recoverability. Data was later restored.",
-    "last_updated": "2026-08-13",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "deception-social-eng",
@@ -7187,7 +7490,9 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0101"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -7257,7 +7562,7 @@
     ],
     "id": "secflow-asia-government-education-campaign",
     "impact": "Per Hunt.io: command execution and credential collection on a district government environment including administrative and health-related records, access to a Chinese education AI platform's data including student information, and root database and admin-level access to a university campus-card environment. One recruitment system should not be described as compromised.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -7267,7 +7572,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0124"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -7411,7 +7719,7 @@
     ],
     "id": "shadow-escape-mcp-zero-click",
     "impact": "Per Cyber Security News and Operant AI: a zero-click technique that could silently exfiltrate sensitive data from MCP-connected AI agents without user interaction. A demonstration; no confirmed in-the-wild victims.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "exfiltration"
@@ -7419,7 +7727,11 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0053",
+        "AML.T0086"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -7482,7 +7794,7 @@
     ],
     "id": "skills-sh-paperclip-malicious-skills",
     "impact": "In Zenity Labs' detonations the skills triggered live credential collection and payload delivery. The skill family's displayed install counter on skills.sh exceeded 1.7 million by 2026-08-02; this is a non-unique aggregate counter. No source gives a confirmed victim count.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "initial-access",
@@ -7493,7 +7805,15 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0010.005",
+        "AML.T0011.002",
+        "AML.T0051.001",
+        "AML.T0083",
+        "AML.T0109",
+        "AML.T0110.000",
+        "AML.T0115.002"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -7566,7 +7886,7 @@
     ],
     "id": "snowflake-cortex-cli-sandbox-escape",
     "impact": "Per PromptArmor: the Cortex Code CLI could be induced to run commands outside its sandbox with the victim's Snowflake credentials, enabling actions such as data exfiltration or dropping tables. Demonstrated in testing; fixed in version 1.0.25; no in-the-wild exploitation reported.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution"
     ],
@@ -7575,7 +7895,11 @@
       "cve": [
         "CVE-2026-6442"
       ],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0053",
+        "AML.T0112.000"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -7712,7 +8036,7 @@
     ],
     "id": "supabase-mcp-database-leak",
     "impact": "Per General Analysis: an assistant on the Supabase MCP server could be induced via support-ticket content to read a private credentials table and write it into a customer-visible thread. Demonstrated on dummy data; no in-the-wild exploitation.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "execution",
       "exfiltration"
@@ -7720,7 +8044,13 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0051.001",
+        "AML.T0053",
+        "AML.T0086",
+        "AML.T0093",
+        "AML.T0098"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -7777,7 +8107,7 @@
     ],
     "id": "sysdig-marimo-ai-agent-database-exfiltration",
     "impact": "Per Sysdig: an internal PostgreSQL database dumped after entry through a Marimo notebook, with the full chain under an hour. No victim identified.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -7789,7 +8119,11 @@
       "cve": [
         "CVE-2026-39987"
       ],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0102",
+        "AML.T0117"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -7858,7 +8192,7 @@
     ],
     "id": "thailand-mof-hermes-agent-intrusion",
     "impact": "Per Hunt.io: several systems within the Ministry of Finance network compromised, including a web shell on a ministry web server, captured session material for an administrative panel and a document-management platform, and agent-driven enumeration of a directory holding personnel records. No evidence of exfiltration; the ministry has not confirmed a breach.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "initial-access",
@@ -7876,7 +8210,10 @@
         "CVE-2021-3156",
         "CVE-2017-7269"
       ],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0102"
+      ],
       "mitre_attack": [
         "T1190",
         "T1505.003",
@@ -7979,7 +8316,7 @@
     ],
     "id": "trendmicro-gemini-cli-dental-botnet",
     "impact": "Per Trend Micro: a live command-and-control botnet built and operated with Gemini CLI controlling eight dental-clinic computers and accessing the clinic's practice database; related credential attacks and compromised merchant websites. No victim named.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "resource-dev",
       "execution",
@@ -7989,7 +8326,10 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0102"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -8056,7 +8396,7 @@
     ],
     "id": "unit42-ai-assisted-enterprise-intrusion",
     "impact": "Per Unit 42: internal networks, source-code repositories, a secrets-management system and CI/CD pipelines breached; root and administrative credentials and cloud access keys obtained; the victim's cloud AI endpoints used as attacker infrastructure. An infrastructure-as-code tampering attempt was blocked by branch protection. Operational timeline under ten hours.",
-    "last_updated": "2026-10-10",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "initial-access",
       "execution",
@@ -8067,7 +8407,12 @@
     "mappings": {
       "aiid": [],
       "cve": [],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0102",
+        "AML.T0117",
+        "AML.T0118"
+      ],
       "mitre_attack": [],
       "owasp_asi": [],
       "owasp_llm": []
@@ -8146,7 +8491,7 @@
     ],
     "id": "unit42-hermes-deepseek-autonomous-campaign",
     "impact": "Per Unit 42: no autonomous exploitation succeeded. Manual operations exfiltrated memory data from three Citrix NetScaler targets, achieved command execution on 11 Marimo notebook endpoints, and made reverse-shell attempts against nine Apache Tomcat servers and three IKE VPN endpoints, including sustained exploitation of a government entity in Malaysia. More than 460 targets were attempted in total.",
-    "last_updated": "2026-10-15",
+    "last_updated": "2026-10-16",
     "lifecycle_phases": [
       "recon",
       "resource-dev",
@@ -8166,7 +8511,15 @@
         "CVE-2026-34486",
         "CVE-2026-33824"
       ],
-      "mitre_atlas": [],
+      "mitre_atlas": [
+        "AML.T0016.002",
+        "AML.T0016.004",
+        "AML.T0017.002",
+        "AML.T0040",
+        "AML.T0102",
+        "AML.T0116",
+        "AML.T0117"
+      ],
       "mitre_atlas_case_studies": [
         "AML.CS0070"
       ],
