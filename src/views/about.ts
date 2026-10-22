@@ -131,7 +131,7 @@ export function aboutView({ ds, root }: ViewContext): void {
     panel(
       'Licenses and privacy',
       h('p', null, 'The data is © the Agentic Attack Index contributors, licensed ', externalLink(SITE.dataLicenseUrl, 'CC BY-SA 4.0', 'plain'), '. Reuse it with attribution to "Agentic Attack Index (MLSecOpsHub)" and a link to the repository. The dashboard code is ', externalLink(SITE.repoUrl, 'MIT', 'plain'), '.'),
-      h('p', null, 'This is a static site: no server, no accounts, no analytics, no cookies, no third-party fonts or scripts. The site is dark by default; if you switch to the light theme, that preference is stored locally in your browser only.'),
+      h('p', null, 'This is a static site: no server, no accounts, no cookies, no third-party fonts or scripts. Page views are counted with Vercel Web Analytics, which is cookieless and served from this site\'s own origin: it records the page, referrer, country and browser type in aggregate, and never the filters you set. The site is dark by default; if you switch to the light theme, that preference is stored locally in your browser only.'),
     ),
   );
 

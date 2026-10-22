@@ -1,4 +1,5 @@
 import './styles.css';
+import { startAnalytics, trackView } from './analytics';
 import { applyStoredTheme, footer, header } from './components/layout';
 import { loadDataset } from './data/load';
 import { currentRoute, onPathPage, onRouteChange, type Route } from './router';
@@ -43,6 +44,7 @@ const TITLES: Record<Route['view'], string> = {
 
 function boot(): void {
   applyStoredTheme();
+  startAnalytics();
   const ds = loadDataset();
   const app = document.getElementById('app');
   if (!app) throw new Error('#app missing');
@@ -72,6 +74,7 @@ function boot(): void {
     const path = (window.location.hash || '#/').split('?')[0] ?? '';
     if (path !== lastPath) {
       window.scrollTo({ top: 0 });
+      trackView(route);
       lastPath = path;
     }
   };

@@ -92,7 +92,7 @@ export function footer(ds: Dataset): HTMLElement {
       externalLink(upstreamUrls.ndjson, 'NDJSON', 'plain'),
       ' · ',
       externalLink(upstreamUrls.stix, 'STIX 2.1', 'plain'),
-      '. No analytics, no cookies, no trackers.',
+      '. No cookies, no ads, no cross-site tracking; page views are counted anonymously with Vercel Web Analytics.',
     ),
   );
 }

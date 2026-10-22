@@ -65,7 +65,7 @@ export function headerHtml(ctx, current) {
 export function footerHtml(ctx) {
   const cov = ctx.summary.archive_coverage;
   const commit = ctx.snapshot?.source_commit ?? '';
-  return `<footer class="site-footer"><div class="trust"><span class="trust-item">Dataset <strong>v${esc(ctx.version)}</strong></span><span class="trust-item"><strong>${ctx.summary.total}</strong> records</span>${cov ? `<span class="trust-item">Archive coverage <strong>${esc(cov.pct)}%</strong> (${esc(cov.archived)}/${esc(cov.sources)} sources)</span>` : ''}<span class="trust-item">Snapshot ${commit ? `<a class="plain mono" href="${esc(`${UPSTREAM}/commit/${commit}`)}">${esc(commit.slice(0, 7))}</a>` : esc(ctx.snapshot?.source_ref ?? '')} fetched ${esc(ctx.snapshot?.fetched_at ?? '')}</span></div><p class="attribution">Data: <a class="plain" href="${UPSTREAM}">Agentic Attack Index</a> (${esc(PUBLISHER.name)}), licensed <a class="plain" href="${LICENSE_URL}">CC BY-SA 4.0</a>. This dashboard adds no facts; corrections go <a class="plain" href="${UPSTREAM}/issues/new?template=data-correction.yml">upstream</a>. <a class="plain" href="${esc(u(ctx, 'feed.atom'))}">Atom feed</a> · <a class="plain" href="${esc(u(ctx, 'llms.txt'))}">llms.txt</a>. No analytics, no cookies, no trackers.</p></footer>`;
+  return `<footer class="site-footer"><div class="trust"><span class="trust-item">Dataset <strong>v${esc(ctx.version)}</strong></span><span class="trust-item"><strong>${ctx.summary.total}</strong> records</span>${cov ? `<span class="trust-item">Archive coverage <strong>${esc(cov.pct)}%</strong> (${esc(cov.archived)}/${esc(cov.sources)} sources)</span>` : ''}<span class="trust-item">Snapshot ${commit ? `<a class="plain mono" href="${esc(`${UPSTREAM}/commit/${commit}`)}">${esc(commit.slice(0, 7))}</a>` : esc(ctx.snapshot?.source_ref ?? '')} fetched ${esc(ctx.snapshot?.fetched_at ?? '')}</span></div><p class="attribution">Data: <a class="plain" href="${UPSTREAM}">Agentic Attack Index</a> (${esc(PUBLISHER.name)}), licensed <a class="plain" href="${LICENSE_URL}">CC BY-SA 4.0</a>. This dashboard adds no facts; corrections go <a class="plain" href="${UPSTREAM}/issues/new?template=data-correction.yml">upstream</a>. <a class="plain" href="${esc(u(ctx, 'feed.atom'))}">Atom feed</a> · <a class="plain" href="${esc(u(ctx, 'llms.txt'))}">llms.txt</a>. No cookies, no ads, no cross-site tracking; page views are counted anonymously with Vercel Web Analytics.</p></footer>`;
 }
 
 function page(ctx, { view, title, body }) {
@@ -258,7 +258,7 @@ ${list([
   `<a href="${esc(u(ctx, 'llms.txt'))}">llms.txt</a> and <a href="${esc(u(ctx, 'llms-full.txt'))}">llms-full.txt</a> for AI assistants and agents`,
 ])}
 <h2>Licences and privacy</h2>
-<p>Code MIT; data CC BY-SA 4.0, attribute "Agentic Attack Index (${esc(PUBLISHER.name)})" with a link and share alike. The site is static, sets no cookies, loads no external fonts and runs no analytics.</p>`,
+<p>Code MIT; data CC BY-SA 4.0, attribute "Agentic Attack Index (${esc(PUBLISHER.name)})" with a link and share alike. The site is static, sets no cookies and loads no external fonts; page views are counted anonymously with Vercel Web Analytics (cookieless, first-party, no filter state).</p>`,
   });
 }
 

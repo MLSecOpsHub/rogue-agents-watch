@@ -4,3 +4,5 @@ export const LOCAL_SITE_URL: string;
 export function resolveBasePath(env?: NodeJS.ProcessEnv): string;
 /** Absolute public URL of the site root, with a trailing slash. */
 export function resolveSiteUrl(env?: NodeJS.ProcessEnv): string;
+/** True on a Vercel build: the only host that serves /_vercel/insights. */
+export function analyticsEnabled(env?: NodeJS.ProcessEnv): boolean;

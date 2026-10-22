@@ -30,7 +30,9 @@ will not be merged.
 6. No runtime network dependency for data. The site builds and runs from the
    vendored snapshot. The footer's "check upstream" button is the only code
    path that leaves the origin, and only when clicked.
-7. Privacy. No analytics, trackers, cookies, or external fonts.
+7. Privacy. No cookies, trackers, ads, or external fonts. The one analytics
+   source is Vercel Web Analytics (`src/analytics.ts`): cookieless,
+   first-party, Vercel builds only, page paths without filter state.
 8. `null` means "not stated". Never render it as `0`.
 9. Geo comes only from a record's `geo` block. Illustrative points render
    visibly differently; records without `geo` are listed, never plotted.

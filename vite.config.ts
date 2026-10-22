@@ -1,12 +1,14 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
-import { resolveBasePath, resolveSiteUrl } from './scripts/site-env.mjs';
+import { analyticsEnabled, resolveBasePath, resolveSiteUrl } from './scripts/site-env.mjs';
 
 // The canonical URL src/config.ts reads via import.meta.env.VITE_SITE_URL.
 // Resolved here so a Vercel build (served at "/") and a GitHub Pages build
 // (served under /<repo>/) each get matching base path and share links
 // without per-host configuration; an explicit VITE_SITE_URL still wins.
 process.env.VITE_SITE_URL ??= resolveSiteUrl();
+// Vercel Web Analytics loads only on Vercel builds (src/analytics.ts).
+process.env.VITE_VERCEL_ANALYTICS ??= analyticsEnabled() ? '1' : '';
 
 // Deterministic build: Vite's asset hashes are content-derived, and nothing
 // here injects a build timestamp. The only date in the output is the one

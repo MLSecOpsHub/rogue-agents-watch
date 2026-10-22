@@ -24,7 +24,11 @@ product. Read the non-negotiables before changing anything.
 6. **No runtime network dependency for data.** The site builds and runs from
    `data/snapshot/`. The only fetch that leaves the origin is the optional,
    user-initiated "check upstream for a newer dataset" button.
-7. **Privacy.** No analytics, trackers, cookies, or external fonts.
+7. **Privacy.** No cookies, trackers, ads, or external fonts. The one
+   analytics source is Vercel Web Analytics (`src/analytics.ts`): cookieless,
+   first-party (`/_vercel/insights/*`), loaded only on Vercel builds, auto
+   tracking off, each view reported under its canonical hash-free path with
+   filter queries dropped. Add no other analytics.
 8. **`null` means "not stated", never `0`.** `autonomy_pct`, `orgs_affected`,
    `records_exfiltrated` render as "not stated" when null.
 9. **Geo is never fabricated.** Markers come only from a record's
@@ -132,6 +136,7 @@ src/components/            badges (grade strip, cards), charts (d3 bars),
                            replay (map scrubber), drawer (incident panel),
                            changes (what-changed strip),
                            upstream-check (the one optional fetch)
+src/analytics.ts           Vercel Web Analytics (Vercel builds only)
 src/util/share.ts          Share URL, caption, clipboard helper
 src/embed.ts, embed.html   Second Vite entry: map-only iframe embed
 src/views/                 overview, map, timeline, table, actors, techniques, stats,

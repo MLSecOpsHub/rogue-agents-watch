@@ -62,3 +62,8 @@ export function resolveSiteUrl(env = process.env) {
   if (gh) return `https://${gh.owner}.github.io${githubPagesBase(gh)}`;
   return LOCAL_SITE_URL;
 }
+
+/** True on a Vercel build: the only host that serves /_vercel/insights. */
+export function analyticsEnabled(env = process.env) {
+  return onVercel(env);
+}
