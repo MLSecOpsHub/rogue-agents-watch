@@ -98,6 +98,7 @@ export const FALLBACK_SHELL: string;
 export function loadContext(siteUrl?: string, opts?: { shell?: string }): PrerenderContext;
 export function cardSvg(rec: PrerenderRecord, ctx: PrerenderContext): string;
 export function siteCardSvg(ctx: PrerenderContext): string;
+export function siteImageUrl(ctx: PrerenderContext): string;
 export function renderPng(svg: string, background?: string): Promise<Buffer>;
 export function bareShell(html: string): string;
 export function pageHtml(ctx: PrerenderContext, meta: PageMeta, body: string): string;

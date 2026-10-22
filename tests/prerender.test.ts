@@ -4,7 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import summary from '../data/snapshot/summary.json';
-import { atomFeed, CARD_H, CARD_W, cardSvg, changesJson, FALLBACK_SHELL, firstSentence, incidentHtml, loadContext, renderPng, routeHtml, siteCardSvg, siteOgTags, STATUS_HEX, wrapText } from '../scripts/prerender.mjs';
+import { atomFeed, CARD_H, CARD_W, cardSvg, changesJson, esc, FALLBACK_SHELL, firstSentence, incidentHtml, loadContext, renderPng, routeHtml, sitemapXml, siteCardSvg, siteImageUrl, siteOgTags, STATUS_HEX, wrapText } from '../scripts/prerender.mjs';
 import type { PrerenderContext, PrerenderRecord } from '../scripts/prerender.mjs';
 import { OG_CARD } from '../src/site-copy.mjs';
 
@@ -223,10 +223,16 @@ describe('site share card', () => {
     expect(png.readUInt32BE(20)).toBe(CARD_H);
   });
 
-  it('the homepage declares it as a large image at /og/site.png with its size', () => {
+  it('the homepage declares it as a large image at /og/site.png, versioned by content, with its size', () => {
+    const url = siteImageUrl(ctx);
+    expect(url).toMatch(/^https:\/\/example\.test\/site\/og\/site\.png\?v=[0-9a-f]{10}$/);
+    expect(siteImageUrl(ctx)).toBe(url);
+    // A different card is a different URL, so platforms that cache by URL fetch it again.
+    expect(siteImageUrl({ ...ctx, summary: { ...ctx.summary, total: ctx.summary.total + 1 } })).not.toBe(url);
+    expect(sitemapXml(ctx)).toContain(esc(url));
     for (const head of [siteOgTags(ctx), routeHtml('overview', ctx)]) {
-      expect(head).toContain('<meta property="og:image" content="https://example.test/site/og/site.png">');
-      expect(head).toContain('<meta name="twitter:image" content="https://example.test/site/og/site.png">');
+      expect(head).toContain(`<meta property="og:image" content="${esc(url)}">`);
+      expect(head).toContain(`<meta name="twitter:image" content="${esc(url)}">`);
       expect(head).toContain('<meta name="twitter:card" content="summary_large_image">');
     }
     expect(siteOgTags(ctx)).toContain(`<meta property="og:image:width" content="${CARD_W}">`);

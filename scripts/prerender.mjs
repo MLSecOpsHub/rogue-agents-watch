@@ -247,6 +247,15 @@ ${siteFooter(ctx)}
 </svg>`;
 }
 
+/**
+ * Public URL of the site card, versioned by its content. Social platforms
+ * cache an image by URL, so a new card gets a new URL; same snapshot, same
+ * version. The file itself stays at og/site.png.
+ */
+export function siteImageUrl(ctx) {
+  return `${ctx.siteUrl}og/site.png?v=${createHash('sha256').update(siteCardSvg(ctx)).digest('hex').slice(0, 10)}`;
+}
+
 // ---- pages ---------------------------------------------------------------------
 //
 // Every page is the Vite-built shell with its own head and a filled #app, so a
@@ -275,7 +284,7 @@ const jsonLdTag = (obj) => `<script type="application/ld+json">${JSON.stringify(
  * Head order matters little, but canonical, hreflang and description precede the social tags for readability.
  */
 export function pageHtml(ctx, meta, body) {
-  const image = meta.image ?? `${ctx.siteUrl}og/site.png`;
+  const image = meta.image ?? siteImageUrl(ctx);
   const head = `${HEAD_OPEN}
 <title>${esc(meta.title)}</title>
 <meta name="description" content="${esc(meta.description)}">
@@ -450,7 +459,7 @@ export function changesJson(records, ctx) {
 }
 
 export function siteOgTags(ctx) {
-  const image = `${ctx.siteUrl}og/site.png`;
+  const image = siteImageUrl(ctx);
   const desc = HOME_COPY.metaDescription;
   return `<link rel="canonical" href="${esc(ctx.siteUrl)}">
     <link rel="alternate" type="application/atom+xml" title="${esc(SITE_NAME)} — new and revised records" href="${esc(ctx.siteUrl)}feed.atom">
@@ -630,7 +639,7 @@ export function incidentJsonLd(rec, ctx) {
 
 export function sitemapXml(ctx) {
   const modified = datasetModified(ctx.incidents, ctx.snapshot?.fetched_at ?? null);
-  const rows = ROUTE_PAGES.map((p) => ({ loc: `${ctx.siteUrl}${p.path}`, lastmod: p.view === 'about' ? (ctx.snapshot?.fetched_at ?? modified) : modified, priority: p.view === 'overview' ? '1.0' : '0.7', image: p.view === 'overview' ? `${ctx.siteUrl}og/site.png` : null }));
+  const rows = ROUTE_PAGES.map((p) => ({ loc: `${ctx.siteUrl}${p.path}`, lastmod: p.view === 'about' ? (ctx.snapshot?.fetched_at ?? modified) : modified, priority: p.view === 'overview' ? '1.0' : '0.7', image: p.view === 'overview' ? siteImageUrl(ctx) : null }));
   for (const r of ctx.incidents.slice().sort(byIdAsc)) rows.push({ loc: `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, lastmod: r.last_updated ?? r.added?.date ?? r.date_disclosed, priority: '0.8', image: `${ctx.siteUrl}og/${encodeURIComponent(r.id)}.png` });
   for (const g of actorGroups(ctx.incidents).slice().sort((a, b) => a.slug.localeCompare(b.slug))) rows.push({ loc: `${ctx.siteUrl}actors/${encodeURIComponent(g.slug)}/`, lastmod: datasetModified(g.incidents, modified), priority: '0.6', image: null });
   return `<?xml version="1.0" encoding="UTF-8"?>
