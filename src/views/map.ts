@@ -6,7 +6,7 @@ import { recordStatusTag } from '../components/badges';
 import { whatChanged } from '../components/changes';
 import { incidentDrawer } from '../components/drawer';
 import { attachTooltip, collectMarkers, createMapCanvas } from '../components/map-canvas';
-import { createReplay, dateMs, formatT, parseT, replayBounds } from '../components/replay';
+import { createReplay, dateMs, formatT, latestDisclosed, parseT, replayBounds } from '../components/replay';
 import { describe, label, values } from '../data/taxonomy';
 import type { Incident } from '../data/types';
 import { applyFilters, fieldValues, fromQuery, matches, toQuery, toggleValue, type FilterField, type FilterState } from '../filters';
@@ -218,8 +218,7 @@ export async function mapView({ ds, route, root }: ViewContext): Promise<void> {
   let lastShown: Set<string> | null = null;
   function render(): void {
     const shown = new Set(applyFilters(ds.incidents, state).filter((i) => dateMs(i.date_disclosed) <= t).map((i) => i.id));
-    let latest: Incident | null = null;
-    for (const inc of ds.incidents) if (shown.has(inc.id) && (!latest || inc.date_disclosed > latest.date_disclosed)) latest = inc;
+    const latest = latestDisclosed(ds.incidents, shown);
     const pulse = lastShown === null ? new Set(latest ? [latest.id] : []) : new Set([...shown].filter((id) => !lastShown!.has(id)));
     canvas.paint(shown, { future: (inc) => dateMs(inc.date_disclosed) > t, filtered: (inc) => !matches(inc, state), pulse, reduced });
     for (const r of logRows) {

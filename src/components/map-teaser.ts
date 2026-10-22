@@ -6,7 +6,7 @@ import type { Dataset } from '../data/types';
 import { href, navigate } from '../router';
 import { h } from '../util/dom';
 import { attachTooltip, createMapCanvas } from './map-canvas';
-import { createReplay, dateMs, formatT, replayBounds } from './replay';
+import { createReplay, dateMs, formatT, latestDisclosed, replayBounds } from './replay';
 
 export interface TeaserBindings {
   /** Receives the replay count (equals the headline count at rest). */
@@ -34,8 +34,7 @@ export function mapTeaser(ds: Dataset, bind: TeaserBindings): HTMLElement {
   let lastShown: Set<string> | null = null;
   const render = () => {
     const shown = new Set(incidents.filter((i) => dateMs(i.date_disclosed) <= t).map((i) => i.id));
-    let latest = null as (typeof incidents)[number] | null;
-    for (const inc of incidents) if (shown.has(inc.id) && (!latest || inc.date_disclosed > latest.date_disclosed)) latest = inc;
+    const latest = latestDisclosed(incidents, shown);
     const pulse = lastShown === null ? new Set(latest ? [latest.id] : []) : new Set([...shown].filter((id) => !lastShown!.has(id)));
     canvas.paint(shown, { pulse, reduced });
     bind.count.textContent = String(shown.size);

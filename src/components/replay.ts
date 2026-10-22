@@ -22,6 +22,21 @@ export function dateMs(iso: string): number {
   return Date.parse(`${iso.slice(0, 10)}T00:00:00Z`);
 }
 
+/**
+ * The most recent disclosure among `incidents` (optionally only those in
+ * `shown`). Several records often share a disclosure date; ties go to the
+ * lowest id, the order the prerendered pages use, so the "Latest" line does
+ * not depend on the upstream array order.
+ */
+export function latestDisclosed<T extends Pick<Incident, 'id' | 'date_disclosed'>>(incidents: readonly T[], shown?: ReadonlySet<string>): T | null {
+  let latest: T | null = null;
+  for (const inc of incidents) {
+    if (shown && !shown.has(inc.id)) continue;
+    if (!latest || inc.date_disclosed > latest.date_disclosed || (inc.date_disclosed === latest.date_disclosed && inc.id < latest.id)) latest = inc;
+  }
+  return latest;
+}
+
 /** The same calendar day `n` months earlier (UTC), clamped to the target month's last day. */
 export function minusMonths(ms: number, n: number): number {
   const d = new Date(ms);

@@ -205,7 +205,7 @@ describe('map', () => {
     expect(c.root.querySelector('.map-legend')?.textContent).toContain('country-level');
     // Replay opens at the end of the range with everything shown and the latest named.
     expect(c.root.querySelector('.hud-count')?.textContent).toBe(String(ds.incidents.filter((i) => i.isActiveRecord).length));
-    const latest = [...ds.incidents].filter((i) => i.isActiveRecord).sort((a, b) => (a.date_disclosed < b.date_disclosed ? 1 : -1))[0]!;
+    const latest = [...ds.incidents].filter((i) => i.isActiveRecord).sort((a, b) => b.date_disclosed.localeCompare(a.date_disclosed) || (a.id < b.id ? -1 : 1))[0]!;
     expect(c.root.querySelector('.hud-caption')?.textContent).toContain(latest.name);
     expect(c.root.querySelector('.replay-range')).not.toBeNull();
     expect(c.root.querySelector('.drawer')?.hasAttribute('hidden')).toBe(true);
@@ -254,7 +254,7 @@ describe('overview, stats, timeline, table, about', () => {
     expect(figures).toHaveLength(1);
     expect(figures[0]?.textContent).toBe(String(summary.total));
     expect(c.root.querySelector('.hud-count')).toBeNull();
-    const latest = [...ds.incidents].filter((i) => i.isActiveRecord).sort((a, b) => (a.date_disclosed < b.date_disclosed ? 1 : -1))[0]!;
+    const latest = [...ds.incidents].filter((i) => i.isActiveRecord).sort((a, b) => b.date_disclosed.localeCompare(a.date_disclosed) || (a.id < b.id ? -1 : 1))[0]!;
     expect(c.root.querySelector('.hero-caption')?.textContent).toContain(latest.name);
     // Honesty split stays in the hero, status next to AI role.
     const honesty = c.root.querySelector('.honesty')!;
