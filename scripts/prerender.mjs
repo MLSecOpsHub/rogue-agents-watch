@@ -5,6 +5,7 @@
 //                                   meta tags that redirects to #/incident/<id>
 //   dist/og/<id>.png                1200x630 share card per incident
 //   dist/og/site.png                site-level card
+//   dist/og/map.png, og/stats.png   route cards (the other routes share the site card)
 //   dist/feed.atom                  Atom feed of records (by added date)
 //   dist/changes.json               latest additions / revisions / status changes
 //   dist/sitemap.xml, robots.txt    crawl surface for search and Dataset Search
@@ -23,12 +24,10 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { geoGraticule10, geoNaturalEarth1, geoPath } from 'd3-geo';
-import { feature } from 'topojson-client';
 import { LOCAL_SITE_URL, resolveSiteUrl } from './site-env.mjs';
 import { actorBody, incidentBody, llmsFullTxt, llmsTxt, ROUTE_BODIES, ROUTE_PAGES, routeDescription } from './prerender-pages.mjs';
 import { actorGroups, byDisclosedDesc, byIdAsc, CARD_H, CARD_W, datasetModified, esc, firstSentence, gradeLine, LICENSE_URL, PUBLISHER, SITE_NAME, tax, UPSTREAM, wrapText } from './prerender-util.mjs';
-import { DATASET_DESCRIPTION, DATASET_NAME, HOME_COPY, OG_CARD } from '../src/site-copy.mjs';
+import { DATASET_DESCRIPTION, DATASET_NAME, HOME_COPY } from '../src/site-copy.mjs';
 
 export { CARD_H, CARD_W, esc, firstSentence, SITE_NAME, UPSTREAM, wrapText };
 
@@ -39,213 +38,15 @@ const FONTS = path.join(ROOT, 'assets', 'fonts');
 
 export const DEFAULT_SITE_URL = LOCAL_SITE_URL;
 
-// Card palette: the dark map theme, fixed (a share image has no viewer theme).
-const C = { ground: '#0b1117', surface: '#16232f', ink: '#e8eef4', ink2: '#b9c4ce', muted: '#93a1af', hair: '#223040', land: '#1f2d3a', coast: '#2f4256', badge: '#17222d', badgeEdge: '#2d3d4f' };
-export const ROLE_HEX = { 'load-bearing': '#ffb070', significant: '#e07a2f', incidental: '#a8511f', disputed: '#6f7d8a', unknown: '#6f7d8a' };
+// The share cards are drawn in prerender-cards.mjs (one terminal treatment for
+// the site card, the route cards and every record card); this file rasterises
+// and places them. The hues are re-exported for the tests that tie them to
+// the site's tokens.
+import { buildGeo, cardSvg, ROUTE_CARDS, siteCardSvg, T } from './prerender-cards.mjs';
+export { cardSvg, mapCardSvg, ROLE_HEX, ROUTE_CARDS, SEVERITY_HEX, siteCardSvg, STATUS_HEX, statsCardSvg } from './prerender-cards.mjs';
 
-function badgeSvg(x, y, text, opts = {}) {
-  const w = Math.round(text.length * 11.4 + 30);
-  const fill = opts.fill ?? C.badge;
-  const stroke = opts.fill ? 'none' : C.badgeEdge;
-  const ink = opts.ink ?? C.ink;
-  return {
-    w,
-    svg: `<rect x="${x}" y="${y}" width="${w}" height="40" rx="6" fill="${fill}" stroke="${stroke}"/><text x="${x + 15}" y="${y + 27}" font-family="Barlow" font-weight="600" font-size="22" fill="${ink}">${esc(text)}</text>`,
-  };
-}
-
-/** Land path + projection shared by every card; built once from the vendored topojson. */
-export function buildGeo(topo) {
-  const projection = geoNaturalEarth1().fitExtent([[6, 6], [954, 494]], { type: 'Sphere' });
-  const pathGen = geoPath(projection);
-  const land = feature(topo, topo.objects.countries);
-  return { landPath: pathGen(land) ?? '', graticulePath: pathGen(geoGraticule10()) ?? '', project: (lng, lat) => projection([lng, lat]) };
-}
-
-function miniMap(geo, markers, opacity = 0.55) {
-  const parts = [`<g transform="translate(470 40) scale(0.78)" opacity="${opacity}"><path d="${geo.landPath}" fill="${C.land}" stroke="${C.coast}" stroke-width="0.6"/>`];
-  for (const m of markers) {
-    const xy = geo.project(m.lng, m.lat);
-    if (!xy) continue;
-    const [x, y] = xy.map((n) => n.toFixed(1));
-    if (m.illustrative) parts.push(`<circle cx="${x}" cy="${y}" r="34" fill="${m.color}" opacity="0.28"/>`);
-    parts.push(`<circle cx="${x}" cy="${y}" r="9" fill="${m.color}" stroke="${C.ground}" stroke-width="3"/>`);
-  }
-  parts.push('</g>');
-  return parts.join('');
-}
-
-/** Per-incident 1200x630 share card as an SVG string. */
-export function cardSvg(rec, ctx) {
-  const role = rec.ai_role ?? 'unknown';
-  const roleHex = ROLE_HEX[role] ?? ROLE_HEX.unknown;
-  const geoPoints = (rec.geo?.points ?? []).map((p) => ({ ...p, color: roleHex }));
-  const big = rec.name.length > 70;
-  const lines = wrapText(rec.name, big ? 34 : 27, 3);
-  const fs = big ? 50 : 60;
-  const lh = big ? 52 : 62;
-  const titleY = 150;
-  const title = lines.map((l, i) => `<text x="64" y="${titleY + i * lh}" font-family="Barlow Condensed" font-weight="700" font-size="${fs}" fill="${C.ink}" style="text-transform:uppercase">${esc(l.toUpperCase())}</text>`).join('');
-  let y = titleY + (lines.length - 1) * lh + 30;
-  const badges = [];
-  let x = 64;
-  for (const [text, fill, ink] of [
-    [tax(ctx, 'status', rec.status), null, null],
-    [tax(ctx, 'confidence', rec.confidence), null, null],
-    [`AI ${tax(ctx, 'ai_role', role).toLowerCase()}`, roleHex, '#1a0d05'],
-    [tax(ctx, 'severity', rec.severity), null, null],
-  ]) {
-    const b = badgeSvg(x, y, text, fill ? { fill, ink } : {});
-    badges.push(b.svg);
-    x += b.w + 10;
-  }
-  y += 40 + 26;
-  const actorLines = wrapText(`Actor: ${rec.actor}`, 52, 2);
-  const actor = actorLines
-    .map((l, i) => {
-      const body = i === 0 ? l.replace(/^Actor: /, '') : l;
-      return `<text x="64" y="${y + 18 + i * 30}" font-family="Barlow" font-size="24" fill="${C.ink2}">${i === 0 ? 'Actor: ' : ''}<tspan font-weight="600" fill="${C.ink}">${esc(body)}</tspan></text>`;
-    })
-    .join('');
-  y += 18 + actorLines.length * 30 + 14;
-  const summaryLines = wrapText(firstSentence(rec.summary), 66, 2);
-  const summary = summaryLines.map((l, i) => `<text x="64" y="${y + 20 + i * 30}" font-family="Barlow" font-size="22" fill="${C.ink2}">${esc(l)}</text>`).join('');
-  const n = (rec.sources ?? []).length;
-  const archived = (rec.sources ?? []).filter((s) => s.archive_url).length;
-  const eyebrow = `${SITE_NAME.toUpperCase()} · ${rec.date_disclosed}${geoPoints.length ? '' : ' · NO STATED LOCATION'}`;
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${CARD_W}" height="${CARD_H}" viewBox="0 0 ${CARD_W} ${CARD_H}">
-<defs><radialGradient id="g" cx="0.78" cy="0.4" r="0.7"><stop offset="0" stop-color="${C.surface}"/><stop offset="0.6" stop-color="${C.ground}"/></radialGradient></defs>
-<rect width="${CARD_W}" height="${CARD_H}" fill="url(#g)"/>
-<rect x="0" y="0" width="10" height="${CARD_H}" fill="${roleHex}"/>
-${miniMap(ctx.geo, geoPoints, geoPoints.length ? 0.55 : 0.28)}
-<text x="64" y="88" font-family="Barlow Condensed" font-weight="700" font-size="22" letter-spacing="3" fill="${C.muted}">${esc(eyebrow)}</text>
-${title}
-${badges.join('')}
-${actor}
-${summary}
-<line x1="64" y1="556" x2="1136" y2="556" stroke="${C.hair}"/>
-<text x="64" y="592" font-family="Barlow" font-size="20" fill="${C.muted}"><tspan font-weight="600" fill="${C.ink}">${n} source${n === 1 ? '' : 's'}</tspan>, ${archived} archived · every dot has a footnote</text>
-<text x="1136" y="592" text-anchor="end" font-family="IBM Plex Mono" font-size="18" fill="${C.muted}">agentic-attack-index v${esc(ctx.version)} · CC BY-SA 4.0</text>
-</svg>`;
-}
-
-// Site card palette: the terminal treatment of the dark theme. Status hues
-// are the --status-* tokens of src/styles.css (a test keeps them equal) so
-// the card and the site grade records the same way; marker hues stay
-// ROLE_HEX (hue = ai_role).
-const T = { ground: '#070b12', grid: '#0d1621', frame: '#1a3240', cyan: '#5fc4d4', amber: '#ff8a4c', ink: '#f2f5f8', ink2: '#c3ccd5', muted: '#8b98a6', land: '#14212d', coast: '#24384a', graticule: '#0f1c28' };
-export const STATUS_HEX = { confirmed: '#6ecf95', reported: '#f0b658', 'test-eval': '#a7a9f0' };
-const MONO = 'font-family="IBM Plex Mono"';
-const COND = 'font-family="Barlow Condensed" font-weight="700"';
-
-// Rough advance widths (em) for Barlow Condensed Bold, used only to space the
-// status breakdown; generous so a longer label never collides.
-const condWidth = (text, size) => [...text].reduce((w, ch) => w + (ch === ' ' ? 0.2 : /[0-9]/.test(ch) ? 0.47 : /[/·.]/.test(ch) ? 0.3 : 0.45), 0) * size;
-
-/** Records that count toward headlines: missing record_status means active. */
-const isActive = (r) => !r.record_status || r.record_status === 'active';
-
-/** Fine grid, inset frame and amber corner brackets. Decoration only, no data. */
-function siteFrame() {
-  const [x0, y0, x1, y1, k] = [24, 24, CARD_W - 24, CARD_H - 24, 22];
-  const corners = [[x0, y0, 1, 1], [x1, y0, -1, 1], [x0, y1, 1, -1], [x1, y1, -1, -1]]
-    .map(([x, y, dx, dy]) => `<path d="M${x} ${y + dy * k}V${y}H${x + dx * k}" fill="none" stroke="${T.amber}" stroke-width="2"/>`)
-    .join('');
-  return `<defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="${T.grid}" stroke-width="1"/></pattern></defs>
-<rect width="${CARD_W}" height="${CARD_H}" fill="${T.ground}"/>
-<rect width="${CARD_W}" height="${CARD_H}" fill="url(#grid)"/>
-<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" fill="none" stroke="${T.frame}"/>
-${corners}`;
-}
-
-/** Brand block, top left: microbrand, name, category label, supporting line. */
-function siteBrand(ctx) {
-  return `<text x="64" y="76" ${MONO} font-size="17" letter-spacing="4" fill="${T.cyan}">[ ${esc(PUBLISHER.name.toUpperCase())} ]</text>
-<text x="${CARD_W - 64}" y="76" text-anchor="end" ${MONO} font-size="16" letter-spacing="2" fill="${T.muted}">DATASET v${esc(ctx.summary.dataset_version)}</text>
-<text x="64" y="160" ${COND} font-size="86" fill="${T.ink}">${esc(SITE_NAME.toUpperCase().replace(/ WATCH$/, ''))} <tspan fill="${T.amber}">WATCH</tspan></text>
-<line x1="64" y1="200" x2="108" y2="200" stroke="${T.amber}" stroke-width="3"/>
-<text x="124" y="208" ${MONO} font-size="24" letter-spacing="4" fill="${T.amber}">${esc(OG_CARD.category.toUpperCase())}</text>
-<text x="64" y="252" font-family="Barlow" font-size="27" fill="${T.ink2}">${esc(OG_CARD.description)}</text>`;
-}
-
-/** Headline count with its framing, then the verification breakdown in taxonomy order. */
-function siteCount(ctx) {
-  const s = ctx.summary;
-  const order = (ctx.taxonomy?.status?.values ?? []).map((v) => v.id);
-  const ids = [...order.filter((id) => id in (s.by_status ?? {})), ...Object.keys(s.by_status ?? {}).filter((id) => !order.includes(id))];
-  let x = 64;
-  const cols = [];
-  for (const id of ids) {
-    const n = String(s.by_status[id]);
-    const label = tax(ctx, 'status', id).toUpperCase();
-    const hex = STATUS_HEX[id] ?? T.ink2;
-    if (cols.length) cols.push(`<line x1="${x - 22}" y1="500" x2="${x - 22}" y2="540" stroke="${T.frame}" stroke-width="2"/>`);
-    cols.push(`<rect x="${x}" y="503" width="4" height="34" fill="${hex}"/><text x="${x + 16}" y="536" ${COND}><tspan font-size="46" fill="${hex}">${esc(n)}</tspan><tspan dx="9" font-size="26" letter-spacing="1" fill="${T.ink2}">${esc(label)}</tspan></text>`);
-    x += 16 + condWidth(n, 46) + 9 + condWidth(label, 26) + label.length + 40;
-  }
-  return `<text x="60" y="432" ${COND} font-size="172" fill="${T.ink}">${esc(s.total)}<tspan dx="18" font-size="66">${esc(OG_CARD.countNoun.toUpperCase())}</tspan></text>
-<text x="64" y="478" ${COND} font-size="40" letter-spacing="1.5" fill="${T.amber}">${esc(OG_CARD.hook.toUpperCase())}</text>
-${cols.join('')}`;
-}
-
-/**
- * Right-hand map: land, a faint graticule, and the points of active records
- * only, with the site's map encoding (hue = ai_role, soft disc = illustrative
- * country-level point, pin = stated location). No connecting lines: the
- * dataset records places, not paths.
- */
-function siteMap(ctx) {
-  const records = ctx.incidents.filter(isActive);
-  const parts = [`<line x1="596" y1="300" x2="596" y2="540" stroke="${T.frame}"/>`, `<g transform="translate(624 290) scale(0.54)"><path d="${ctx.geo.graticulePath ?? ''}" fill="none" stroke="${T.graticule}" stroke-width="1.4"/><path d="${ctx.geo.landPath}" fill="${T.land}" stroke="${T.coast}" stroke-width="0.9"/>`];
-  let points = 0;
-  let illustrative = 0;
-  let withGeo = 0;
-  const discs = [];
-  const dots = [];
-  for (const r of records) {
-    const hex = ROLE_HEX[r.ai_role ?? 'unknown'] ?? ROLE_HEX.unknown;
-    const ps = r.geo?.points ?? [];
-    if (ps.length) withGeo++;
-    for (const p of ps) {
-      const xy = ctx.geo.project(p.lng, p.lat);
-      if (!xy) continue;
-      points++;
-      const [x, y] = xy.map((n) => n.toFixed(1));
-      if (p.illustrative) {
-        illustrative++;
-        discs.push(`<circle cx="${x}" cy="${y}" r="30" fill="${hex}" opacity="0.2"/>`);
-        dots.push(`<circle cx="${x}" cy="${y}" r="7" fill="${hex}" stroke="${T.ground}" stroke-width="3"/>`);
-      } else {
-        dots.push(`<circle cx="${x}" cy="${y}" r="13" fill="none" stroke="${hex}" stroke-width="3"/><circle cx="${x}" cy="${y}" r="6" fill="${hex}"/>`);
-      }
-    }
-  }
-  parts.push(...discs, ...dots, '</g>');
-  const stated = points - illustrative;
-  const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 'S'}`;
-  const detail = !points ? 'NO STATED LOCATIONS' : stated ? `${plural(points, 'POINT')} · ${stated} STATED` : `${plural(points, 'POINT')} · COUNTRY-LEVEL`;
-  parts.push(`<text x="${CARD_W - 64}" y="292" text-anchor="end" ${MONO} font-size="15" letter-spacing="1" fill="${T.muted}">${plural(withGeo, 'RECORD')} WITH GEO · ${detail}</text>`);
-  return parts.join('');
-}
-
-function siteFooter(ctx) {
-  // Preview hosts are long; shrink so they never run into the attribution.
-  const host = new URL(ctx.siteUrl).host.replace(/^www\./, '');
-  return `<line x1="64" y1="566" x2="${CARD_W - 64}" y2="566" stroke="${T.frame}"/>
-<text x="64" y="594" ${MONO} ${host.length > 28 ? `font-size="${Math.min(14, Math.floor(500 / (host.length * 0.6)))}"` : 'font-size="18" letter-spacing="3"'} fill="${T.ink2}">${esc(host.toUpperCase())}</text>
-<text x="${CARD_W - 64}" y="594" text-anchor="end" ${MONO} font-size="15" letter-spacing="1" fill="${T.muted}">// ${esc(OG_CARD.attribution.toUpperCase())} · CC BY-SA 4.0</text>`;
-}
-
-/** Site-level card: brand, headline count, verification breakdown and every point of an active record. */
-export function siteCardSvg(ctx) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${CARD_W}" height="${CARD_H}" viewBox="0 0 ${CARD_W} ${CARD_H}">
-${siteFrame()}
-${siteMap(ctx)}
-${siteBrand(ctx)}
-${siteCount(ctx)}
-${siteFooter(ctx)}
-</svg>`;
-}
+/** Content hash of a card: a changed card is a new URL, same snapshot, same URL. */
+const cardVersion = (svg) => createHash('sha256').update(svg).digest('hex').slice(0, 10);
 
 /**
  * Public URL of the site card, versioned by its content. Social platforms
@@ -253,7 +54,18 @@ ${siteFooter(ctx)}
  * version. The file itself stays at og/site.png.
  */
 export function siteImageUrl(ctx) {
-  return `${ctx.siteUrl}og/site.png?v=${createHash('sha256').update(siteCardSvg(ctx)).digest('hex').slice(0, 10)}`;
+  return `${ctx.siteUrl}og/site.png?v=${cardVersion(siteCardSvg(ctx))}`;
+}
+
+/** Public URL of a record's card, versioned by its content so a redrawn card is fetched afresh by platforms that cache by URL. */
+export function recordImageUrl(ctx, rec) {
+  return `${ctx.siteUrl}og/${encodeURIComponent(rec.id)}.png?v=${cardVersion(cardSvg(rec, ctx))}`;
+}
+
+/** Public URL of a route's own card (og/map.png, og/stats.png), versioned the same way; null for routes that share the site card. */
+export function routeImageUrl(ctx, view) {
+  const draw = ROUTE_CARDS[view];
+  return draw ? `${ctx.siteUrl}og/${view}.png?v=${cardVersion(draw(ctx))}` : null;
 }
 
 // ---- pages ---------------------------------------------------------------------
@@ -334,7 +146,7 @@ export function incidentHtml(rec, ctx) {
       // Event first so a search snippet leads with what happened; the grades follow.
       description: `${leadSentence(rec.summary)} ${grades}.`,
       url,
-      image: `${ctx.siteUrl}og/${encodeURIComponent(rec.id)}.png`,
+      image: recordImageUrl(ctx, rec),
       imageAlt: `${rec.name}: ${grades}`,
       ogType: 'article',
       extraHead: `<link rel="alternate" type="application/json" href="${esc(ctx.upstreamIncidentUrl(rec.id))}">
@@ -380,7 +192,8 @@ export function routeHtml(view, ctx) {
   const title = view === 'overview' ? HOME_COPY.title : `${route.title} — ${SITE_NAME}`;
   const jsonLd = view === 'overview' ? [siteJsonLd(ctx)] : [routeJsonLd(ctx, route), breadcrumbJsonLd(ctx, [[SITE_NAME, ctx.siteUrl], [route.title, url]])];
   if (view === 'about') jsonLd.push(...definedTermSetsJsonLd(ctx));
-  return pageHtml(ctx, { title, ogTitle: view === 'overview' ? HOME_COPY.title : `${route.title} · ${SITE_NAME}`, description: routeDescription(ctx, view), url, jsonLd }, ROUTE_BODIES[view](ctx));
+  const image = routeImageUrl(ctx, view);
+  return pageHtml(ctx, { title, ogTitle: view === 'overview' ? HOME_COPY.title : `${route.title} · ${SITE_NAME}`, description: routeDescription(ctx, view), url, jsonLd, ...(image ? { image, imageAlt: `${route.title} · ${SITE_NAME}` } : {}) }, ROUTE_BODIES[view](ctx));
 }
 
 const byAddedDesc = (a, b) => {
@@ -625,7 +438,7 @@ export function incidentJsonLd(rec, ctx) {
     dateModified: rec.last_updated ?? added,
     author: organizationJsonLd(),
     publisher: organizationJsonLd(),
-    image: `${ctx.siteUrl}og/${encodeURIComponent(rec.id)}.png`,
+    image: recordImageUrl(ctx, rec),
     isPartOf: [{ '@id': site }, { '@id': dataset }],
     about: { '@id': dataset },
     articleSection: tax(ctx, 'category', rec.category),
@@ -639,8 +452,8 @@ export function incidentJsonLd(rec, ctx) {
 
 export function sitemapXml(ctx) {
   const modified = datasetModified(ctx.incidents, ctx.snapshot?.fetched_at ?? null);
-  const rows = ROUTE_PAGES.map((p) => ({ loc: `${ctx.siteUrl}${p.path}`, lastmod: p.view === 'about' ? (ctx.snapshot?.fetched_at ?? modified) : modified, priority: p.view === 'overview' ? '1.0' : '0.7', image: p.view === 'overview' ? siteImageUrl(ctx) : null }));
-  for (const r of ctx.incidents.slice().sort(byIdAsc)) rows.push({ loc: `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, lastmod: r.last_updated ?? r.added?.date ?? r.date_disclosed, priority: '0.8', image: `${ctx.siteUrl}og/${encodeURIComponent(r.id)}.png` });
+  const rows = ROUTE_PAGES.map((p) => ({ loc: `${ctx.siteUrl}${p.path}`, lastmod: p.view === 'about' ? (ctx.snapshot?.fetched_at ?? modified) : modified, priority: p.view === 'overview' ? '1.0' : '0.7', image: p.view === 'overview' ? siteImageUrl(ctx) : routeImageUrl(ctx, p.view) }));
+  for (const r of ctx.incidents.slice().sort(byIdAsc)) rows.push({ loc: `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, lastmod: r.last_updated ?? r.added?.date ?? r.date_disclosed, priority: '0.8', image: recordImageUrl(ctx, r) });
   for (const g of actorGroups(ctx.incidents).slice().sort((a, b) => a.slug.localeCompare(b.slug))) rows.push({ loc: `${ctx.siteUrl}actors/${encodeURIComponent(g.slug)}/`, lastmod: datasetModified(g.incidents, modified), priority: '0.6', image: null });
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
@@ -808,15 +621,15 @@ export function loadContext(siteUrl = resolveSiteUrl(), { shell } = {}) {
   };
 }
 
-export async function renderPng(svg, background = C.ground) {
+export async function renderPng(svg, background = T.ground) {
   const { Resvg } = await import('@resvg/resvg-js');
   const r = new Resvg(svg, {
     fitTo: { mode: 'width', value: CARD_W },
     background,
     font: {
       loadSystemFonts: false,
-      fontFiles: ['BarlowCondensed-Bold.ttf', 'Barlow-Regular.ttf', 'Barlow-SemiBold.ttf', 'IBMPlexMono-Regular.ttf'].map((f) => path.join(FONTS, f)),
-      defaultFontFamily: 'Barlow',
+      fontFiles: ['IBMPlexMono-Regular.ttf', 'IBMPlexMono-Bold.ttf'].map((f) => path.join(FONTS, f)),
+      defaultFontFamily: 'IBM Plex Mono',
     },
   });
   return r.render().asPng();
@@ -849,7 +662,8 @@ async function main() {
   }
   writeFileSync(path.join(DIST, 'llms.txt'), llmsTxt(ctx));
   writeFileSync(path.join(DIST, 'llms-full.txt'), llmsFullTxt(ctx));
-  writeFileSync(path.join(DIST, 'og', 'site.png'), await renderPng(siteCardSvg(ctx), T.ground));
+  writeFileSync(path.join(DIST, 'og', 'site.png'), await renderPng(siteCardSvg(ctx)));
+  for (const [view, draw] of Object.entries(ROUTE_CARDS)) writeFileSync(path.join(DIST, 'og', `${view}.png`), await renderPng(draw(ctx)));
   writeFileSync(path.join(DIST, 'feed.atom'), atomFeed(ctx.incidents, ctx));
   writeFileSync(path.join(DIST, 'changes.json'), JSON.stringify(changesJson(ctx.incidents, ctx), null, 2) + '\n');
   writeFileSync(path.join(DIST, 'sitemap.xml'), sitemapXml(ctx));
@@ -862,7 +676,7 @@ async function main() {
   writeFileSync(path.join(DIST, 'misp', 'manifest.json'), JSON.stringify(feed.manifest, null, 2) + '\n');
   for (const [uuid, ev] of Object.entries(feed.events)) writeFileSync(path.join(DIST, 'misp', `${uuid}.json`), JSON.stringify(ev, null, 2) + '\n');
   writeFileSync(path.join(DIST, 'misp', 'hashes.csv'), feed.hashes);
-  console.log(`prerender: ${n} incident pages + cards, ${ROUTE_PAGES.length} route pages, ${actors.length} actor pages, site card, llms.txt, feed.atom, changes.json, sitemap, robots, 2 Navigator layers, MISP feed (${Object.keys(feed.events).length} events) → ${path.relative(ROOT, DIST)} (site ${ctx.siteUrl})`);
+  console.log(`prerender: ${n} incident pages + cards, ${ROUTE_PAGES.length} route pages, ${actors.length} actor pages, site card, ${Object.keys(ROUTE_CARDS).length} route cards, llms.txt, feed.atom, changes.json, sitemap, robots, 2 Navigator layers, MISP feed (${Object.keys(feed.events).length} events) → ${path.relative(ROOT, DIST)} (site ${ctx.siteUrl})`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

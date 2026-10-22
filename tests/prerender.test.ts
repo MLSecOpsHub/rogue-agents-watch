@@ -4,7 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import summary from '../data/snapshot/summary.json';
-import { atomFeed, CARD_H, CARD_W, cardSvg, changesJson, esc, FALLBACK_SHELL, firstSentence, incidentHtml, loadContext, renderPng, routeHtml, sitemapXml, siteCardSvg, siteImageUrl, siteOgTags, STATUS_HEX, wrapText } from '../scripts/prerender.mjs';
+import { atomFeed, CARD_H, CARD_W, cardSvg, changesJson, esc, FALLBACK_SHELL, firstSentence, incidentHtml, loadContext, mapCardSvg, renderPng, routeHtml, routeImageUrl, SEVERITY_HEX, sitemapXml, siteCardSvg, siteImageUrl, siteOgTags, STATUS_HEX, statsCardSvg, wrapText } from '../scripts/prerender.mjs';
 import type { PrerenderContext, PrerenderRecord } from '../scripts/prerender.mjs';
 import { OG_CARD } from '../src/site-copy.mjs';
 
@@ -17,11 +17,18 @@ describe('prerender generators', () => {
     const rec = byId.get(id)!;
     const svg = cardSvg(rec, ctx);
     expect(svg.startsWith('<svg')).toBe(true);
-    expect(svg).toContain('every dot has a footnote');
-    expect(svg).toContain(`v${summary.dataset_version}`);
-    for (const line of rec.name.toUpperCase().split(' ').slice(0, 2)) expect(svg).toContain(line.replace(/&/g, '&amp;').replace(/'/g, '&#39;').slice(0, 8));
+    // The four grades with their upstream labels, the disclosure date, the source count and the name's first words.
+    expect(svg).toContain(`>${ctx.labels['status']![rec.status]!.label}</text>`);
+    expect(svg).toContain(`>${ctx.labels['confidence']![rec.confidence]!.label}</text>`);
+    expect(svg).toContain(`>${ctx.labels['ai_role']![rec.ai_role ?? 'unknown']?.label ?? rec.ai_role}</text>`);
+    expect(svg).toContain(`fill="${SEVERITY_HEX[rec.severity]}">${ctx.labels['severity']![rec.severity]!.label}</text>`);
+    expect(svg).toContain(`disclosed ${rec.date_disclosed}`);
+    expect(svg).toMatch(new RegExp(`>${rec.sources.length}</tspan> sources?`));
+    expect(svg).toContain('>rogueagentswatch.com</text>'.replace('rogueagentswatch.com', 'example.test'));
+    expect(svg).not.toContain('not stated');
+    for (const line of rec.name.split(' ').slice(0, 2)) expect(svg).toContain(line.replace(/&/g, '&amp;').replace(/'/g, '&#39;').slice(0, 8));
     const html = incidentHtml(rec, ctx);
-    expect(html).toContain(`<meta property="og:image" content="https://example.test/site/og/${id}.png">`);
+    expect(html).toMatch(new RegExp(`<meta property="og:image" content="https://example\\.test/site/og/${id.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}\\.png\\?v=[0-9a-f]{10}">`));
     expect(html).toContain(`<meta property="og:url" content="https://example.test/site/incident/${id}/">`);
     expect(html).toContain(`<link rel="canonical" href="https://example.test/site/incident/${id}/">`);
     expect(html).toContain('hreflang="x-default"');
@@ -57,6 +64,12 @@ describe('prerender generators', () => {
     for (const v of ctx.taxonomy['status']!.values) expect(about).toContain(v.label);
     const map = routeHtml('map', ctx);
     expect(map).toContain('never plotted');
+    // The map and stats routes carry their own card, versioned by content; the others share the site card.
+    expect(map).toMatch(/<meta property="og:image" content="https:\/\/example\.test\/site\/og\/map\.png\?v=[0-9a-f]{10}">/);
+    expect(routeHtml('stats', ctx)).toMatch(/og:image" content="https:\/\/example\.test\/site\/og\/stats\.png\?v=[0-9a-f]{10}"/);
+    expect(routeHtml('timeline', ctx)).toContain('og:image" content="https://example.test/site/og/site.png?v=');
+    expect(routeImageUrl(ctx, 'about')).toBeNull();
+    expect(sitemapXml(ctx)).toContain('<image:loc>https://example.test/site/og/map.png?v=');
     for (const view of ['timeline', 'table', 'techniques', 'stats'] as const) {
       const html = routeHtml(view, ctx);
       expect(html).toContain(`<link rel="canonical" href="https://example.test/site/${view}/">`);
@@ -148,27 +161,26 @@ describe('site share card', () => {
   const textOf = (svg: string) => svg.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
   const statuses = Object.entries(summary.by_status) as Array<[string, number]>;
 
-  it('is 1200x630 with the brand, category, supporting line and hook', () => {
+  it('is 1200x630 with the brand, category, the two terms, supporting line and hook', () => {
     const svg = siteCardSvg(ctx);
     expect(svg).toMatch(new RegExp(`^<svg [^>]*width="${CARD_W}" height="${CARD_H}" viewBox="0 0 1200 630"`));
     const text = textOf(svg);
     expect(text).toContain('ROGUE AGENTS WATCH');
-    expect(text).toContain('[ MLSECOPSHUB ]');
-    expect(text).toContain(OG_CARD.category.toUpperCase());
+    expect(text).toContain(`// ${OG_CARD.category}`);
+    expect(text).toContain(`&gt; ${OG_CARD.terms.join(' · ')}`);
     expect(text).toContain(OG_CARD.description.replace('&', '&amp;'));
-    expect(text).toContain(OG_CARD.hook.toUpperCase());
-    expect(text).toContain(`DATASET v${summary.dataset_version}`);
-    expect(text).toContain('POWERED BY THE AGENTIC ATTACK INDEX');
+    expect(text).toContain(OG_CARD.hook);
+    expect(text).toContain(`MLSECOPSHUB · v${summary.dataset_version}`);
+    // One family in two weights, rasterised from vendored files: nothing else is named.
+    expect(svg.match(/font-family="([^"]+)"/g)?.every((m) => m === 'font-family="IBM Plex Mono"')).toBe(true);
   });
 
   it('shows the record total and the status breakdown from summary.json, with the upstream labels', () => {
     const svg = siteCardSvg(ctx);
-    expect(svg).toContain(`>${summary.total}<tspan dx="18" font-size="66">CASES.</tspan>`);
-    for (const [id, n] of statuses) {
-      const label = ctx.labels['status']![id]!.label.toUpperCase();
-      expect(svg).toContain(`<tspan font-size="46" fill="${STATUS_HEX[id]}">${n}</tspan>`);
-      expect(svg).toContain(`>${label.replace('&', '&amp;')}</tspan>`);
-    }
+    expect(svg).toContain(`font-size="136" fill="#e6edf3">${summary.total}</text>`);
+    expect(textOf(svg)).toContain(`${summary.total} ${OG_CARD.countNoun.replace('&', '&amp;')}`);
+    for (const [id, n] of statuses) expect(textOf(svg)).toContain(`${n} ${ctx.labels['status']![id]!.label.toLowerCase().replace('&', '&amp;')}`);
+    expect(textOf(svg)).toContain(`${summary.by_status.confirmed} confirmed · ${summary.by_status.reported} reported`);
     // Same hues as the site's --status-* tokens; confirmed and reported never share one.
     const css = readFileSync('src/styles.css', 'utf8').split("data-theme='light'")[0]!;
     const tokens = Object.fromEntries([...css.matchAll(/--status-([\w-]+):\s*(#[0-9a-f]{6})/g)].map((m) => [m[1], m[2]]));
@@ -177,9 +189,13 @@ describe('site share card', () => {
   });
 
   it('takes the host from the canonical URL, never a hard-coded domain', () => {
-    expect(siteCardSvg(ctx)).toContain('>EXAMPLE.TEST<');
-    expect(siteCardSvg(ctx)).not.toContain('ROGUEAGENTSWATCH.COM');
-    expect(siteCardSvg(loadContext('https://www.rogueagentswatch.com/', { shell: FALLBACK_SHELL }))).toContain('>ROGUEAGENTSWATCH.COM<');
+    expect(siteCardSvg(ctx)).toContain('>example.test<');
+    expect(siteCardSvg(ctx)).not.toContain('rogueagentswatch.com');
+    expect(siteCardSvg(loadContext('https://www.rogueagentswatch.com/', { shell: FALLBACK_SHELL }))).toContain('>rogueagentswatch.com<');
+    // A long preview host shrinks, and the footer's left line shrinks to clear it.
+    const preview = siteCardSvg(loadContext('https://rogue-agents-watch-git-feat-terminal-share-cards-mlsecopshub.vercel.app/', { shell: FALLBACK_SHELL }));
+    expect(preview).toContain('>rogue-agents-watch-git-feat-terminal-share-cards-mlsecopshub.vercel.app<');
+    expect(preview).toMatch(/font-size="1[0-3]" letter-spacing="1" fill="#ff8a4c">rogue-agents/);
   });
 
   it('makes no live, real-time or monitoring claim and draws no paths between points', () => {
@@ -189,7 +205,7 @@ describe('site share card', () => {
     // One disc + one dot per illustrative point, ring + dot per stated point: nothing else is a circle.
     const pts = ctx.incidents.filter((r) => !r.record_status || r.record_status === 'active').flatMap((r) => r.geo?.points ?? []);
     expect((svg.match(/<circle /g) ?? []).length).toBe(pts.length * 2);
-    expect(textOf(svg)).toContain(`${pts.length} POINTS`);
+    expect(textOf(svg)).toContain(`threat map · ${pts.length} points`);
   });
 
   it('follows the data: other totals and breakdowns, no geo, retracted points left off', () => {
@@ -202,18 +218,57 @@ describe('site share card', () => {
     };
     const svg = siteCardSvg(other);
     const text = textOf(svg);
-    expect(svg).toContain('>1234<tspan');
+    expect(svg).toContain('fill="#e6edf3">1234</text>');
     for (const n of [400, 800, 34]) expect(svg).toContain(`>${n}</tspan>`);
     for (const [, n] of statuses) expect(svg).not.toContain(`>${n}</tspan>`);
-    expect(svg).not.toContain(`>${summary.total}<tspan`);
-    expect(text).toContain('DATASET v9.9.9');
+    expect(svg).not.toContain(`>${summary.total}</text>`);
+    expect(text).toContain('MLSECOPSHUB · v9.9.9');
     // The active stated point is a pin (ring + dot); the retracted record's disc is not drawn.
     expect((svg.match(/<circle /g) ?? []).length).toBe(2);
     expect(svg).not.toContain('opacity="0.2"');
-    expect(text).toContain('1 RECORD WITH GEO · 1 POINT · 1 STATED');
+    expect(text).toContain('threat map · 1 point · stated · 1 of 1234 records');
     const empty = siteCardSvg({ ...other, incidents: [] });
     expect(empty).not.toContain('<circle');
-    expect(textOf(empty)).toContain('NO STATED LOCATIONS');
+    expect(textOf(empty)).toContain('threat map · no stated locations · 0 of 1234 records');
+  });
+
+  it('the map card states the located share, every basis by its taxonomy noun, and the unplotted remainder', () => {
+    const svg = mapCardSvg(ctx);
+    const text = textOf(svg);
+    const geo = ctx.incidents.filter((r) => !r.record_status || r.record_status === 'active').filter((r) => r.geo?.points?.length);
+    const pts = geo.flatMap((r) => r.geo!.points);
+    expect(text).toContain('THREAT MAP');
+    expect(text).toContain(`${geo.length} of ${summary.total} records located`);
+    expect(text).toContain(`${summary.total - geo.length} records listed, not plotted`);
+    expect(text).toContain(`${pts.length} ${pts.every((p) => p.illustrative) ? 'country-level ' : ''}points, each with its basis`);
+    const byBasis = new Map<string, number>();
+    for (const p of pts) if (p.basis) byBasis.set(p.basis, (byBasis.get(p.basis) ?? 0) + 1);
+    for (const [id, n] of byBasis) expect(text).toContain(`${n} ${ctx.labels['geo_basis']![id]!.label.toLowerCase().split(' ')[0]}`);
+    expect((svg.match(/<circle /g) ?? []).length).toBe(pts.length * 2);
+    expect(svg).toContain('>example.test/map<');
+    expect(text).not.toMatch(/\b(live|real[- ]?time|monitor(ing)?|score)\b/i);
+  });
+
+  it('the stats card is the status × AI-role crosstab from summary.evidence_split, with the year split and no score', () => {
+    const svg = statsCardSvg(ctx);
+    const text = textOf(svg);
+    const split = summary.evidence_split as { confirmed_load_bearing: number; by_status_ai_role: Record<string, Record<string, number>> };
+    expect(text).toContain('EVIDENCE STATS');
+    expect(svg).toContain(`font-size="136" fill="#ff8a4c">${split.confirmed_load_bearing}</text>`);
+    expect(text).toContain(`of ${summary.total} records`);
+    for (const [status, row] of Object.entries(split.by_status_ai_role)) {
+      expect(svg).toContain(`fill="${STATUS_HEX[status]}">${ctx.labels['status']![status]!.label.toLowerCase()} <tspan fill="#7d8b99">${Object.values(row).reduce((a, b) => a + b, 0)}</tspan>`);
+      for (const n of Object.values(row)) expect(svg).toContain(`font-size="36" fill="#${n ? 'e6edf3' : '566677'}">${n}</text>`.replace('e6edf3">22<', 'ff8a4c">22<'));
+    }
+    for (const [year, n] of Object.entries(summary.by_year)) expect(text).toContain(`${n} in ${year}`);
+    expect(text).toContain('every number is a count of records');
+    expect(svg).toContain('>example.test/stats<');
+    // Without the rollup the table is counted over active records (the dashboard's headline rule, which may exclude a record upstream still counts).
+    const counted = statsCardSvg({ ...ctx, summary: { ...ctx.summary, evidence_split: undefined } });
+    const active = ctx.incidents.filter((r) => !r.record_status || r.record_status === 'active');
+    const confirmedLoadBearing = active.filter((r) => r.status === 'confirmed' && r.ai_role === 'load-bearing').length;
+    expect(counted).toContain(`font-size="136" fill="#ff8a4c">${confirmedLoadBearing}</text>`);
+    expect(counted).toContain(`fill="${STATUS_HEX['confirmed']}">confirmed <tspan fill="#7d8b99">${active.filter((r) => r.status === 'confirmed').length}</tspan>`);
   });
 
   it('rasterises to a 1200x630 PNG', async () => {
@@ -260,7 +315,7 @@ describe('discoverability and interop generators', () => {
     const art = incidentJsonLd(byId.get(summary.ids[0]!)!, ctx);
     expect(art['@type']).toBe('Article');
     expect(art['url']).toBe(`https://example.test/site/incident/${summary.ids[0]}/`);
-    expect(art['image']).toBe(`https://example.test/site/og/${summary.ids[0]}.png`);
+    expect(art['image']).toMatch(new RegExp(`^https://example\\.test/site/og/${summary.ids[0]}\\.png\\?v=[0-9a-f]{10}$`));
     expect((art['citation'] as unknown[]).length).toBe(byId.get(summary.ids[0]!)!.sources.length);
   });
 
