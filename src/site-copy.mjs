@@ -30,6 +30,20 @@ export const HOME_COPY = {
     'Rogue Agents Watch is a public dashboard of open threat intelligence on rogue AI agents and AI-orchestrated cyberattacks. It renders the Agentic Attack Index, an open-source, source-linked dataset of documented cyberattacks executed or orchestrated by AI agents and of rogue-agent incidents, including test and evaluation records; the dashboard adds no facts of its own.',
 };
 
+/**
+ * The site-level share image (dist/og/site.png). Shorter than the meta
+ * description on purpose; the count, the status breakdown, the host and the
+ * dataset version are filled in from the snapshot where the card is drawn.
+ */
+export const OG_CARD = {
+  category: 'Open threat intelligence',
+  description: 'Rogue AI agent incidents & AI-orchestrated cyberattacks',
+  /** Follows the record total: "99 CASES." then the line below. */
+  countNoun: 'Cases.',
+  hook: 'Follow the evidence.',
+  attribution: `Powered by the ${DATASET_NAME}`,
+};
+
 /** Dataset JSON-LD description lead: the dataset itself, not the site. Counts are appended where it is rendered. */
 export const DATASET_DESCRIPTION =
   'Open-source, source-linked dataset of documented cyberattacks executed or orchestrated by AI agents and of rogue-agent incidents, including test and evaluation records.';

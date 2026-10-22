@@ -23,12 +23,12 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { geoNaturalEarth1, geoPath } from 'd3-geo';
+import { geoGraticule10, geoNaturalEarth1, geoPath } from 'd3-geo';
 import { feature } from 'topojson-client';
 import { LOCAL_SITE_URL, resolveSiteUrl } from './site-env.mjs';
 import { actorBody, incidentBody, llmsFullTxt, llmsTxt, ROUTE_BODIES, ROUTE_PAGES, routeDescription } from './prerender-pages.mjs';
 import { actorGroups, byDisclosedDesc, byIdAsc, CARD_H, CARD_W, datasetModified, esc, firstSentence, gradeLine, LICENSE_URL, PUBLISHER, SITE_NAME, tax, UPSTREAM, wrapText } from './prerender-util.mjs';
-import { DATASET_DESCRIPTION, DATASET_NAME, HOME_COPY } from '../src/site-copy.mjs';
+import { DATASET_DESCRIPTION, DATASET_NAME, HOME_COPY, OG_CARD } from '../src/site-copy.mjs';
 
 export { CARD_H, CARD_W, esc, firstSentence, SITE_NAME, UPSTREAM, wrapText };
 
@@ -59,7 +59,7 @@ export function buildGeo(topo) {
   const projection = geoNaturalEarth1().fitExtent([[6, 6], [954, 494]], { type: 'Sphere' });
   const pathGen = geoPath(projection);
   const land = feature(topo, topo.objects.countries);
-  return { landPath: pathGen(land) ?? '', project: (lng, lat) => projection([lng, lat]) };
+  return { landPath: pathGen(land) ?? '', graticulePath: pathGen(geoGraticule10()) ?? '', project: (lng, lat) => projection([lng, lat]) };
 }
 
 function miniMap(geo, markers, opacity = 0.55) {
@@ -129,28 +129,121 @@ ${summary}
 </svg>`;
 }
 
-/** Site-level card: headline count and every stated point. */
-export function siteCardSvg(ctx) {
-  const points = [];
-  for (const r of ctx.incidents) {
-    const hex = ROLE_HEX[r.ai_role ?? 'unknown'] ?? ROLE_HEX.unknown;
-    for (const p of r.geo?.points ?? []) points.push({ ...p, color: hex });
-  }
+// Site card palette: the terminal treatment of the dark theme. Status hues
+// are the --status-* tokens of src/styles.css (a test keeps them equal) so
+// the card and the site grade records the same way; marker hues stay
+// ROLE_HEX (hue = ai_role).
+const T = { ground: '#070b12', grid: '#0d1621', frame: '#1a3240', cyan: '#5fc4d4', amber: '#ff8a4c', ink: '#f2f5f8', ink2: '#c3ccd5', muted: '#8b98a6', land: '#14212d', coast: '#24384a', graticule: '#0f1c28' };
+export const STATUS_HEX = { confirmed: '#6ecf95', reported: '#f0b658', 'test-eval': '#a7a9f0' };
+const MONO = 'font-family="IBM Plex Mono"';
+const COND = 'font-family="Barlow Condensed" font-weight="700"';
+
+// Rough advance widths (em) for Barlow Condensed Bold, used only to space the
+// status breakdown; generous so a longer label never collides.
+const condWidth = (text, size) => [...text].reduce((w, ch) => w + (ch === ' ' ? 0.2 : /[0-9]/.test(ch) ? 0.47 : /[/·.]/.test(ch) ? 0.3 : 0.45), 0) * size;
+
+/** Records that count toward headlines: missing record_status means active. */
+const isActive = (r) => !r.record_status || r.record_status === 'active';
+
+/** Fine grid, inset frame and amber corner brackets. Decoration only, no data. */
+function siteFrame() {
+  const [x0, y0, x1, y1, k] = [24, 24, CARD_W - 24, CARD_H - 24, 22];
+  const corners = [[x0, y0, 1, 1], [x1, y0, -1, 1], [x0, y1, 1, -1], [x1, y1, -1, -1]]
+    .map(([x, y, dx, dy]) => `<path d="M${x} ${y + dy * k}V${y}H${x + dx * k}" fill="none" stroke="${T.amber}" stroke-width="2"/>`)
+    .join('');
+  return `<defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="${T.grid}" stroke-width="1"/></pattern></defs>
+<rect width="${CARD_W}" height="${CARD_H}" fill="${T.ground}"/>
+<rect width="${CARD_W}" height="${CARD_H}" fill="url(#grid)"/>
+<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" fill="none" stroke="${T.frame}"/>
+${corners}`;
+}
+
+/** Brand block, top left: microbrand, name, category label, supporting line. */
+function siteBrand(ctx) {
+  return `<text x="64" y="76" ${MONO} font-size="17" letter-spacing="4" fill="${T.cyan}">[ ${esc(PUBLISHER.name.toUpperCase())} ]</text>
+<text x="${CARD_W - 64}" y="76" text-anchor="end" ${MONO} font-size="16" letter-spacing="2" fill="${T.muted}">DATASET v${esc(ctx.summary.dataset_version)}</text>
+<text x="64" y="160" ${COND} font-size="86" fill="${T.ink}">${esc(SITE_NAME.toUpperCase().replace(/ WATCH$/, ''))} <tspan fill="${T.amber}">WATCH</tspan></text>
+<line x1="64" y1="200" x2="108" y2="200" stroke="${T.amber}" stroke-width="3"/>
+<text x="124" y="208" ${MONO} font-size="24" letter-spacing="4" fill="${T.amber}">${esc(OG_CARD.category.toUpperCase())}</text>
+<text x="64" y="252" font-family="Barlow" font-size="27" fill="${T.ink2}">${esc(OG_CARD.description)}</text>`;
+}
+
+/** Headline count with its framing, then the verification breakdown in taxonomy order. */
+function siteCount(ctx) {
   const s = ctx.summary;
-  const confirmed = s.by_status?.confirmed ?? 0;
-  const withGeo = ctx.incidents.filter((r) => r.geo?.points?.length).length;
+  const order = (ctx.taxonomy?.status?.values ?? []).map((v) => v.id);
+  const ids = [...order.filter((id) => id in (s.by_status ?? {})), ...Object.keys(s.by_status ?? {}).filter((id) => !order.includes(id))];
+  let x = 64;
+  const cols = [];
+  for (const id of ids) {
+    const n = String(s.by_status[id]);
+    const label = tax(ctx, 'status', id).toUpperCase();
+    const hex = STATUS_HEX[id] ?? T.ink2;
+    if (cols.length) cols.push(`<line x1="${x - 22}" y1="500" x2="${x - 22}" y2="540" stroke="${T.frame}" stroke-width="2"/>`);
+    cols.push(`<rect x="${x}" y="503" width="4" height="34" fill="${hex}"/><text x="${x + 16}" y="536" ${COND}><tspan font-size="46" fill="${hex}">${esc(n)}</tspan><tspan dx="9" font-size="26" letter-spacing="1" fill="${T.ink2}">${esc(label)}</tspan></text>`);
+    x += 16 + condWidth(n, 46) + 9 + condWidth(label, 26) + label.length + 40;
+  }
+  return `<text x="60" y="432" ${COND} font-size="172" fill="${T.ink}">${esc(s.total)}<tspan dx="18" font-size="66">${esc(OG_CARD.countNoun.toUpperCase())}</tspan></text>
+<text x="64" y="478" ${COND} font-size="40" letter-spacing="1.5" fill="${T.amber}">${esc(OG_CARD.hook.toUpperCase())}</text>
+${cols.join('')}`;
+}
+
+/**
+ * Right-hand map: land, a faint graticule, and the points of active records
+ * only, with the site's map encoding (hue = ai_role, soft disc = illustrative
+ * country-level point, pin = stated location). No connecting lines: the
+ * dataset records places, not paths.
+ */
+function siteMap(ctx) {
+  const records = ctx.incidents.filter(isActive);
+  const parts = [`<line x1="596" y1="300" x2="596" y2="540" stroke="${T.frame}"/>`, `<g transform="translate(624 290) scale(0.54)"><path d="${ctx.geo.graticulePath ?? ''}" fill="none" stroke="${T.graticule}" stroke-width="1.4"/><path d="${ctx.geo.landPath}" fill="${T.land}" stroke="${T.coast}" stroke-width="0.9"/>`];
+  let points = 0;
+  let illustrative = 0;
+  let withGeo = 0;
+  const discs = [];
+  const dots = [];
+  for (const r of records) {
+    const hex = ROLE_HEX[r.ai_role ?? 'unknown'] ?? ROLE_HEX.unknown;
+    const ps = r.geo?.points ?? [];
+    if (ps.length) withGeo++;
+    for (const p of ps) {
+      const xy = ctx.geo.project(p.lng, p.lat);
+      if (!xy) continue;
+      points++;
+      const [x, y] = xy.map((n) => n.toFixed(1));
+      if (p.illustrative) {
+        illustrative++;
+        discs.push(`<circle cx="${x}" cy="${y}" r="30" fill="${hex}" opacity="0.2"/>`);
+        dots.push(`<circle cx="${x}" cy="${y}" r="7" fill="${hex}" stroke="${T.ground}" stroke-width="3"/>`);
+      } else {
+        dots.push(`<circle cx="${x}" cy="${y}" r="13" fill="none" stroke="${hex}" stroke-width="3"/><circle cx="${x}" cy="${y}" r="6" fill="${hex}"/>`);
+      }
+    }
+  }
+  parts.push(...discs, ...dots, '</g>');
+  const stated = points - illustrative;
+  const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 'S'}`;
+  const detail = !points ? 'NO STATED LOCATIONS' : stated ? `${plural(points, 'POINT')} · ${stated} STATED` : `${plural(points, 'POINT')} · COUNTRY-LEVEL`;
+  parts.push(`<text x="${CARD_W - 64}" y="292" text-anchor="end" ${MONO} font-size="15" letter-spacing="1" fill="${T.muted}">${plural(withGeo, 'RECORD')} WITH GEO · ${detail}</text>`);
+  return parts.join('');
+}
+
+function siteFooter(ctx) {
+  // Preview hosts are long; shrink so they never run into the attribution.
+  const host = new URL(ctx.siteUrl).host.replace(/^www\./, '');
+  return `<line x1="64" y1="566" x2="${CARD_W - 64}" y2="566" stroke="${T.frame}"/>
+<text x="64" y="594" ${MONO} ${host.length > 28 ? `font-size="${Math.min(14, Math.floor(500 / (host.length * 0.6)))}"` : 'font-size="18" letter-spacing="3"'} fill="${T.ink2}">${esc(host.toUpperCase())}</text>
+<text x="${CARD_W - 64}" y="594" text-anchor="end" ${MONO} font-size="15" letter-spacing="1" fill="${T.muted}">// ${esc(OG_CARD.attribution.toUpperCase())} · CC BY-SA 4.0</text>`;
+}
+
+/** Site-level card: brand, headline count, verification breakdown and every point of an active record. */
+export function siteCardSvg(ctx) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${CARD_W}" height="${CARD_H}" viewBox="0 0 ${CARD_W} ${CARD_H}">
-<defs><radialGradient id="g" cx="0.78" cy="0.4" r="0.7"><stop offset="0" stop-color="${C.surface}"/><stop offset="0.6" stop-color="${C.ground}"/></radialGradient></defs>
-<rect width="${CARD_W}" height="${CARD_H}" fill="url(#g)"/>
-<rect x="0" y="0" width="10" height="${CARD_H}" fill="${ROLE_HEX.significant}"/>
-${miniMap(ctx.geo, points, 0.6)}
-<text x="64" y="88" font-family="Barlow Condensed" font-weight="700" font-size="22" letter-spacing="3" fill="${C.muted}">${esc(SITE_NAME.toUpperCase())} · MLSECOPSHUB</text>
-<text x="64" y="230" font-family="Barlow Condensed" font-weight="700" font-size="150" fill="${C.ink}">${s.total}</text>
-<text x="64" y="290" font-family="Barlow Condensed" font-weight="700" font-size="44" fill="${C.ink}">AI-AGENT CYBER INCIDENTS, SOURCE-LINKED</text>
-<text x="64" y="340" font-family="Barlow" font-size="26" fill="${C.ink2}">${confirmed} confirmed · ${withGeo} with a stated location · every record graded and cited</text>
-<line x1="64" y1="556" x2="1136" y2="556" stroke="${C.hair}"/>
-<text x="64" y="592" font-family="Barlow" font-size="20" fill="${C.muted}"><tspan font-weight="600" fill="${C.ink}">Every dot has a footnote.</tspan> No trackers, no invented pins.</text>
-<text x="1136" y="592" text-anchor="end" font-family="IBM Plex Mono" font-size="18" fill="${C.muted}">agentic-attack-index v${esc(s.dataset_version)} · CC BY-SA 4.0</text>
+${siteFrame()}
+${siteMap(ctx)}
+${siteBrand(ctx)}
+${siteCount(ctx)}
+${siteFooter(ctx)}
 </svg>`;
 }
 
@@ -706,11 +799,11 @@ export function loadContext(siteUrl = resolveSiteUrl(), { shell } = {}) {
   };
 }
 
-async function renderPng(svg) {
+export async function renderPng(svg, background = C.ground) {
   const { Resvg } = await import('@resvg/resvg-js');
   const r = new Resvg(svg, {
     fitTo: { mode: 'width', value: CARD_W },
-    background: C.ground,
+    background,
     font: {
       loadSystemFonts: false,
       fontFiles: ['BarlowCondensed-Bold.ttf', 'Barlow-Regular.ttf', 'Barlow-SemiBold.ttf', 'IBMPlexMono-Regular.ttf'].map((f) => path.join(FONTS, f)),
@@ -747,7 +840,7 @@ async function main() {
   }
   writeFileSync(path.join(DIST, 'llms.txt'), llmsTxt(ctx));
   writeFileSync(path.join(DIST, 'llms-full.txt'), llmsFullTxt(ctx));
-  writeFileSync(path.join(DIST, 'og', 'site.png'), await renderPng(siteCardSvg(ctx)));
+  writeFileSync(path.join(DIST, 'og', 'site.png'), await renderPng(siteCardSvg(ctx), T.ground));
   writeFileSync(path.join(DIST, 'feed.atom'), atomFeed(ctx.incidents, ctx));
   writeFileSync(path.join(DIST, 'changes.json'), JSON.stringify(changesJson(ctx.incidents, ctx), null, 2) + '\n');
   writeFileSync(path.join(DIST, 'sitemap.xml'), sitemapXml(ctx));

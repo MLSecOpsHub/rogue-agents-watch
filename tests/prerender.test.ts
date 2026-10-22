@@ -1,9 +1,12 @@
 // The prerender step runs after the Vite build; these tests cover its pure
 // generators against the real snapshot so a build that would produce a broken
 // card, page, or feed fails here first.
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import summary from '../data/snapshot/summary.json';
-import { atomFeed, cardSvg, changesJson, FALLBACK_SHELL, firstSentence, incidentHtml, loadContext, siteCardSvg, siteOgTags, wrapText } from '../scripts/prerender.mjs';
+import { atomFeed, CARD_H, CARD_W, cardSvg, changesJson, FALLBACK_SHELL, firstSentence, incidentHtml, loadContext, renderPng, routeHtml, siteCardSvg, siteOgTags, STATUS_HEX, wrapText } from '../scripts/prerender.mjs';
+import type { PrerenderContext, PrerenderRecord } from '../scripts/prerender.mjs';
+import { OG_CARD } from '../src/site-copy.mjs';
 
 // The fallback shell keeps the suite independent of whatever a previous build left in dist/.
 const ctx = loadContext('https://example.test/site/', { shell: FALLBACK_SHELL });
@@ -136,6 +139,98 @@ describe('prerender generators', () => {
     expect(wrapText('a '.repeat(80).trim(), 10, 2).at(-1)).toMatch(/…$/);
     expect(firstSentence('First one. Second one.')).toBe('First one.');
     expect(firstSentence('No terminator here')).toBe('No terminator here');
+  });
+});
+
+// The site share image (dist/og/site.png): every number on it comes from the
+// snapshot, and it claims nothing the site does not do.
+describe('site share card', () => {
+  const textOf = (svg: string) => svg.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  const statuses = Object.entries(summary.by_status) as Array<[string, number]>;
+
+  it('is 1200x630 with the brand, category, supporting line and hook', () => {
+    const svg = siteCardSvg(ctx);
+    expect(svg).toMatch(new RegExp(`^<svg [^>]*width="${CARD_W}" height="${CARD_H}" viewBox="0 0 1200 630"`));
+    const text = textOf(svg);
+    expect(text).toContain('ROGUE AGENTS WATCH');
+    expect(text).toContain('[ MLSECOPSHUB ]');
+    expect(text).toContain(OG_CARD.category.toUpperCase());
+    expect(text).toContain(OG_CARD.description.replace('&', '&amp;'));
+    expect(text).toContain(OG_CARD.hook.toUpperCase());
+    expect(text).toContain(`DATASET v${summary.dataset_version}`);
+    expect(text).toContain('POWERED BY THE AGENTIC ATTACK INDEX');
+  });
+
+  it('shows the record total and the status breakdown from summary.json, with the upstream labels', () => {
+    const svg = siteCardSvg(ctx);
+    expect(svg).toContain(`>${summary.total}<tspan dx="18" font-size="66">CASES.</tspan>`);
+    for (const [id, n] of statuses) {
+      const label = ctx.labels['status']![id]!.label.toUpperCase();
+      expect(svg).toContain(`<tspan font-size="46" fill="${STATUS_HEX[id]}">${n}</tspan>`);
+      expect(svg).toContain(`>${label.replace('&', '&amp;')}</tspan>`);
+    }
+    // Same hues as the site's --status-* tokens; confirmed and reported never share one.
+    const css = readFileSync('src/styles.css', 'utf8').split("data-theme='light'")[0]!;
+    const tokens = Object.fromEntries([...css.matchAll(/--status-([\w-]+):\s*(#[0-9a-f]{6})/g)].map((m) => [m[1], m[2]]));
+    expect(tokens).toEqual(STATUS_HEX);
+    expect(STATUS_HEX['confirmed']).not.toBe(STATUS_HEX['reported']);
+  });
+
+  it('takes the host from the canonical URL, never a hard-coded domain', () => {
+    expect(siteCardSvg(ctx)).toContain('>EXAMPLE.TEST<');
+    expect(siteCardSvg(ctx)).not.toContain('ROGUEAGENTSWATCH.COM');
+    expect(siteCardSvg(loadContext('https://www.rogueagentswatch.com/', { shell: FALLBACK_SHELL }))).toContain('>ROGUEAGENTSWATCH.COM<');
+  });
+
+  it('makes no live, real-time or monitoring claim and draws no paths between points', () => {
+    const svg = siteCardSvg(ctx);
+    expect(textOf(svg)).not.toMatch(/\b(live|real[- ]?time|monitor(ing)?|scann(ing|er)|detect(ion|ing)?|telemetry|score)\b/i);
+    expect(svg).not.toMatch(/<(line|path|polyline)[^>]*class="arc"/);
+    // One disc + one dot per illustrative point, ring + dot per stated point: nothing else is a circle.
+    const pts = ctx.incidents.filter((r) => !r.record_status || r.record_status === 'active').flatMap((r) => r.geo?.points ?? []);
+    expect((svg.match(/<circle /g) ?? []).length).toBe(pts.length * 2);
+    expect(textOf(svg)).toContain(`${pts.length} POINTS`);
+  });
+
+  it('follows the data: other totals and breakdowns, no geo, retracted points left off', () => {
+    const point = { role: 'target' as const, lat: 48.85, lng: 2.35, label: 'Paris', country: 'FR' };
+    const rec = (id: string, extra: Partial<PrerenderRecord>): PrerenderRecord => ({ ...ctx.incidents[0]!, id, ai_role: 'significant', ...extra });
+    const other: PrerenderContext = {
+      ...ctx,
+      summary: { ...ctx.summary, total: 1234, dataset_version: '9.9.9', by_status: { confirmed: 400, reported: 800, 'test-eval': 34 } },
+      incidents: [rec('a', { geo: { points: [point] } }), rec('b', { record_status: 'retracted', geo: { points: [{ ...point, lat: -33.9, lng: 151.2, illustrative: true }] } }), rec('c', { geo: null })],
+    };
+    const svg = siteCardSvg(other);
+    const text = textOf(svg);
+    expect(svg).toContain('>1234<tspan');
+    for (const n of [400, 800, 34]) expect(svg).toContain(`>${n}</tspan>`);
+    for (const [, n] of statuses) expect(svg).not.toContain(`>${n}</tspan>`);
+    expect(svg).not.toContain(`>${summary.total}<tspan`);
+    expect(text).toContain('DATASET v9.9.9');
+    // The active stated point is a pin (ring + dot); the retracted record's disc is not drawn.
+    expect((svg.match(/<circle /g) ?? []).length).toBe(2);
+    expect(svg).not.toContain('opacity="0.2"');
+    expect(text).toContain('1 RECORD WITH GEO · 1 POINT · 1 STATED');
+    const empty = siteCardSvg({ ...other, incidents: [] });
+    expect(empty).not.toContain('<circle');
+    expect(textOf(empty)).toContain('NO STATED LOCATIONS');
+  });
+
+  it('rasterises to a 1200x630 PNG', async () => {
+    const png = await renderPng(siteCardSvg(ctx));
+    expect([...png.subarray(1, 4)].map((c) => String.fromCharCode(c)).join('')).toBe('PNG');
+    expect(png.readUInt32BE(16)).toBe(CARD_W);
+    expect(png.readUInt32BE(20)).toBe(CARD_H);
+  });
+
+  it('the homepage declares it as a large image at /og/site.png with its size', () => {
+    for (const head of [siteOgTags(ctx), routeHtml('overview', ctx)]) {
+      expect(head).toContain('<meta property="og:image" content="https://example.test/site/og/site.png">');
+      expect(head).toContain('<meta name="twitter:image" content="https://example.test/site/og/site.png">');
+      expect(head).toContain('<meta name="twitter:card" content="summary_large_image">');
+    }
+    expect(siteOgTags(ctx)).toContain(`<meta property="og:image:width" content="${CARD_W}">`);
+    expect(siteOgTags(ctx)).toContain(`<meta property="og:image:height" content="${CARD_H}">`);
   });
 });
 

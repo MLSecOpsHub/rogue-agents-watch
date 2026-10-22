@@ -10,4 +10,11 @@ export const HOME_COPY: {
   metaDescription: string;
   machineSummary: string;
 };
+export const OG_CARD: {
+  category: string;
+  description: string;
+  countNoun: string;
+  hook: string;
+  attribution: string;
+};
 export const DATASET_DESCRIPTION: string;

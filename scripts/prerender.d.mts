@@ -55,7 +55,7 @@ export interface PrerenderContext {
   schemaUrl: string;
   /** The Vite-built index.html every page is assembled from (or FALLBACK_SHELL). */
   shell: string;
-  geo: { landPath: string; project: (lng: number, lat: number) => [number, number] | null };
+  geo: { landPath: string; graticulePath?: string; project: (lng: number, lat: number) => [number, number] | null };
   upstreamIncidentUrl: (id: string) => string;
 }
 export interface PageMeta {
@@ -90,6 +90,7 @@ export const DEFAULT_SITE_URL: string;
 export const CARD_W: number;
 export const CARD_H: number;
 export const ROLE_HEX: Record<string, string>;
+export const STATUS_HEX: Record<string, string>;
 export function esc(s: unknown): string;
 export function wrapText(text: string, maxChars: number, maxLines: number): string[];
 export function firstSentence(text: string): string;
@@ -97,6 +98,7 @@ export const FALLBACK_SHELL: string;
 export function loadContext(siteUrl?: string, opts?: { shell?: string }): PrerenderContext;
 export function cardSvg(rec: PrerenderRecord, ctx: PrerenderContext): string;
 export function siteCardSvg(ctx: PrerenderContext): string;
+export function renderPng(svg: string, background?: string): Promise<Buffer>;
 export function bareShell(html: string): string;
 export function pageHtml(ctx: PrerenderContext, meta: PageMeta, body: string): string;
 export function incidentHtml(rec: PrerenderRecord, ctx: PrerenderContext): string;
