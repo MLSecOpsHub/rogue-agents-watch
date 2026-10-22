@@ -9,6 +9,7 @@ import { externalLink, h } from '../util/dom';
 import { copyToClipboard, siteCaption } from '../util/share';
 import { enumBars, rollups, yearBars } from './shared';
 import type { ViewContext } from './types';
+import { trackEvent } from '../analytics';
 
 export function overviewView({ ds, route, root }: ViewContext): void {
   const includeInactive = route.query.get('inactive') === '1';
@@ -62,11 +63,13 @@ export function overviewView({ ds, route, root }: ViewContext): void {
         if (typeof nav.share === 'function') {
           try {
             await nav.share({ title: SITE.name, text, url: SITE_URL });
+            trackEvent('Share', { target: 'site', method: 'native' });
             return;
           } catch {
             /* user cancelled or unsupported payload: fall back to copy */
           }
         }
+        trackEvent('Share', { target: 'site', method: 'copy' });
         await copyToClipboard(`${text} ${SITE_URL}`, btn, 'Link copied');
       },
     },

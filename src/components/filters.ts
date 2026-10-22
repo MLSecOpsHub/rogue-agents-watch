@@ -3,6 +3,7 @@ import { describe, label, values } from '../data/taxonomy';
 import type { Dataset } from '../data/types';
 import { h } from '../util/dom';
 import { fieldValues } from '../filters';
+import { trackEvent } from '../analytics';
 
 const FIELD_TITLES: Record<FilterField, string> = {
   status: 'Status',
@@ -66,7 +67,11 @@ export function filterPanel(ds: Dataset, state: FilterState, onChange: (next: Fi
     let t: number | undefined;
     input.addEventListener('input', () => {
       window.clearTimeout(t);
-      t = window.setTimeout(() => onChange({ ...state, q: input.value }), 150);
+      t = window.setTimeout(() => {
+        // Count a search once, when it starts, never per keystroke or its text.
+        if (!state.q && input.value) trackEvent('Filter', { field: 'search' });
+        onChange({ ...state, q: input.value });
+      }, 150);
     });
     top.appendChild(input);
   }
@@ -78,7 +83,10 @@ export function filterPanel(ds: Dataset, state: FilterState, onChange: (next: Fi
         type: 'button',
         class: 'btn btn-quiet',
         disabled: active === 0 && !state.q && !state.includeInactive ? true : null,
-        onClick: () => onChange({ values: {}, q: '', includeInactive: false }),
+        onClick: () => {
+          trackEvent('Filter', { field: 'clear' });
+          onChange({ values: {}, q: '', includeInactive: false });
+        },
       },
       active ? `Clear ${active} filter${active === 1 ? '' : 's'}` : 'Clear filters',
     ),
@@ -87,7 +95,10 @@ export function filterPanel(ds: Dataset, state: FilterState, onChange: (next: Fi
 
   if (opts.showInactiveToggle !== false) {
     const cb = h('input', { type: 'checkbox', id: 'f-inactive', checked: state.includeInactive ? true : null }) as HTMLInputElement;
-    cb.addEventListener('change', () => onChange({ ...state, includeInactive: cb.checked }));
+    cb.addEventListener('change', () => {
+      trackEvent('Filter', { field: 'include-inactive' });
+      onChange({ ...state, includeInactive: cb.checked });
+    });
     panel.appendChild(
       h(
         'label',
@@ -108,7 +119,10 @@ export function filterPanel(ds: Dataset, state: FilterState, onChange: (next: Fi
     for (const opt of options) {
       const id = `f-${field}-${opt.id}`;
       const cb = h('input', { type: 'checkbox', id, checked: selected.has(opt.id) ? true : null }) as HTMLInputElement;
-      cb.addEventListener('change', () => onChange(toggleValue(state, field, opt.id)));
+      cb.addEventListener('change', () => {
+        trackEvent('Filter', { field });
+        onChange(toggleValue(state, field, opt.id));
+      });
       list.appendChild(
         h(
           'label',

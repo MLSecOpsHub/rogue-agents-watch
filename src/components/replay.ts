@@ -3,6 +3,7 @@
 // yields the same default view and the same shareable `t=` links.
 import type { Incident } from '../data/types';
 import { h } from '../util/dom';
+import { trackEvent } from '../analytics';
 
 export interface ReplayBounds {
   /** One quarter (three calendar months) before the earliest disclosure in the set, ms UTC. */
@@ -163,7 +164,14 @@ export function createReplay(bounds: ReplayBounds, initial: number, onChange: (t
     },
   };
 
-  play.addEventListener('click', () => (playing ? api.pause() : api.play()));
+  play.addEventListener('click', () => {
+    if (playing) {
+      api.pause();
+    } else {
+      trackEvent('Map replay');
+      api.play();
+    }
+  });
   range.addEventListener('input', () => {
     if (playing) stop(false);
     t = bounds.start + (Number(range.value) / 1000) * span;

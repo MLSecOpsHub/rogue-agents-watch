@@ -4,6 +4,7 @@
 // site renders.
 import { upstreamUrls } from '../config';
 import type { Dataset } from '../data/types';
+import { trackEvent } from '../analytics';
 
 export async function checkForNewerDataset(ds: Dataset, out: HTMLElement): Promise<void> {
   out.textContent = 'Checking…';
@@ -12,10 +13,12 @@ export async function checkForNewerDataset(ds: Dataset, out: HTMLElement): Promi
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const live = (await res.json()) as { dataset_version?: string; total?: number };
     const same = live.dataset_version === ds.summary.dataset_version && live.total === ds.summary.total;
+    trackEvent('Upstream check', { result: same ? 'current' : 'newer' });
     out.textContent = same
       ? `Up to date (upstream v${live.dataset_version}, ${live.total} records).`
       : `Newer data upstream: v${live.dataset_version} with ${live.total} records (this site shows v${ds.summary.dataset_version}, ${ds.summary.total}). The daily sync proposes it as a pull request; it reaches this site once that is merged and deployed.`;
   } catch (err) {
+    trackEvent('Upstream check', { result: 'error' });
     out.textContent = `Could not reach upstream (${err instanceof Error ? err.message : 'error'}).`;
   }
 }

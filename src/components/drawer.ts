@@ -12,6 +12,7 @@ import { copyToClipboard, shareCaption } from '../util/share';
 import { shareUrl } from '../config';
 import { badge, gradeStrip, recordStatusBanner } from './badges';
 import { basisText, placeName } from './map-canvas';
+import { trackEvent } from '../analytics';
 
 function row(dt: string, dd: HTMLElement | string): HTMLElement[] {
   return [h('dt', null, dt), h('dd', null, dd)];
@@ -24,8 +25,14 @@ export function incidentDrawer(ds: Dataset, inc: Incident, onClose: () => void):
     : 'no stated location; listed in the field log only';
   const close = h('button', { type: 'button', class: 'btn btn-small btn-quiet drawer-close', 'aria-label': 'Close incident panel', onClick: onClose }, 'Close');
   const banner = recordStatusBanner(tax, inc, inc.superseded_by ? ds.byId.get(inc.superseded_by)?.name : undefined);
-  const copyLink = h('button', { type: 'button', class: 'btn btn-small', onClick: (e: Event) => void copyToClipboard(shareUrl(inc.id), e.currentTarget as HTMLButtonElement, 'Link copied') }, 'Copy share link');
-  const copyCap = h('button', { type: 'button', class: 'btn btn-small btn-quiet', onClick: (e: Event) => void copyToClipboard(shareCaption(tax, inc), e.currentTarget as HTMLButtonElement, 'Caption copied') }, 'Copy caption');
+  const copyLink = h('button', { type: 'button', class: 'btn btn-small', onClick: (e: Event) => {
+      trackEvent('Share', { target: 'record-link', method: 'copy' });
+      void copyToClipboard(shareUrl(inc.id), e.currentTarget as HTMLButtonElement, 'Link copied');
+    } }, 'Copy share link');
+  const copyCap = h('button', { type: 'button', class: 'btn btn-small btn-quiet', onClick: (e: Event) => {
+      trackEvent('Share', { target: 'record-caption', method: 'copy' });
+      void copyToClipboard(shareCaption(tax, inc), e.currentTarget as HTMLButtonElement, 'Caption copied');
+    } }, 'Copy caption');
   const el = h(
     'div',
     { class: 'drawer-inner', role: 'dialog', 'aria-modal': 'false', 'aria-labelledby': 'drawer-title', tabindex: -1 },

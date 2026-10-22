@@ -10,6 +10,7 @@ import { fmtDate, fmtInt, fmtPct } from '../util/format';
 import { copyToClipboard, shareCaption } from '../util/share';
 import { relatedIncidents } from './shared';
 import type { ViewContext } from './types';
+import { trackEvent } from '../analytics';
 
 export function incidentView({ ds, route, root }: ViewContext): void {
   if (route.view !== 'incident') return;
@@ -217,6 +218,7 @@ export function incidentView({ ds, route, root }: ViewContext): void {
             class: 'btn btn-small',
             onClick: async (e: Event) => {
               const b = e.currentTarget as HTMLButtonElement;
+              trackEvent('Share', { target: 'citation', method: 'copy' });
               try {
                 await navigator.clipboard.writeText(citation);
                 b.textContent = 'Copied';
@@ -243,9 +245,15 @@ export function incidentView({ ds, route, root }: ViewContext): void {
       h(
         'p',
         null,
-        h('button', { type: 'button', class: 'btn btn-small', onClick: (e: Event) => void copyToClipboard(shareUrl(inc.id), e.currentTarget as HTMLButtonElement, 'Link copied') }, 'Copy share link'),
+        h('button', { type: 'button', class: 'btn btn-small', onClick: (e: Event) => {
+          trackEvent('Share', { target: 'record-link', method: 'copy' });
+          void copyToClipboard(shareUrl(inc.id), e.currentTarget as HTMLButtonElement, 'Link copied');
+        } }, 'Copy share link'),
         ' ',
-        h('button', { type: 'button', class: 'btn btn-small btn-quiet', onClick: (e: Event) => void copyToClipboard(shareCaption(tax, inc), e.currentTarget as HTMLButtonElement, 'Caption copied') }, 'Copy caption'),
+        h('button', { type: 'button', class: 'btn btn-small btn-quiet', onClick: (e: Event) => {
+          trackEvent('Share', { target: 'record-caption', method: 'copy' });
+          void copyToClipboard(shareCaption(tax, inc), e.currentTarget as HTMLButtonElement, 'Caption copied');
+        } }, 'Copy caption'),
         ' ',
         h('a', { class: 'btn btn-small btn-quiet', href: href('map', { open: inc.id }) }, 'Show on map'),
       ),
