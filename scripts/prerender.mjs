@@ -28,6 +28,7 @@ import { feature } from 'topojson-client';
 import { LOCAL_SITE_URL, resolveSiteUrl } from './site-env.mjs';
 import { actorBody, incidentBody, llmsFullTxt, llmsTxt, ROUTE_BODIES, ROUTE_PAGES, routeDescription } from './prerender-pages.mjs';
 import { actorGroups, byDisclosedDesc, byIdAsc, CARD_H, CARD_W, datasetModified, esc, firstSentence, gradeLine, LICENSE_URL, PUBLISHER, SITE_NAME, tax, UPSTREAM, wrapText } from './prerender-util.mjs';
+import { DATASET_DESCRIPTION, DATASET_NAME, HOME_COPY } from '../src/site-copy.mjs';
 
 export { CARD_H, CARD_W, esc, firstSentence, SITE_NAME, UPSTREAM, wrapText };
 
@@ -266,10 +267,10 @@ export function routeHtml(view, ctx) {
   const route = ROUTE_PAGES.find((p) => p.view === view);
   if (!route) throw new Error(`unknown route page ${view}`);
   const url = `${ctx.siteUrl}${route.path}`;
-  const title = view === 'overview' ? SITE_NAME : `${route.title} — ${SITE_NAME}`;
+  const title = view === 'overview' ? HOME_COPY.title : `${route.title} — ${SITE_NAME}`;
   const jsonLd = view === 'overview' ? [siteJsonLd(ctx)] : [routeJsonLd(ctx, route), breadcrumbJsonLd(ctx, [[SITE_NAME, ctx.siteUrl], [route.title, url]])];
   if (view === 'about') jsonLd.push(...definedTermSetsJsonLd(ctx));
-  return pageHtml(ctx, { title, ogTitle: view === 'overview' ? SITE_NAME : `${route.title} · ${SITE_NAME}`, description: routeDescription(ctx, view), url, jsonLd }, ROUTE_BODIES[view](ctx));
+  return pageHtml(ctx, { title, ogTitle: view === 'overview' ? HOME_COPY.title : `${route.title} · ${SITE_NAME}`, description: routeDescription(ctx, view), url, jsonLd }, ROUTE_BODIES[view](ctx));
 }
 
 const byAddedDesc = (a, b) => {
@@ -349,19 +350,19 @@ export function changesJson(records, ctx) {
 
 export function siteOgTags(ctx) {
   const image = `${ctx.siteUrl}og/site.png`;
-  const desc = `${ctx.summary.total} source-linked, graded records of real-world cyberattacks executed or orchestrated by AI agents, and rogue-agent incidents. Every dot has a footnote.`;
+  const desc = HOME_COPY.metaDescription;
   return `<link rel="canonical" href="${esc(ctx.siteUrl)}">
     <link rel="alternate" type="application/atom+xml" title="${esc(SITE_NAME)} — new and revised records" href="${esc(ctx.siteUrl)}feed.atom">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="${esc(SITE_NAME)}">
-    <meta property="og:title" content="${esc(SITE_NAME)}">
+    <meta property="og:title" content="${esc(HOME_COPY.title)}">
     <meta property="og:description" content="${esc(desc)}">
     <meta property="og:url" content="${esc(ctx.siteUrl)}">
     <meta property="og:image" content="${esc(image)}">
     <meta property="og:image:width" content="${CARD_W}">
     <meta property="og:image:height" content="${CARD_H}">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="${esc(SITE_NAME)}">
+    <meta name="twitter:title" content="${esc(HOME_COPY.title)}">
     <meta name="twitter:description" content="${esc(desc)}">
     <meta name="twitter:image" content="${esc(image)}">
 `;
@@ -399,9 +400,8 @@ export function datasetJsonLd(ctx) {
   return {
     '@type': 'Dataset',
     '@id': dataset,
-    name: 'Agentic Attack Index',
-    alternateName: SITE_NAME,
-    description: `Curated, source-linked, graded records of real-world cyberattacks executed or orchestrated by AI agents, and rogue-agent incidents. ${ctx.summary.total} records, dataset v${ctx.version}. Each record carries verification status, sourcing confidence, AI-role and severity grades, MITRE ATLAS and ATT&CK mappings, and every source with an archive copy where available.`,
+    name: DATASET_NAME,
+    description: `${DATASET_DESCRIPTION} ${ctx.summary.total} records, dataset v${ctx.version}. Each record carries verification status, sourcing confidence, AI-role and severity grades, MITRE ATLAS and ATT&CK mappings, and every source with an archive copy where available.`,
     url: ctx.siteUrl,
     sameAs: [UPSTREAM],
     identifier: `agentic-attack-index v${ctx.version}`,

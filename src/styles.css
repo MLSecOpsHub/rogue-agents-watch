@@ -506,8 +506,15 @@ a.plain {
   margin-bottom: 0.4rem;
 }
 .hero-head .lede {
-  margin: 0;
+  margin: 0 0 0.4rem;
   max-width: 70ch;
+}
+.hero-head .hero-description {
+  margin: 0 0 0.3rem;
+  max-width: 70ch;
+}
+.hero-head .hero-attribution {
+  margin: 0;
 }
 .hero-split {
   display: grid;

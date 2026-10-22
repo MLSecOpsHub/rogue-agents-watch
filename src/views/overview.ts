@@ -2,7 +2,7 @@ import { barChart } from '../components/charts';
 import { incidentCard } from '../components/badges';
 import { whatChanged } from '../components/changes';
 import { mapTeaser } from '../components/map-teaser';
-import { newIncidentIssueUrl, SITE, SITE_URL, UPSTREAM_REPO_URL } from '../config';
+import { newIncidentIssueUrl, SITE, SITE_URL } from '../config';
 import { headlineRecords } from '../data/adapter';
 import { href } from '../router';
 import { externalLink, h } from '../util/dom';
@@ -10,6 +10,7 @@ import { copyToClipboard, siteCaption } from '../util/share';
 import { enumBars, rollups, yearBars } from './shared';
 import type { ViewContext } from './types';
 import { trackEvent } from '../analytics';
+import { HOME_COPY } from '../site-copy.mjs';
 
 export function overviewView({ ds, route, root }: ViewContext): void {
   const includeInactive = route.query.get('inactive') === '1';
@@ -18,13 +19,15 @@ export function overviewView({ ds, route, root }: ViewContext): void {
   const headline = headlineRecords(ds.incidents, includeInactive);
   const withGeo = headline.filter((i) => i.hasGeo).length;
 
-  // ---- hero: title + one-sentence lede, then [figure + honesty split] | [live map] ----
+  // ---- hero: title, tagline, description and attribution (src/site-copy.mjs), then [figure + honesty split] | [live map] ----
   root.appendChild(
     h(
       'section',
       { class: 'hero-head' },
-      h('h1', null, 'Rogue Agents Watch'),
-      h('p', { class: 'lede' }, 'A public, source-linked tracker of cyberattacks executed or orchestrated by AI agents, graded for evidence and for how much the AI actually did, rendered from the ', externalLink(UPSTREAM_REPO_URL, 'Agentic Attack Index', 'plain'), '.'),
+      h('h1', null, HOME_COPY.h1),
+      h('p', { class: 'lede' }, HOME_COPY.tagline),
+      h('p', { class: 'hero-description' }, HOME_COPY.description),
+      h('p', { class: 'hero-attribution muted small' }, HOME_COPY.attribution.before, externalLink(HOME_COPY.attribution.href, HOME_COPY.attribution.link, 'plain'), HOME_COPY.attribution.after),
     ),
   );
 

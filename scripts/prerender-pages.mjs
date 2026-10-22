@@ -10,6 +10,7 @@
 import {
   actorGroups, aiidUrl, atlasUrl, attackUrl, byDisclosedDesc, byIdAsc, correctionIssueUrl, cveUrl, datasetModified, esc, firstSentence, safeHref, gradeLine, LICENSE_URL, owaspAsiUrl, owaspLlmUrl, PUBLISHER, SITE_NAME, tax, taxDesc, UPSTREAM,
 } from './prerender-util.mjs';
+import { HOME_COPY } from '../src/site-copy.mjs';
 
 /** Route pages in navigation order. `path` is relative to the site root and ends with a slash (or is empty for the root). */
 export const ROUTE_PAGES = [
@@ -83,8 +84,11 @@ export function overviewBody(ctx) {
   const dates = ctx.incidents.map((r) => r.date_disclosed).sort();
   return page(ctx, {
     view: 'overview',
-    title: SITE_NAME,
-    body: `<p class="lede">${s.total} source-linked, graded records of real-world cyberattacks executed or orchestrated by AI agents, and of rogue-agent incidents, disclosed between <time datetime="${esc(dates[0])}">${esc(dates[0])}</time> and <time datetime="${esc(dates.at(-1))}">${esc(dates.at(-1))}</time>. Rendered from the <a href="${UPSTREAM}">Agentic Attack Index</a> dataset v${esc(ctx.version)}. Every record shows what is confirmed, what is only reported, how central the AI was, and every source behind it.</p>
+    title: HOME_COPY.h1,
+    body: `<p class="lede">${esc(HOME_COPY.tagline)}</p>
+<p class="hero-description">${esc(HOME_COPY.description)}</p>
+<p class="hero-attribution muted small">${esc(HOME_COPY.attribution.before)}<a href="${esc(HOME_COPY.attribution.href)}">${esc(HOME_COPY.attribution.link)}</a>${esc(HOME_COPY.attribution.after)}</p>
+<p>${s.total} records, disclosed between <time datetime="${esc(dates[0])}">${esc(dates[0])}</time> and <time datetime="${esc(dates.at(-1))}">${esc(dates.at(-1))}</time>; Agentic Attack Index dataset v${esc(ctx.version)}.</p>
 <h2>By verification status</h2>
 ${dl(status)}
 <h2>By AI role</h2>
@@ -339,7 +343,7 @@ export function routeDescription(ctx, view) {
   const withGeo = ctx.incidents.filter((r) => r.geo?.points?.length).length;
   switch (view) {
     case 'overview':
-      return `${n} source-linked, graded records of real-world cyberattacks executed or orchestrated by AI agents, and rogue-agent incidents (${dates[0]} to ${dates.at(-1)}). Every record shows verification status, sourcing confidence, AI role and severity, with every source cited. Agentic Attack Index v${ctx.version}, CC BY-SA 4.0.`;
+      return HOME_COPY.metaDescription;
     case 'map':
       return `World map of the ${withGeo} of ${n} AI-agent cyber incidents that carry a stated location. Every point states its role, its basis (sponsor attribution, operator location, victim location…) and the publisher that stated it; the other ${n - withGeo} records are listed, never plotted.`;
     case 'timeline':
@@ -440,7 +444,7 @@ export function llmsTxt(ctx) {
   const status = Object.entries(s.by_status ?? {}).map(([k, n]) => `${n} ${tax(ctx, 'status', k).toLowerCase()}`).join(', ');
   return `# ${SITE_NAME}
 
-> ${s.total} source-linked, graded records of real-world cyberattacks executed or orchestrated by AI agents, and of rogue-agent incidents. Rendered from the Agentic Attack Index dataset v${ctx.version} (${PUBLISHER.name}), CC BY-SA 4.0. Latest data: ${datasetModified(ctx.incidents, ctx.snapshot?.fetched_at ?? '')}.
+> ${HOME_COPY.machineSummary} ${s.total} records, Agentic Attack Index dataset v${ctx.version} (${PUBLISHER.name}), CC BY-SA 4.0. Latest data: ${datasetModified(ctx.incidents, ctx.snapshot?.fetched_at ?? '')}.
 
 Every record carries three independent grades: verification status (confirmed, reported, test-eval), sourcing confidence (primary, secondary, unverified) and AI role (load-bearing, significant, incidental, disputed, unknown), plus severity. Of ${s.total} records: ${status}. A "reported" record is not confirmed; "AI incidental" means the AI was present but not what made the attack work. Nulls mean "not stated", never zero. Actors are shown as stated by sources; nothing is inferred. Cite the dataset as "Agentic Attack Index (${PUBLISHER.name})" with a link.
 
@@ -512,6 +516,8 @@ Cite: Agentic Attack Index (${PUBLISHER.name}), dataset v${ctx.version}, record 
 `;
   };
   return `# ${SITE_NAME}: every record in full
+
+${HOME_COPY.machineSummary}
 
 Dataset: Agentic Attack Index v${ctx.version} (${PUBLISHER.name}), ${ctx.incidents.length} records, CC BY-SA 4.0. Latest data: ${datasetModified(ctx.incidents, ctx.snapshot?.fetched_at ?? '')}. Grade definitions: ${u(ctx, 'about/')}. Index: ${u(ctx, 'llms.txt')}.
 

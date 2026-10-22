@@ -1,5 +1,6 @@
 import './styles.css';
 import { startAnalytics, trackView } from './analytics';
+import { HOME_COPY } from './site-copy.mjs';
 import { applyStoredTheme, footer, header } from './components/layout';
 import { loadDataset } from './data/load';
 import { currentRoute, onPathPage, onRouteChange, type Route } from './router';
@@ -62,7 +63,7 @@ function boot(): void {
     headerSlot.appendChild(header(route));
     clear(main);
     main.dataset.view = route.view;
-    document.title = route.view === 'overview' ? 'Rogue Agents Watch' : `${TITLES[route.view]} — Rogue Agents Watch`;
+    document.title = route.view === 'overview' ? HOME_COPY.title : `${TITLES[route.view]} — Rogue Agents Watch`;
     // The overview with no filters is the site root: show the canonical URL
     // ("/") rather than "/#/", which the brand link and "#/" hrefs produce.
     // Same document, no reload; crawlers ignore fragments either way.

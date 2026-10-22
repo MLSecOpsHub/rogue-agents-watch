@@ -11,7 +11,7 @@ describe('boot URL normalisation', () => {
     await new Promise((r) => setTimeout(r, 0));
     expect(window.location.hash).toBe('');
     expect(window.location.pathname).toBe('/');
-    expect(document.title).toBe('Rogue Agents Watch');
+    expect(document.title).toBe('Rogue Agents Watch — Rogue AI Agent Incidents & Cyberattacks');
 
     window.location.hash = '#/map';
     await new Promise((r) => setTimeout(r, 0));
