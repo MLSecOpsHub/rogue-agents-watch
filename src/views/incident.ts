@@ -28,7 +28,8 @@ export function incidentView({ ds, route, root }: ViewContext): void {
     );
     return;
   }
-  document.title = `${inc.name} — Rogue Agents Watch`;
+  // The record name alone, matching the prerendered <title>; the names are long as published.
+  document.title = inc.name;
   const tax = ds.taxonomy;
 
   const banner = recordStatusBanner(tax, inc, inc.superseded_by ? ds.byId.get(inc.superseded_by)?.name : undefined);

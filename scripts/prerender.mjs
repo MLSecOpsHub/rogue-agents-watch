@@ -213,6 +213,12 @@ ${HEAD_CLOSE}`;
 }
 
 /** Per-incident page: the full record in static HTML, Open Graph card, Article JSON-LD, and the app boots in place. */
+/** First sentence of a summary for a description, marked with an ellipsis when firstSentence() had to cut it. */
+function leadSentence(summary) {
+  const lead = firstSentence(summary);
+  return /[.!?]$/.test(lead) ? lead : `${lead}…`;
+}
+
 export function incidentHtml(rec, ctx) {
   const url = `${ctx.siteUrl}incident/${encodeURIComponent(rec.id)}/`;
   const grades = gradeLine(ctx, rec);
@@ -220,9 +226,11 @@ export function incidentHtml(rec, ctx) {
   return pageHtml(
     ctx,
     {
-      title: `${rec.name} — ${SITE_NAME}`,
+      // The record name alone: og:site_name carries the brand, and the names are long as published.
+      title: rec.name,
       ogTitle: rec.name,
-      description: `${grades}. ${firstSentence(rec.summary)}`,
+      // Event first so a search snippet leads with what happened; the grades follow.
+      description: `${leadSentence(rec.summary)} ${grades}.`,
       url,
       image: `${ctx.siteUrl}og/${encodeURIComponent(rec.id)}.png`,
       imageAlt: `${rec.name}: ${grades}`,
@@ -417,7 +425,9 @@ export function datasetJsonLd(ctx) {
     conformsTo: ctx.schemaUrl,
     distribution: [dist(`${raw}incidents.json`, 'application/json'), dist(`${raw}incidents.csv`, 'text/csv'), dist(`${raw}incidents.ndjson`, 'application/x-ndjson'), dist(`${raw}stix/bundle.json`, 'application/stix+json'), dist(`${ctx.siteUrl}feed.atom`, 'application/atom+xml'), dist(`${ctx.siteUrl}misp/manifest.json`, 'application/json'), dist(`${ctx.siteUrl}llms-full.txt`, 'text/plain')],
     includedInDataCatalog: { '@type': 'DataCatalog', name: SITE_NAME, url: ctx.siteUrl },
-    hasPart: ctx.incidents.slice().sort(byDisclosedDesc).map((r) => ({ '@type': 'Article', '@id': `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, headline: r.name, datePublished: r.date_disclosed })),
+    // datePublished is when the record was published here (added.date), the same value the
+    // record's own Article emits; the disclosure date is a fact of the event, shown on the page.
+    hasPart: ctx.incidents.slice().sort(byDisclosedDesc).map((r) => ({ '@type': 'Article', '@id': `${ctx.siteUrl}incident/${encodeURIComponent(r.id)}/`, headline: r.name, datePublished: r.added?.date ?? r.date_disclosed })),
   };
 }
 
@@ -505,7 +515,7 @@ export function incidentJsonLd(rec, ctx) {
     '@type': 'Article',
     '@id': url,
     headline: rec.name,
-    description: `${gradeLine(ctx, rec)}. ${firstSentence(rec.summary)}`,
+    description: `${leadSentence(rec.summary)} ${gradeLine(ctx, rec)}.`,
     abstract: rec.summary,
     url,
     mainEntityOfPage: url,

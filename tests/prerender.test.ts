@@ -24,6 +24,12 @@ describe('prerender generators', () => {
     expect(html).toContain('hreflang="x-default"');
     expect(html).toContain('summary_large_image');
     expect(html).toMatch(/og:description" content="[^"]*(Confirmed|Reported|Test)/);
+    // Title is the record name alone; the description leads with the event and ends with the grades.
+    const escName = rec.name.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    expect(html).toContain(`<title>${escName}</title>`);
+    const desc = /<meta name="description" content="([^"]*)">/.exec(html)![1]!;
+    expect(desc.startsWith(firstSentence(rec.summary).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'))).toBe(true);
+    expect(desc).toMatch(/severity\.$/);
     // A real page, not a redirect: search engines drop instant-refresh pages.
     expect(html).not.toContain('http-equiv="refresh"');
     expect(html).not.toContain('location.replace');
@@ -143,6 +149,13 @@ describe('discoverability and interop generators', () => {
     expect(Array.isArray(ld['distribution'])).toBe(true);
     expect((ld['hasPart'] as unknown[]).length).toBe(summary.total);
     expect(graph.map((n) => n['@type'])).toEqual(['Organization', 'WebSite', 'Dataset', 'CollectionPage']);
+    // The Dataset's hasPart entries and each record's own Article agree on @id and datePublished.
+    for (const part of ld['hasPart'] as Array<Record<string, unknown>>) {
+      const id = decodeURIComponent(String(part['@id']).replace('https://example.test/site/incident/', '').replace(/\/$/, ''));
+      const own = incidentJsonLd(byId.get(id)!, ctx);
+      expect(own['@id']).toBe(part['@id']);
+      expect(part['datePublished']).toBe(own['datePublished']);
+    }
     const art = incidentJsonLd(byId.get(summary.ids[0]!)!, ctx);
     expect(art['@type']).toBe('Article');
     expect(art['url']).toBe(`https://example.test/site/incident/${summary.ids[0]}/`);
