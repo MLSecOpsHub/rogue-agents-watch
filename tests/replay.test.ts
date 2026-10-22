@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildDataset, normalizeIncident } from '../src/data/adapter';
-import { createReplay, dateMs, formatT, minusMonths, parseT, replayBounds } from '../src/components/replay';
+import { createReplay, dateMs, formatT, latestDisclosed, minusMonths, parseT, replayBounds } from '../src/components/replay';
 import { latestAdditions, latestRevisions } from '../src/components/changes';
 import { rawRecord, snapshot, summaryFor, taxonomy } from './fixtures';
 
@@ -60,6 +60,20 @@ describe('replay bounds', () => {
     expect(formatT(t)).toBe('2025-08');
     expect(dateMs('2025-06-11') <= t).toBe(true);
     expect(dateMs('2025-11-13') <= t).toBe(false);
+  });
+});
+
+describe('latest disclosure', () => {
+  it('picks the newest date, breaks ties by id whatever the input order, and honours the shown set', () => {
+    const recs = [
+      { id: 'b-second', date_disclosed: '2026-10-21' },
+      { id: 'c-older', date_disclosed: '2026-10-20' },
+      { id: 'a-first', date_disclosed: '2026-10-21' },
+    ];
+    expect(latestDisclosed(recs)?.id).toBe('a-first');
+    expect(latestDisclosed([...recs].reverse())?.id).toBe('a-first');
+    expect(latestDisclosed(recs, new Set(['b-second', 'c-older']))?.id).toBe('b-second');
+    expect(latestDisclosed(recs, new Set())).toBeNull();
   });
 });
 

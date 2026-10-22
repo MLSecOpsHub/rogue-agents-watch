@@ -258,7 +258,8 @@ describe('site share card', () => {
     expect(text).toContain(`of ${summary.total} records`);
     for (const [status, row] of Object.entries(split.by_status_ai_role)) {
       expect(svg).toContain(`fill="${STATUS_HEX[status]}">${ctx.labels['status']![status]!.label.toLowerCase()} <tspan fill="#7d8b99">${Object.values(row).reduce((a, b) => a + b, 0)}</tspan>`);
-      for (const n of Object.values(row)) expect(svg).toContain(`font-size="36" fill="#${n ? 'e6edf3' : '566677'}">${n}</text>`.replace('e6edf3">22<', 'ff8a4c">22<'));
+      // The confirmed × load-bearing cell is the accented one; zero counts are dimmed.
+      for (const [role, n] of Object.entries(row)) expect(svg).toContain(`font-size="36" fill="#${status === 'confirmed' && role === 'load-bearing' ? 'ff8a4c' : n ? 'e6edf3' : '566677'}">${n}</text>`);
     }
     for (const [year, n] of Object.entries(summary.by_year)) expect(text).toContain(`${n} in ${year}`);
     expect(text).toContain('every number is a count of records');
