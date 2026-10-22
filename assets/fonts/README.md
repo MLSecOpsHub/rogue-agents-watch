@@ -8,10 +8,8 @@ CLAUDE.md).
 
 | File | Family | Licence |
 |---|---|---|
-| `BarlowCondensed-Bold.ttf` | Barlow Condensed (Jeremy Tribby) | SIL OFL 1.1, `OFL-Barlow.txt` |
-| `Barlow-Regular.ttf`, `Barlow-SemiBold.ttf` | Barlow (Jeremy Tribby) | SIL OFL 1.1, `OFL-Barlow.txt` |
-| `IBMPlexMono-Regular.ttf` | IBM Plex Mono (IBM) | SIL OFL 1.1, `OFL-IBMPlexMono.txt` |
+| `IBMPlexMono-Regular.ttf`, `IBMPlexMono-Bold.ttf` | IBM Plex Mono (IBM) | SIL OFL 1.1, `OFL-IBMPlexMono.txt` |
 
-Source: the Google Fonts repository (`ofl/barlow`, `ofl/barlowcondensed`,
-`ofl/ibmplexmono`). Replacing a file changes every card, which the CI
+The cards use one family in two weights, so these are the only files resvg
+loads. Source: the Google Fonts repository (`ofl/ibmplexmono`). Replacing a file changes every card, which the CI
 reproducibility check will surface as a changed build.

@@ -100,8 +100,11 @@ product. Read the non-negotiables before changing anything.
   an instant redirect as a redirect and drop the page. Static content is
   generated from the snapshot only, escaped, with grades shown next to their
   upstream definitions; the hash-free URL is the canonical one.
-- The rest of the prerender output: PNG cards via resvg with the vendored OFL
-  fonts in `assets/fonts/`, `feed.atom`, `changes.json`, `sitemap.xml` (every
+- The rest of the prerender output: PNG share cards via resvg with the vendored
+  OFL fonts in `assets/fonts/` (`scripts/prerender-cards.mjs`: one terminal
+  treatment, IBM Plex Mono only, for the site card, the `/map/` and `/stats/`
+  cards and every record card; each card URL carries a content hash so a
+  redrawn card is fetched afresh by platforms that cache by URL), `feed.atom`, `changes.json`, `sitemap.xml` (every
   page, with card images), `robots.txt` (AI crawlers allowed by name),
   `llms.txt` and `llms-full.txt`, one schema.org graph on the landing page
   (`WebSite`, `Organization`, `Dataset` with `hasPart`, `ItemList`),
@@ -150,6 +153,7 @@ scripts/sync-data.mjs      Fetch upstream artifacts, write snapshot
 scripts/validate-data.mjs  Schema + consistency validation (hermetic)
 scripts/bundle-size.mjs    Gzip report and budget gate
 scripts/prerender.mjs      Post-build: share pages, OG cards, feed, changes.json
+scripts/prerender-cards.mjs The OG share cards as SVG (site, /map/, /stats/, per record)
 assets/fonts/              OFL fonts for card rendering (build-time only)
 tests/                     vitest: adapter, schema, router, filters, csv, smoke
 .github/workflows/         ci.yml, sync-data.yml (deploys are Vercel's integration, no workflow)

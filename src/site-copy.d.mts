@@ -12,9 +12,9 @@ export const HOME_COPY: {
 };
 export const OG_CARD: {
   category: string;
-  description: string;
+  terms: string[];
   countNoun: string;
+  description: string;
   hook: string;
-  attribution: string;
 };
 export const DATASET_DESCRIPTION: string;

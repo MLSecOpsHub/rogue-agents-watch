@@ -31,17 +31,21 @@ export const HOME_COPY = {
 };
 
 /**
- * The site-level share image (dist/og/site.png). Shorter than the meta
- * description on purpose; the count, the status breakdown, the host and the
- * dataset version are filled in from the snapshot where the card is drawn.
+ * The share cards (dist/og/*.png): the site card's copy. Shorter than the meta
+ * description on purpose; the count, the status breakdown, the map figures,
+ * the host and the dataset version are filled in from the snapshot where the
+ * card is drawn. Terminal voice: lower case, a code comment, a prompt line.
  */
 export const OG_CARD = {
-  category: 'Open threat intelligence',
+  /** The category, drawn as a code comment: "// open AI threat intelligence". */
+  category: 'open AI threat intelligence',
+  /** What the site offers, drawn as a prompt line: "> incident/attacks database · threat map". Add a product here when it ships. */
+  terms: ['incident/attacks database', 'threat map'],
+  /** Follows the record total: "99 incidents & attacks". */
+  countNoun: 'incidents & attacks',
   description: 'Rogue AI agent incidents & AI-orchestrated cyberattacks',
-  /** Follows the record total: "99 CASES." then the line below. */
-  countNoun: 'Cases.',
-  hook: 'Follow the evidence.',
-  attribution: `Powered by the ${DATASET_NAME}`,
+  /** Closes the footer after the status breakdown. */
+  hook: 'every record source-linked',
 };
 
 /** Dataset JSON-LD description lead: the dataset itself, not the site. Counts are appended where it is rendered. */
