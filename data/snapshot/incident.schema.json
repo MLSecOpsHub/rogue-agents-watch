@@ -347,10 +347,10 @@
         },
         "owasp_asi": {
           "type": "array",
-          "description": "OWASP Agentic Security Initiative (ASI) threat IDs, e.g. T1. Distinct from the LLM Top 10 — use owasp_llm for those.",
+          "description": "OWASP Top 10 for Agentic Applications ids (ASI01–ASI10), e.g. ASI01. The edition is pinned in schema/owasp-asi.json (2026 edition, published December 2025); the method is in docs/owasp-asi-mapping.md. Not the T-numbered threats of the 2025 Agentic AI Threats and Mitigations guide. Distinct from the LLM Top 10 — use owasp_llm for those.",
           "items": {
             "type": "string",
-            "minLength": 2
+            "pattern": "^ASI(0[1-9]|10)$"
           },
           "uniqueItems": true
         },
